@@ -30,5 +30,10 @@
   },
   "overrides": {
     "tmp": "0.2.7"
+  },
+  "exports": {
+    ".": "./index.mjs",
+    "./portable": "./portable.mjs",
+    "./package.json": "./package.json"
   }
 }

@@ -1,4 +1,5 @@
 evidence/fork-attempt.json
+evidence/**/fork-attempt.json
 *.local.json
 node_modules/
 .env

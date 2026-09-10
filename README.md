@@ -1,6 +1,6 @@
 # Ring Aqua SwapVM strategy
 
-[中文说明](README.zh.md) · [Validation](VALIDATION.md) · [License scope](LICENSE.md)
+[中文说明](README.zh.md) · [Integration API](INTEGRATION.md) · [Validation](VALIDATION.md) · [License scope](LICENSE.md)
 
 Build unsigned `fwUSDC/fwUSDT` strategies with the 1inch Aqua and SwapVM SDKs, inspect their on-chain state, and reproduce swaps on a local Ethereum mainnet fork.
 
@@ -21,7 +21,9 @@ Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Lt
 | CLI | Unsigned transaction generation and read-only RPC; no private keys, signatures, or broadcasts |
 | Production status | Unaudited; discovery and real 1inch frontend fills remain unverified |
 
-`strategy.mjs` uses the official `PeggedSwapArgs.fromTokens` and `AquaProgramBuilder`. It adds a mandatory expiry instruction and encodes fees with integers. Offline tests compare the shared instruction bytes against the SDK's higher-level `AquaPeggedAmmStrategy`.
+`strategy-core.mjs` uses the official `PeggedSwapArgs.fromTokens` and `AquaProgramBuilder`; `strategy.mjs` preserves the Node entry. It adds a mandatory expiry instruction and encodes fees with integers. Offline tests compare the shared instruction bytes against the SDK's higher-level `AquaPeggedAmmStrategy`.
+
+[The integration API](INTEGRATION.md) supplies ship/dock plans, canonical USDC/USDT wrap/unwrap plans, a portable core and atomic resolver recipes. The recipe binds actual output and excess-input refunds; it still needs an adapter to the selected resolver's production runtime. No frontend application is included.
 
 ## Run locally
 
@@ -55,7 +57,7 @@ node cli.mjs build config/maker.local.json maker-unsigned.local.json
 
 This command does not connect a wallet or send transactions. It refuses to overwrite existing files. The bundle contains the maker, chain ID, target, calldata, value, and strategy hash.
 
-`open` contains five ordered transactions: reset the fwUSDC allowance to Aqua, approve the bounded fwUSDC amount, reset the fwUSDT allowance, approve its bounded amount, then `ship` both assets. The maker must already hold the FewTokens. The tool does not acquire or fund them.
+`open` contains five ordered transactions: reset the fwUSDC allowance to Aqua, approve the bounded fwUSDC amount, reset the fwUSDT allowance, approve its bounded amount, then `ship` both assets. The maker must hold the FewTokens before executing these steps. Separate `wrap` plans can prepare explicitly chosen amounts from the maker's underlying balance; nothing is funded or sent automatically.
 
 `close` docks both assets and separately resets both allowances to zero. Closing does not transfer maker balances to another address. If an already-docked strategy makes `dock` revert, revoke the allowances separately. A docked hash cannot be shipped again; build a fresh strategy with a new salt. ERC-20 allowances are shared across strategies in the same wallet, so isolate a pilot in a dedicated wallet.
 
@@ -120,11 +122,11 @@ This is Ring's source-data format, **not an accepted 1inch Pathfinder plugin int
 
 ## Integration acceptance
 
-The next integration work needs agreement with 1inch on the source/Assembler interface, contribution repository, review owner, and eligible Resolver pilot. Ring can supply this builder, wrapper catalog, reproducible quote vectors, and execution tests, then implement the agreed adapter.
+Ring now supplies maker lifecycle/conversion APIs, atomic execution recipes, wrapper metadata and reproducible tests without waiting for a private partner interface. The remaining joint work is adaptation to the selected source/Assembler and resolver runtime, code review and an eligible Resolver pilot. These Ring-defined APIs are not represented as an accepted 1inch plugin schema.
 
 Frontend acceptance requires a normal USDC/USDT order to select the full FewToken route when it offers the best executable result after costs, followed by a verifiable real frontend fill. Publishing an Aqua position, obtaining an API quote, or passing this fork suite does not establish that outcome.
 
-`test/RouteHarness.sol` is only a local test executor. It lacks a production executor's complete route binding, user authorization, reentrancy, and residual-token protections. Do not deploy it to serve orders. Pinned code hashes are compatibility checks, not a security audit; proxy implementations and upstream changes require separate review.
+`test/RouteHarness.sol` and `test/RecipeHarness.sol` are local test executors. They do not provide a production executor's complete route binding, outer user authorization and security controls. The recipe harness exercises actual output/refund and balance checks but is not a production adapter. Do not deploy either to serve orders. Pinned code hashes are compatibility checks, not a security audit; proxy implementations and upstream changes require separate review.
 
 ## References
 

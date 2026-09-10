@@ -1,6 +1,12 @@
 # Validation
 
-2026-09-10. The standalone repository passed **34 offline tests and 27 Ethereum mainnet fork cases**. These tests establish local encoding and execution behavior, not 1inch frontend integration or production safety.
+## Integration extension — 2026-09-11
+
+The extension passed **45 offline tests and 38 fork cases**, including all baseline cases below. Formatting passed and `npm audit --audit-level=high` reported zero vulnerabilities. New cases execute the SDK's maker wrap/unwrap plans, four atomic resolver recipes, excess-input refunds, preservation of preexisting tokens, rollback after failed settlement/redemption, and shutdown after expiry. [Current fork report](evidence/integration-2026-09-11/fork-results.json) and [offline output](evidence/integration-2026-09-11/offline-tests.txt). The report binds the strategy/integration source files and both test-only executors. Actual partner runtime integration and real frontend fills remain unverified.
+
+## Baseline — 2026-09-10, commit e94ae6a
+
+At the baseline commit, the standalone repository passed **34 offline tests and 27 Ethereum mainnet fork cases**. The older evidence below is preserved for that commit; its hashes do not describe later source edits. These tests establish local encoding and execution behavior, not 1inch frontend integration or production safety.
 
 Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Ltd 2025. [License scope](LICENSE.md).
 

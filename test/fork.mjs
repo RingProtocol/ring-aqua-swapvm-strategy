@@ -17,6 +17,13 @@ import {
 } from '../strategy.mjs';
 import { readonlyRpc, preflight } from '../readonly.mjs';
 import { inspectSources } from '../sources.mjs';
+import {
+  buildAquaShipPlan,
+  buildAquaDockPlan,
+  buildMakerWrapPlan,
+  buildMakerUnwrapPlan,
+  buildUnderlyingRoute,
+} from '../index.mjs';
 import { config as fixture, request as requestFixture, OPERATOR, MAKER, USER } from './fixtures.mjs';
 
 const port = 18569,
@@ -38,10 +45,19 @@ const report = {
   sourceSha256: Object.fromEntries(
     [
       'strategy.mjs',
+      'strategy-core.mjs',
+      'integration-core.mjs',
+      'index.mjs',
+      'portable.mjs',
+      'cli.mjs',
+      'package.json',
+      'test/integration.test.mjs',
+      'test/cli.test.mjs',
       'readonly.mjs',
       'sources.mjs',
       'test/fork.mjs',
       'test/RouteHarness.sol',
+      'test/RecipeHarness.sol',
       'config/deployment.json',
       'config/wrapper-sources.json',
     ].map((path) => [
@@ -53,7 +69,12 @@ const report = {
   ),
   tests: [],
 };
-const evidence = new URL('../evidence/', import.meta.url);
+const evidence = new URL(
+  process.env.RING_FORK_EVIDENCE_DIR
+    ? `../${process.env.RING_FORK_EVIDENCE_DIR.replace(/\/$/, '')}/`
+    : '../evidence/',
+  import.meta.url,
+);
 mkdirSync(evidence, { recursive: true });
 const save = () => writeFileSync(new URL('fork-attempt.json', evidence), json(report));
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -163,6 +184,7 @@ async function main() {
     language: 'Solidity',
     sources: {
       'RouteHarness.sol': { content: readFileSync(new URL('./RouteHarness.sol', import.meta.url), 'utf8') },
+      'RecipeHarness.sol': { content: readFileSync(new URL('./RecipeHarness.sol', import.meta.url), 'utf8') },
     },
     settings: {
       optimizer: { enabled: true, runs: 200 },
@@ -185,8 +207,18 @@ async function main() {
   ).deploy(C.swapVmRouter, OPERATOR);
   await harness.waitForDeployment();
   const harnessAddress = (await harness.getAddress()).toLowerCase();
+  const recipeArtifact = compiled.contracts['RecipeHarness.sol'].RecipeHarness;
+  const recipeHarness = await new ethers.ContractFactory(
+    recipeArtifact.abi,
+    recipeArtifact.evm.bytecode.object,
+    operator,
+  ).deploy(C.swapVmRouter, OPERATOR);
+  await recipeHarness.waitForDeployment();
+  const recipeExecutor = (await recipeHarness.getAddress()).toLowerCase();
   for (const t of TOKENS)
     await (await token(t.underlying, operator).approve(harnessAddress, 100_000000n)).wait();
+  for (const t of TOKENS)
+    await (await token(t.underlying, operator).approve(recipeExecutor, 100_000000n)).wait();
   async function test(name, fn) {
     const snap = await provider.send('evm_snapshot', []);
     report.currentCase = name;
@@ -205,7 +237,7 @@ async function main() {
     assert(r.issues.includes('STRATEGY_NOT_ACTIVE'));
     return { state: r.maker.map((x) => x.state) };
   });
-  for (const tx of built.bundle.open) await sent(maker, tx);
+  for (const tx of buildAquaShipPlan(config, opts).transactions) await sent(maker, tx);
   report.strategyHash = built.bundle.strategyHash;
   report.syntheticInventory = {
     fwUSDC: '30',
@@ -220,6 +252,155 @@ async function main() {
     assert.equal(r.fillSimulation.status, 'passed');
     writeFileSync(new URL('preflight.json', evidence), json(r));
     return { block: r.block, quote: r.quote, fillSimulation: r.fillSimulation };
+  });
+  for (const [asset, t] of [
+    ['USDC', TOKENS[0]],
+    ['USDT', TOKENS[1]],
+  ]) {
+    await test(`SDK ${asset} wrap and unwrap plans reconcile real balances and allowances`, async () => {
+      const input = { chainId: 1, maker: MAKER, asset, amount: '1250001' };
+      const beforeOrigin = await token(t.underlying).balanceOf(MAKER);
+      const beforeFew = await token(t.address).balanceOf(MAKER);
+      for (const tx of buildMakerWrapPlan(input).transactions) await sent(maker, tx);
+      assert.equal(await token(t.underlying).balanceOf(MAKER), beforeOrigin - 1250001n);
+      assert.equal(await token(t.address).balanceOf(MAKER), beforeFew + 1250001n);
+      assert.equal(await token(t.underlying).allowance(MAKER, t.address), 0n);
+      for (const tx of buildMakerUnwrapPlan(input).transactions) await sent(maker, tx);
+      assert.equal(await token(t.underlying).balanceOf(MAKER), beforeOrigin);
+      assert.equal(await token(t.address).balanceOf(MAKER), beforeFew);
+    });
+  }
+  const makeRecipe = (direction, exactIn = true, threshold = exactIn ? '800000' : '2000000') =>
+    buildUnderlyingRoute(
+      config,
+      {
+        chainId: 1,
+        direction,
+        exactIn,
+        amount: '1000000',
+        threshold,
+        deadline: request.deadline,
+        operator: OPERATOR,
+        executor: recipeExecutor,
+        receiver: USER,
+      },
+      opts,
+    );
+  const recipeArgs = (p) => [
+    p.originIn,
+    p.fewIn,
+    p.fewOut,
+    p.originOut,
+    p.maxAmountIn,
+    p.minAmountOut,
+    p.deadline,
+    p.receiver,
+    p.swapCall.data,
+  ];
+  const recipeBalances = async (p) => {
+    const balances = [];
+    for (const a of [OPERATOR, USER, MAKER, recipeExecutor])
+      for (const t of [p.originIn, p.fewIn, p.fewOut, p.originOut])
+        balances.push(String(await token(t).balanceOf(a)));
+    return balances;
+  };
+  for (const direction of ['USDC_USDT', 'USDT_USDC'])
+    for (const exactIn of [true, false]) {
+      await test(`SDK recipe ${direction} ${exactIn ? 'exact-in' : 'exact-out'} settles and refunds actual amounts`, async () => {
+        const p = makeRecipe(direction, exactIn);
+        // Donated/preexisting tokens are not part of this order and must not be swept.
+        for (const t of [p.originIn, p.fewIn, p.fewOut, p.originOut])
+          await (await token(t, operator).transfer(recipeExecutor, 7n)).wait();
+        const raw = await provider.call(p.quoteCall);
+        const [expectedIn, expectedOut] = routerAbi.decodeFunctionResult('quote', raw);
+        const beforeIn = await token(p.originIn).balanceOf(OPERATOR);
+        const beforeOut = await token(p.originOut).balanceOf(USER);
+        const result = await recipeHarness.execute.staticCall(...recipeArgs(p));
+        assert.equal(result[0], expectedIn);
+        assert.equal(result[1], expectedOut);
+        const receipt = await (await recipeHarness.execute(...recipeArgs(p))).wait();
+        assert.equal(beforeIn - (await token(p.originIn).balanceOf(OPERATOR)), expectedIn);
+        assert.equal((await token(p.originOut).balanceOf(USER)) - beforeOut, expectedOut);
+        if (!exactIn) assert(BigInt(p.maxAmountIn) > expectedIn, 'Exact-out refund was not exercised');
+        for (const t of [p.originIn, p.fewIn, p.fewOut, p.originOut])
+          assert.equal(await token(t).balanceOf(recipeExecutor), 7n);
+        assert.equal(await token(p.originIn).allowance(recipeExecutor, p.fewIn), 0n);
+        assert.equal(await token(p.fewIn).allowance(recipeExecutor, C.swapVmRouter), 0n);
+        const swaps = receipt.logs
+          .filter((l) => l.address.toLowerCase() === C.swapVmRouter)
+          .map((l) => {
+            try {
+              return routerAbi.parseLog(l);
+            } catch {
+              return null;
+            }
+          })
+          .filter((l) => l?.name === 'Swapped');
+        assert.equal(swaps.length, 1);
+        return {
+          amountIn: expectedIn,
+          amountOut: expectedOut,
+          refund: BigInt(p.maxAmountIn) - expectedIn,
+          gasUsed: receipt.gasUsed,
+          recipeHash: p.recipeHash,
+          composition: 'Ring SDK recipe interpreted by a local test-only executor',
+        };
+      });
+    }
+  await test('SDK recipe failing after wrapping rolls back input, maker and recipient balances', async () => {
+    const p = makeRecipe('USDC_USDT', true, '50000000');
+    const before = await recipeBalances(p);
+    await assert.rejects(async () =>
+      (await recipeHarness.execute(...recipeArgs(p), { gasLimit: 1500000 })).wait(),
+    );
+    assert.deepEqual(await recipeBalances(p), before);
+    assert.equal(await token(p.originIn).allowance(recipeExecutor, p.fewIn), 0n);
+    assert.equal(await token(p.fewIn).allowance(recipeExecutor, C.swapVmRouter), 0n);
+  });
+  await test('SDK recipe wrong swap recipient cannot leave FewToken outside atomic settlement', async () => {
+    const p = makeRecipe('USDC_USDT');
+    const q = buildQuote(config, { ...request, threshold: p.minAmountOut, receiver: USER }, opts);
+    const altered = { ...p, swapCall: new sdk.SwapVMContract(new sdk.Address(C.swapVmRouter)).swap(q.args) };
+    const before = await recipeBalances(p);
+    await assert.rejects(async () =>
+      (await recipeHarness.execute(...recipeArgs(altered), { gasLimit: 1500000 })).wait(),
+    );
+    assert.deepEqual(await recipeBalances(p), before);
+  });
+  await test('SDK recipe insufficient immediate redemption backing rolls back the Aqua fill', async () => {
+    const p = makeRecipe('USDC_USDT');
+    const wrapper = await impersonate(p.fewOut);
+    await (
+      await token(p.originOut, wrapper).transfer(USER, await token(p.originOut).balanceOf(p.fewOut))
+    ).wait();
+    const before = await recipeBalances(p);
+    await assert.rejects(async () =>
+      (await recipeHarness.execute(...recipeArgs(p), { gasLimit: 1500000 })).wait(),
+    );
+    assert.deepEqual(await recipeBalances(p), before);
+  });
+  await test('SDK recipe deadline remains enforced during atomic execution', async () => {
+    const p = makeRecipe('USDC_USDT');
+    await provider.send('evm_setNextBlockTimestamp', [Number(p.deadline) + 1]);
+    const before = await recipeBalances(p);
+    await assert.rejects(async () =>
+      (await recipeHarness.execute(...recipeArgs(p), { gasLimit: 1500000 })).wait(),
+    );
+    assert.deepEqual(await recipeBalances(p), before);
+  });
+  await test('SDK dock plan closes an expired position without requiring a future expiry', async () => {
+    await provider.send('evm_setNextBlockTimestamp', [Number(config.expiry) + 1]);
+    await provider.send('evm_mine', []);
+    const p = buildAquaDockPlan(config);
+    for (const tx of p.transactions) await sent(maker, tx);
+    for (const t of TOKENS) assert.equal(await token(t.address).allowance(MAKER, C.aqua), 0n);
+    const a = new ethers.Contract(
+      C.aqua,
+      ['function rawBalances(address,address,bytes32,address) view returns(uint248,uint8)'],
+      provider,
+    );
+    for (const t of TOKENS)
+      assert.equal((await a.rawBalances(MAKER, C.swapVmRouter, p.strategyHash, t.address))[1], 255n);
   });
   function quoteRequest(direction, exactIn, amount, threshold = '1', receiver = OPERATOR) {
     return { ...request, direction, exactIn, amount: String(amount), threshold: String(threshold), receiver };

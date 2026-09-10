@@ -54,3 +54,61 @@ test('CLI rejects invalid amounts without creating a transaction artifact', () =
     rmSync(dir, { recursive: true, force: true });
   }
 });
+test('partner CLI commands work without secrets and preserve explicit lifecycle semantics', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'ring-aqua-partner-cli-'));
+  try {
+    const live = { ...config, expiry: String(Math.floor(Date.now() / 1000) + 86400) };
+    const cases = [
+      ['ship', live, 'ring.aqua-lifecycle.v1'],
+      ['dock', { ...config, expiry: '100' }, 'ring.aqua-lifecycle.v1'],
+      [
+        'wrap',
+        { chainId: 1, maker: config.maker, asset: 'USDT', amount: '1000000' },
+        'ring.fewtoken-conversion.v1',
+      ],
+      [
+        'unwrap',
+        { chainId: 1, maker: config.maker, asset: 'USDC', amount: '1000000' },
+        'ring.fewtoken-conversion.v1',
+      ],
+      [
+        'route',
+        {
+          strategy: live,
+          route: {
+            chainId: 1,
+            direction: 'USDC_USDT',
+            exactIn: false,
+            amount: '1000000',
+            threshold: '1200000',
+            deadline: String(Number(live.expiry) - 1),
+            operator: '0x0000000000000000000000000000000020260920',
+            executor: '0x0000000000000000000000000000000020260921',
+            receiver: '0x0000000000000000000000000000000020260922',
+          },
+        },
+        'ring.aqua-underlying-route.v1',
+      ],
+    ];
+    for (const [command, inputData, schema] of cases) {
+      const input = join(dir, command + '-input.json'),
+        output = join(dir, command + '-output.json');
+      writeFileSync(input, JSON.stringify(inputData));
+      const result = spawnSync(
+        process.execPath,
+        [fileURLToPath(new URL('../cli.mjs', import.meta.url)), command, input, output],
+        { env: {}, encoding: 'utf8' },
+      );
+      assert.equal(result.status, 0, result.stderr);
+      const plan = JSON.parse(readFileSync(output, 'utf8'));
+      assert.equal(plan.schema, schema);
+      assert.equal(plan.safety.executionAllowed, false);
+      if (command === 'route') {
+        assert.equal(plan.atomicRequired, true);
+        assert.equal(plan.adapterStatus, 'requires-resolver-runtime-adapter');
+      }
+    }
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

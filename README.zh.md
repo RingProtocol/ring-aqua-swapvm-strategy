@@ -1,10 +1,12 @@
 # Ring Aqua SwapVM 策略
 
-[English](README.md) · [测试记录](VALIDATION.zh.md) · [许可范围](LICENSE.md)
+[English](README.md) · [接入接口](INTEGRATION.zh.md) · [测试记录](VALIDATION.zh.md) · [许可范围](LICENSE.md)
 
 本模块把 `fwUSDC/fwUSDT` 做成官方 SwapVM 策略，生成未签名的限额授权、建仓和关闭交易，并检查链上状态。使用的是官方已有 opcodes，无须新增生产合约，由 Ring 基于官方 SDK 编写。
 
 完整的 `USDC → fwUSDC → Aqua → fwUSDT → USDT` 由本地测试执行器显式组合。它证明可以执行，不能证明 1inch 前端已经会选这条路线。后续仍需与 1inch 确认接入接口、代码提交位置和 Resolver 试点。
+
+现已增加建仓、关闭、USDC/USDT 包装和解包接口，以及供执行方适配的完整兑换步骤；计算核心不再依赖 Node 文件读取。通用部分由 Ring 自行完成，具体执行方接口适配与真实订单验收另行联调，详见[接入接口](INTEGRATION.zh.md)。本轮不含前端页面或新增生产合约。
 
 Powered by SwapVM — © Degensoft Ltd 2025.
 
@@ -24,7 +26,7 @@ Powered by Aqua — © Degensoft Ltd 2025.
 | 权限 | 保留官方 `tx.origin` KycNFT 检查；无签名、广播或私钥入口 |
 | 流量 | 官方发现、路径组合、前端成交均未验证 |
 
-`strategy.mjs` 使用官方 `PeggedSwapArgs.fromTokens` 和 `AquaProgramBuilder`。与高层 `AquaPeggedAmmStrategy` 的区别是增加强制到期指令，并用整数编码费率，避免 JavaScript 浮点转换。测试比较了两种 builder 的相同指令部分。
+`strategy-core.mjs` 使用官方 `PeggedSwapArgs.fromTokens` 和 `AquaProgramBuilder`，`strategy.mjs` 保留原 Node 入口。与高层 `AquaPeggedAmmStrategy` 的区别是增加强制到期指令，并用整数编码费率，避免 JavaScript 浮点转换。测试比较了两种 builder 的相同指令部分。
 
 `config/deployment.json` 锁定地址、Router 版本和参考代码哈希。链上检查遇到不同代码、错误链或 wrapper 绑定不一致时失败。代码哈希检查并不等于审计，也不能覆盖可升级代币代理背后的全部实现风险。升级版本必须重新核对兼容性和 fork 证据，不能只改地址。
 
@@ -60,7 +62,7 @@ node cli.mjs build config/maker.local.json maker-unsigned.local.json
 
 `open` 的顺序是：清零 fwUSDC 对 Aqua 的旧授权、授权指定 fwUSDC 额度、清零 fwUSDT 旧授权、授权指定 fwUSDT 额度、`ship` 两种币。输出包含 maker、chainId、to、data、value 和完整 strategyHash，可用 SDK 独立解码。
 
-Maker 必须已持有配置中的 FewToken；本模块不自动筹资或打包充值交易。授权上限以原始代币单位记录，禁止无限授权。示例的 30 fwUSDC / 33 fwUSDT 仅用于复现约 63 美元的测试配置，不是资金建议。
+Maker 在执行上述建仓步骤前必须持有配置中的 FewToken。可用独立 `wrap` 接口构造明确数量的包装交易，但不会自动筹资、签名或广播。授权上限以原始代币单位记录，禁止无限授权。示例的 30 fwUSDC / 33 fwUSDT 仅用于复现约 63 美元的测试配置，不是资金建议。
 
 `close` 是 `dock` 两种币，再分别 `approve(Aqua, 0)`。关闭不会把余额转给其他地址。若已有 `dock` 导致再次 dock 失败，仍需分别执行撤销授权；不能因为第一笔失败就放弃撤销。关闭后的 hash 不能重新 ship，必须使用新 salt。不同策略共享钱包的 ERC-20 allowance，故试点应使用专用钱包。
 

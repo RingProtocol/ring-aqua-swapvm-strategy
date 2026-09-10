@@ -2,16 +2,31 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { buildStrategy, json, check } from './strategy.mjs';
 import { preflight, readonlyRpc } from './readonly.mjs';
 import { inspectSources } from './sources.mjs';
+import {
+  buildAquaShipPlan,
+  buildAquaDockPlan,
+  buildMakerWrapPlan,
+  buildMakerUnwrapPlan,
+  buildUnderlyingRoute,
+} from './index.mjs';
 
 try {
   const [command, input, output] = process.argv.slice(2);
   check(
-    ['build', 'preflight', 'sources'].includes(command) && input && output && process.argv.length === 5,
+    ['build', 'ship', 'dock', 'wrap', 'unwrap', 'route', 'preflight', 'sources'].includes(command) &&
+      input &&
+      output &&
+      process.argv.length === 5,
     'USAGE',
   );
   const config = JSON.parse(readFileSync(input, 'utf8'));
   let result;
   if (command === 'build') result = buildStrategy(config).bundle;
+  else if (command === 'ship') result = buildAquaShipPlan(config);
+  else if (command === 'dock') result = buildAquaDockPlan(config);
+  else if (command === 'wrap') result = buildMakerWrapPlan(config);
+  else if (command === 'unwrap') result = buildMakerUnwrapPlan(config);
+  else if (command === 'route') result = buildUnderlyingRoute(config.strategy, config.route);
   else {
     check(process.env.ETH_RPC_URL || process.env.RPC_URL, 'MISSING_RPC');
     const rpc = readonlyRpc(process.env.ETH_RPC_URL || process.env.RPC_URL);
@@ -26,7 +41,7 @@ try {
   if (result.status && result.status !== 'available') process.exitCode = 2;
 } catch {
   console.error(
-    'Command failed. Usage: node cli.mjs build|preflight|sources INPUT.json NEW_OUTPUT.json. Check config, expiry, RPC and output path. No transaction sent.',
+    'Command failed. Usage: node cli.mjs build|ship|dock|wrap|unwrap|route|preflight|sources INPUT.json NEW_OUTPUT.json. Check config, expiry, RPC and output path. No transaction sent.',
   );
   process.exitCode = 1;
 }

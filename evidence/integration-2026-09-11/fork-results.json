@@ -1,0 +1,320 @@
+{
+  "schema": "ring.swapvm-fork-tests.v1",
+  "startedAt": "2026-09-10T16:14:42.606Z",
+  "safety": {
+    "mainnetTransactions": 0,
+    "realSignatures": 0,
+    "localWritesOnly": true,
+    "officialFrontendTraffic": "unverified"
+  },
+  "sourceBlock": {
+    "number": 25926940,
+    "hash": "0x4eef63526f5f907c0d0e0ca8e7c133cde7fcbc89f272e161e467b4fc9737715a",
+    "timestamp": 1788801743
+  },
+  "sdkVersions": {
+    "swapVm": "0.4.2",
+    "aqua": "0.3.2"
+  },
+  "lockSha256": "6ce1ecca69457d8a9f53b173d4daa6de882699a00f9527151720d8b3b2ac4b3b",
+  "sourceSha256": {
+    "strategy.mjs": "98dce5455e639a747a4dfaef6f49b3a7013f7444723ab6d1ce9cb95f19af2b2e",
+    "strategy-core.mjs": "4440a5be37ce443542608fd2f49a8629fdc0535cfc41b81b493e7062047efcfc",
+    "integration-core.mjs": "6b73fa6a698ec35b12db8a4949f839ff82df5bfab6a8608102cd475f80249e4d",
+    "index.mjs": "32184759ee701ebb83f97b91c5b12e1203226e4d0084fe0b1fbd29b84513e2f0",
+    "portable.mjs": "74d54b60970f2cd7032120ec9fb45327f92ae94fc5e5b8d72b220de357071205",
+    "cli.mjs": "55399ee7b85dae688a832284cf52d04f48bda36578f9f0a9c4ff38a395fa0e3c",
+    "package.json": "739e56911cd2f2eabef997d71c9532cdd57dc8cf0123ca48922869f046b3aa99",
+    "test/integration.test.mjs": "072a700189dffd6a15024f831cdc5f5aab6f0460d5ad4184826922f84fcead1e",
+    "test/cli.test.mjs": "e7e7cdc25491f51bac9ddf960646d54c6865645ff8f72acd61a22572b5461b04",
+    "readonly.mjs": "19ee95c2f23c03f333c2b47015cb1179c3c764a87a9feab0b76827b1d747944d",
+    "sources.mjs": "11060f19f4a5b04204107c7ae4a282dfb874468b2e31d944e5d1184d48dcb5df",
+    "test/fork.mjs": "4c6acabc696f217fdefeedb3af3ce8f47f22c308ec8696f768f72215d3bf8ca6",
+    "test/RouteHarness.sol": "523c6e36ccf5f94dff3a600672605750c3b8454896500a0e589d61ebcfe183df",
+    "test/RecipeHarness.sol": "14678d58bc893407913fc22920776954529b3542fddb8f65ee891f0dba0e6cd7",
+    "config/deployment.json": "ab95570e7f0d63e3f893eaa8247ba1c035a782de772afae2288e7a44a7e4b698",
+    "config/wrapper-sources.json": "a6a1c4a3bfd40daf8aee5ab2ece7757225b63f86df8cf8ca798d257e51bd4d14"
+  },
+  "tests": [
+    {
+      "name": "unshipped strategy detected before maker authorization",
+      "passed": true,
+      "state": [
+        "unshipped",
+        "unshipped"
+      ]
+    },
+    {
+      "name": "SDK v0.4.2 + Aqua v0.3.2 compatible with deployed v1.0.2 router",
+      "passed": true,
+      "block": {
+        "hash": "0xcf5d3982ce6cad979fe33811199f96e401ee7f5fa09a5bb2a396b77ed090dabc",
+        "parentHash": "0x3ac4be2807863f3abb87fa1e3312872a55cd86525b24662cff31776cc053fc4c",
+        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "miner": "0x0000000000000000000000000000000000000000",
+        "stateRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "transactionsRoot": "0xadf77b2d5b5349da9d37e7f2b6205dc94ecab5fd21f90315054e1ba86676a4c3",
+        "receiptsRoot": "0x9369471c08ee5992c285ab9ffe1a6a2ce25121eef0b47f01f2f757d348a7a55f",
+        "logsBloom": "0x00000000000000000000000000000000000000000000000000100000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000004000000000000202000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000",
+        "difficulty": "0x0",
+        "number": "0x18b9d35",
+        "gasLimit": "0x3938700",
+        "gasUsed": "0x14631",
+        "timestamp": "0x6a9ef2d1",
+        "extraData": "0x",
+        "mixHash": "0x10f06ba50a3b888c73dca50c1daffc74603661a8746433038180151dfb6b7381",
+        "nonce": "0x0000000000000000",
+        "baseFeePerGas": "0x303ba7",
+        "withdrawalsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+        "blobGasUsed": "0x0",
+        "excessBlobGas": "0x0",
+        "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "requestsHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "totalDifficulty": "0x0",
+        "size": "0x5a3",
+        "uncles": [],
+        "transactions": [
+          "0x0a8ef3b4ea68f4280704267495e71f091ce8b61cd8b61161b601c0a93004480d"
+        ],
+        "withdrawals": []
+      },
+      "quote": {
+        "amountIn": "1000000",
+        "amountOut": "1099956",
+        "tokenIn": "0x0492560fa7cfd6a85e50d8be3f77318994f8f429",
+        "tokenOut": "0xef87f4608e601e8564800265aee1c1ffadf73283",
+        "raw": "0x00000000000000000000000000000000000000000000000000000000000f4240000000000000000000000000000000000000000000000000000000000010c8b456319082a96496ee28e98e404176caa5df7ee1ba7be1c565f2e866003dfe7d24"
+      },
+      "fillSimulation": {
+        "status": "passed",
+        "amountIn": "1000000",
+        "amountOut": "1099956"
+      }
+    },
+    {
+      "name": "SDK USDC wrap and unwrap plans reconcile real balances and allowances",
+      "passed": true
+    },
+    {
+      "name": "SDK USDT wrap and unwrap plans reconcile real balances and allowances",
+      "passed": true
+    },
+    {
+      "name": "SDK recipe USDC_USDT exact-in settles and refunds actual amounts",
+      "passed": true,
+      "amountIn": "1000000",
+      "amountOut": "1099956",
+      "refund": "0",
+      "gasUsed": "335228",
+      "recipeHash": "0xd662bd4f5a4dcbefcb020a64c5310a313b3545e4155b7778fbdcadcdb30ed2a0",
+      "composition": "Ring SDK recipe interpreted by a local test-only executor"
+    },
+    {
+      "name": "SDK recipe USDC_USDT exact-out settles and refunds actual amounts",
+      "passed": true,
+      "amountIn": "909126",
+      "amountOut": "1000000",
+      "refund": "1090874",
+      "gasUsed": "348011",
+      "recipeHash": "0xb8e8ea710a3e5d0b55ecb218d4d7164e84b3cafd584ca054f36ac60fbcce9320",
+      "composition": "Ring SDK recipe interpreted by a local test-only executor"
+    },
+    {
+      "name": "SDK recipe USDT_USDC exact-in settles and refunds actual amounts",
+      "passed": true,
+      "amountIn": "1000000",
+      "amountOut": "909057",
+      "refund": "0",
+      "gasUsed": "333236",
+      "recipeHash": "0xf5336b6064c5e78d56d0913c3988c68c9c40a16c75942ee96f57b2ef0bc036db",
+      "composition": "Ring SDK recipe interpreted by a local test-only executor"
+    },
+    {
+      "name": "SDK recipe USDT_USDC exact-out settles and refunds actual amounts",
+      "passed": true,
+      "amountIn": "1100045",
+      "amountOut": "1000000",
+      "refund": "899955",
+      "gasUsed": "346588",
+      "recipeHash": "0x45069accdf68131cb5256ab1323ceb701aa45e4dea30aa9f3d87fe57bb6ea4d7",
+      "composition": "Ring SDK recipe interpreted by a local test-only executor"
+    },
+    {
+      "name": "SDK recipe failing after wrapping rolls back input, maker and recipient balances",
+      "passed": true
+    },
+    {
+      "name": "SDK recipe wrong swap recipient cannot leave FewToken outside atomic settlement",
+      "passed": true
+    },
+    {
+      "name": "SDK recipe insufficient immediate redemption backing rolls back the Aqua fill",
+      "passed": true
+    },
+    {
+      "name": "SDK recipe deadline remains enforced during atomic execution",
+      "passed": true
+    },
+    {
+      "name": "SDK dock plan closes an expired position without requiring a future expiry",
+      "passed": true
+    },
+    {
+      "name": "direct USDC_USDT exact-in quote matches real settlement",
+      "passed": true,
+      "amountIn": "1000000",
+      "amountOut": "1099956",
+      "gasUsed": "175511"
+    },
+    {
+      "name": "atomic wrap-Aqua-unwrap USDC_USDT exact-in",
+      "passed": true,
+      "amountIn": "1000000",
+      "amountOut": "1099956",
+      "gasUsed": "350044",
+      "transactionHash": "0x3f7b3a23f986884ee5243552099279ed6cafd08c98286909d8b445287acac335",
+      "composition": "explicit test harness; no official frontend involvement"
+    },
+    {
+      "name": "direct USDC_USDT exact-out quote matches real settlement",
+      "passed": true,
+      "amountIn": "909126",
+      "amountOut": "1000000",
+      "gasUsed": "175681"
+    },
+    {
+      "name": "atomic wrap-Aqua-unwrap USDC_USDT exact-out",
+      "passed": true,
+      "amountIn": "909126",
+      "amountOut": "1000000",
+      "gasUsed": "350180",
+      "transactionHash": "0x0fd5703e3d151f5efee6279753326e7de5149fb50eeabe1d8c16615834e43594",
+      "composition": "explicit test harness; no official frontend involvement"
+    },
+    {
+      "name": "direct USDT_USDC exact-in quote matches real settlement",
+      "passed": true,
+      "amountIn": "1000000",
+      "amountOut": "909057",
+      "gasUsed": "175523"
+    },
+    {
+      "name": "atomic wrap-Aqua-unwrap USDT_USDC exact-in",
+      "passed": true,
+      "amountIn": "1000000",
+      "amountOut": "909057",
+      "gasUsed": "348179",
+      "transactionHash": "0x2f6e430d56ff031193d8cad7aff7d7c80c81452d1e6a6cbec2c50396d4866ccd",
+      "composition": "explicit test harness; no official frontend involvement"
+    },
+    {
+      "name": "direct USDT_USDC exact-out quote matches real settlement",
+      "passed": true,
+      "amountIn": "1100045",
+      "amountOut": "1000000",
+      "gasUsed": "175693"
+    },
+    {
+      "name": "atomic wrap-Aqua-unwrap USDT_USDC exact-out",
+      "passed": true,
+      "amountIn": "1100045",
+      "amountOut": "1000000",
+      "gasUsed": "348315",
+      "transactionHash": "0x0d31317f2e1d490e241b94de894e93ac9926539a92b5597ae90b3c1368d94d2c",
+      "composition": "explicit test harness; no official frontend involvement"
+    },
+    {
+      "name": "atomic USDC_USDT size 5 with actual origin-token deltas",
+      "passed": true,
+      "amountIn": "5000000",
+      "amountOut": "5499162",
+      "gasUsed": "350044"
+    },
+    {
+      "name": "atomic USDC_USDT size 25 with actual origin-token deltas",
+      "passed": true,
+      "amountIn": "25000000",
+      "amountOut": "27473611",
+      "gasUsed": "350083"
+    },
+    {
+      "name": "atomic USDT_USDC size 5 with actual origin-token deltas",
+      "passed": true,
+      "amountIn": "5000000",
+      "amountOut": "4544821",
+      "gasUsed": "348179"
+    },
+    {
+      "name": "atomic USDT_USDC size 25 with actual origin-token deltas",
+      "passed": true,
+      "amountIn": "25000000",
+      "amountOut": "22708861",
+      "gasUsed": "348217"
+    },
+    {
+      "name": "maker balances, virtual balances, protocol fee and cumulative allowances reconcile",
+      "passed": true,
+      "protocolFeeRaw": "2"
+    },
+    {
+      "name": "missing KycNFT cannot quote or execute",
+      "passed": true
+    },
+    {
+      "name": "wrong factory-to-wrapper binding fails before quoting",
+      "passed": true
+    },
+    {
+      "name": "ordinary token input does not automatically use FewToken strategy",
+      "passed": true
+    },
+    {
+      "name": "maker missing approval is detected even if mathematical quote succeeds",
+      "passed": true
+    },
+    {
+      "name": "maker physical balance below virtual inventory blocks fill",
+      "passed": true
+    },
+    {
+      "name": "missing taker approval blocks fill simulation",
+      "passed": true
+    },
+    {
+      "name": "one-wei tighter min-out / max-in protection reverts settlement",
+      "passed": true
+    },
+    {
+      "name": "oversized output cannot consume unavailable virtual inventory",
+      "passed": true
+    },
+    {
+      "name": "maker program expiry is enforced onchain",
+      "passed": true
+    },
+    {
+      "name": "taker deadline independently enforced onchain",
+      "passed": true
+    },
+    {
+      "name": "dock and revoke fully disable strategy without moving maker funds",
+      "passed": true
+    },
+    {
+      "name": "nine canonical wrapper sources checked with actual v4 quote vectors",
+      "passed": true,
+      "sources": 9,
+      "quotes": 36,
+      "availableQuotes": 30
+    }
+  ],
+  "strategyHash": "0x56319082a96496ee28e98e404176caa5df7ee1ba7be1c565f2e866003dfe7d24",
+  "syntheticInventory": {
+    "fwUSDC": "30",
+    "fwUSDT": "33",
+    "source": "impersonated V3 pool and real FewToken.wrapTo on local fork only",
+    "capitalRecommendation": false
+  },
+  "completed": true,
+  "completedAt": "2026-09-10T16:17:33.397Z"
+}
