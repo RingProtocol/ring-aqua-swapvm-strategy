@@ -1,0 +1,12 @@
+{
+  "chainId": 1,
+  "maker": "REPLACE_WITH_DEDICATED_MAKER_ADDRESS",
+  "fwUSDC": "30",
+  "fwUSDT": "33",
+  "amplification": "300",
+  "feeBps": "0.1",
+  "protocolFeeBps": "0.025",
+  "protocolFeeReceiver": "0x8063d4faf54bf8c898dc6ddc689c76ab12b4614a",
+  "expiry": "REPLACE_WITH_UNIX_SECONDS",
+  "salt": "REPLACE_WITH_UNIQUE_POSITIVE_INTEGER"
+}

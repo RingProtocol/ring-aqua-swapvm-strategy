@@ -1,0 +1,14 @@
+# Generated reports stay local; stable regression inputs belong in test/fixtures.
+artifacts/
+evidence/
+*.local.json
+node_modules/
+.env
+.env.*
+*.log
+.DS_Store
+out/
+cache/
+broadcast/
+coverage/
+*.tgz

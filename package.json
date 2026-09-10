@@ -1,0 +1,81 @@
+{
+  "name": "@ring-protocol/aqua-swapvm-strategy",
+  "version": "0.2.2",
+  "description": "Unsigned FewToken strategy building and read-only validation using the 1inch Aqua and SwapVM SDKs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RingProtocol/ring-aqua-swapvm-strategy.git"
+  },
+  "license": "SEE LICENSE IN LICENSE.md",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.1"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "test:fork": "node test/fork.mjs",
+    "format:check": "prettier --check '*.mjs' '*.d.mts' 'test/*.mjs' 'test/*.mts' 'examples/*.mjs' 'config/*.json' package.json 'test/fixtures/*.json'",
+    "build:unsigned": "node cli.mjs build",
+    "preflight": "node cli.mjs preflight",
+    "test:types": "tsc --noEmit --strict --module NodeNext --moduleResolution NodeNext --target ES2022 --skipLibCheck test/types.mts",
+    "build:browser-smoke": "node test/browser-build.mjs",
+    "example:plans": "node examples/build-plans.mjs",
+    "test:package": "node test/package.mjs",
+    "check:repo": "node test/repository.mjs"
+  },
+  "dependencies": {
+    "@1inch/aqua-sdk": "0.3.2",
+    "@1inch/swap-vm-sdk": "0.4.2",
+    "ethers": "6.17.0"
+  },
+  "devDependencies": {
+    "assert": "2.1.0",
+    "esbuild": "0.25.12",
+    "prettier": "3.9.6",
+    "process": "0.11.10",
+    "solc": "0.8.30",
+    "typescript": "5.9.3"
+  },
+  "overrides": {
+    "tmp": "0.2.7"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.mts",
+      "default": "./index.mjs"
+    },
+    "./portable": {
+      "types": "./portable.d.mts",
+      "default": "./portable.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./index.d.mts",
+  "files": [
+    "assets.mjs",
+    "cli.mjs",
+    "index.mjs",
+    "index.d.mts",
+    "integration-core.mjs",
+    "portable.mjs",
+    "portable.d.mts",
+    "readonly.mjs",
+    "strategy.mjs",
+    "strategy-core.mjs",
+    "config/assets.json",
+    "config/deployment.json",
+    "config/example.json",
+    "examples/build-plans.mjs",
+    "LICENSE",
+    "LICENSES/*.txt",
+    "README.md",
+    "LICENSE.md",
+    "SECURITY.md",
+    "THIRD_PARTY_NOTICES.md",
+    "docs/integration.md",
+    "docs/cli.md",
+    "docs/compatibility.md",
+    "docs/testing.md"
+  ]
+}

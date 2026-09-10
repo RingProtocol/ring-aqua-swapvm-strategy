@@ -1,0 +1,44 @@
+{
+  "chainId": 1,
+  "routerVersion": "1.0.2",
+  "referenceBlock": {
+    "number": 25926940,
+    "hash": "0x4eef63526f5f907c0d0e0ca8e7c133cde7fcbc89f272e161e467b4fc9737715a",
+    "timestamp": 1788801743
+  },
+  "contracts": {
+    "aqua": {
+      "address": "0x1111113ccf1426a8e30e2bff5e005d929bf6a90a",
+      "codeHash": "0x720bc02d220db318164dc3bade86eec1f3655bdc00fc1174de7d816a95c341f8"
+    },
+    "swapVmRouter": {
+      "address": "0x111111338c5091e8440b67b168bae16a668ac0de",
+      "codeHash": "0x1ffc57300722e5a2c523b5131e17c01950f447718449e1c9fd2ab382b3e340f9"
+    },
+    "resolverCredential": {
+      "address": "0x26ffc7d378e8e49be2c483295a3e3e511f96a468",
+      "codeHash": "0x952fb14239bc48ac18f1e056cbeb44c527aa96691b89bce1cf05a0ef0b2ecfd4"
+    },
+    "fewFactory": {
+      "address": "0x7d86394139bf1122e82fdf45bb4e3b038a4464dd",
+      "codeHash": "0x5126b02f7eec0470df7780456cdcee61bc47bf7bf574f213674c66393fd50ae9"
+    },
+    "usdc": {
+      "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "codeHash": "0xd80d4b7c890cb9d6a4893e6b52bc34b56b25335cb13716e0d1d31383e6b41505"
+    },
+    "fwUsdc": {
+      "address": "0x0492560fa7cfd6a85e50d8be3f77318994f8f429",
+      "codeHash": "0xbe63f68c8de6e3f7cf411d9b117b931128468c36e0753fc5878fd5359f16acf5"
+    },
+    "fwUsdt": {
+      "address": "0xef87f4608e601e8564800265aee1c1ffadf73283",
+      "codeHash": "0xbe63f68c8de6e3f7cf411d9b117b931128468c36e0753fc5878fd5359f16acf5"
+    },
+    "usdt": {
+      "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+      "codeHash": "0xb44fb4e949d0f78f87f79ee46428f23a2a5713ce6fc6e0beb3dda78c2ac1ea55"
+    }
+  },
+  "source": "https://business.1inch.com/portal/documentation/aqua/getting-started/build-an-aquaapp"
+}
