@@ -1,0 +1,11 @@
+evidence/fork-attempt.json
+*.local.json
+node_modules/
+.env
+.env.*
+*.log
+.DS_Store
+out/
+cache/
+broadcast/
+coverage/

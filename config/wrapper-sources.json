@@ -1,0 +1,135 @@
+{
+  "schema": "ring.wrapper-sources.v1",
+  "chainId": 1,
+  "poolManager": "0x000000000004444c5dc75cb358380d2e3de08a90",
+  "quoter": "0x52f0e24d1c21c8a0cb1e5a5dd6198556bd9e1203",
+  "allowlistSource": "https://github.com/Uniswap/uniroute-public/blob/cde1af2f7a2008781f5ce9b1972764bf7f57b845/src/lib/poolCaching/util/hooksAddressesAllowlist.ts",
+  "sources": [
+    {
+      "asset": "cbBTC",
+      "underlying": "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
+      "fewToken": "0xdbf1703e5d29afefbf1bd958ce7a6023c67f3e5d",
+      "decimals": 8,
+      "poolKey": {
+        "currency0": "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
+        "currency1": "0xdbf1703e5d29afefbf1bd958ce7a6023c67f3e5d",
+        "fee": 0,
+        "tickSpacing": 1,
+        "hooks": "0x8347b7a3807c681513d2b51b8223e59aa16a2888"
+      },
+      "poolId": "0x8f8b0b21fb429ffb5210f2bf0f8b7cb267b944a0c61beaae35f20f6839c0f33b"
+    },
+    {
+      "asset": "DAI",
+      "underlying": "0x6b175474e89094c44da98b954eedeac495271d0f",
+      "fewToken": "0x8a6fe57c08c84e0f4ee97aae68a62e820a37d259",
+      "decimals": 18,
+      "poolKey": {
+        "currency0": "0x6b175474e89094c44da98b954eedeac495271d0f",
+        "currency1": "0x8a6fe57c08c84e0f4ee97aae68a62e820a37d259",
+        "fee": 0,
+        "tickSpacing": 1,
+        "hooks": "0x85b648a64aed6307d5d5ce26e6ae086c17bde888"
+      },
+      "poolId": "0xf906beb74154ca4d057b7079c90eb1044efaf40ef468e62ec983930cf80a1e2b"
+    },
+    {
+      "asset": "ETH",
+      "underlying": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "fewToken": "0xa250cc729bb3323e7933022a67b52200fe354767",
+      "decimals": 18,
+      "poolKey": {
+        "currency0": "0x0000000000000000000000000000000000000000",
+        "currency1": "0xa250cc729bb3323e7933022a67b52200fe354767",
+        "fee": 0,
+        "tickSpacing": 1,
+        "hooks": "0x044301939deb7ca53c4733dd4d9b3bc5ea0c6888"
+      },
+      "poolId": "0x7a5a8f5a36a6a2e9961caf6bb047a5a7580d0fe16a532aad93efc596028dfa54"
+    },
+    {
+      "asset": "USDC",
+      "underlying": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "fewToken": "0x0492560fa7cfd6a85e50d8be3f77318994f8f429",
+      "decimals": 6,
+      "poolKey": {
+        "currency0": "0x0492560fa7cfd6a85e50d8be3f77318994f8f429",
+        "currency1": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "fee": 0,
+        "tickSpacing": 1,
+        "hooks": "0x4b2eb653d13e6c9ac5a0a01fde22f2c8d6592888"
+      },
+      "poolId": "0x5837e6b4fd4b8193f2f7a8b4490c0f154344bb9a52b36a885578ff6d3193fc47"
+    },
+    {
+      "asset": "WBTC",
+      "underlying": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+      "fewToken": "0x2078f336fdd260f708bec4a20c82b063274e1b23",
+      "decimals": 8,
+      "poolKey": {
+        "currency0": "0x2078f336fdd260f708bec4a20c82b063274e1b23",
+        "currency1": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+        "fee": 0,
+        "tickSpacing": 1,
+        "hooks": "0x0fe942afdb2f51e25cbf892aad175c6a574f2888"
+      },
+      "poolId": "0x18605c7a76101aeccc414cc300dd5e5ae44b30d6c247ba164ccd88952c259735"
+    },
+    {
+      "asset": "weETH",
+      "underlying": "0xcd5fe23c85820f7b72d0926fc9b05b43e359b7ee",
+      "fewToken": "0x9553d5f1f564ede30f5a9f0274cd0af7a00546e7",
+      "decimals": 18,
+      "poolKey": {
+        "currency0": "0x9553d5f1f564ede30f5a9f0274cd0af7a00546e7",
+        "currency1": "0xcd5fe23c85820f7b72d0926fc9b05b43e359b7ee",
+        "fee": 0,
+        "tickSpacing": 1,
+        "hooks": "0x877323adbf747f85eb8d182d42f01f34a5492888"
+      },
+      "poolId": "0x6933dfbf7441cc4ee4439843fdd464e215a6c90f07c5a769198e2a047f1f3f3e"
+    },
+    {
+      "asset": "UNI",
+      "underlying": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+      "fewToken": "0xe8e1f50392bd61d0f8f48e8e7af51d3b8a52090a",
+      "decimals": 18,
+      "poolKey": {
+        "currency0": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+        "currency1": "0xe8e1f50392bd61d0f8f48e8e7af51d3b8a52090a",
+        "fee": 0,
+        "tickSpacing": 1,
+        "hooks": "0x4b3e2a8cf36c7eb0fba2a5b39b20c896c6f22888"
+      },
+      "poolId": "0x301d41ff23b73b209ab2b1112f4effd0d8ff978ec29d743c1431463f84cbec24"
+    },
+    {
+      "asset": "USDT",
+      "underlying": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+      "fewToken": "0xef87f4608e601e8564800265aee1c1ffadf73283",
+      "decimals": 6,
+      "poolKey": {
+        "currency0": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+        "currency1": "0xef87f4608e601e8564800265aee1c1ffadf73283",
+        "fee": 0,
+        "tickSpacing": 1,
+        "hooks": "0xbadf77d50478b4432ef1f243b9c0bc7869486888"
+      },
+      "poolId": "0x7db868544c8f7f6ddb107c7749c94f03c9e0155f2138aef3f8a020e4a469d95a"
+    },
+    {
+      "asset": "wstETH",
+      "underlying": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
+      "fewToken": "0xb90e63487bc6a4fa3d58f707510dab3c28a63137",
+      "decimals": 18,
+      "poolKey": {
+        "currency0": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
+        "currency1": "0xb90e63487bc6a4fa3d58f707510dab3c28a63137",
+        "fee": 0,
+        "tickSpacing": 1,
+        "hooks": "0x75ae0292e8ad3ab60b9a1a7b3046d3f4abdfa888"
+      },
+      "poolId": "0xe7c2f30fd89238331b0e3e6ac6351578d5e3091b7839eff321c29cf88e17274e"
+    }
+  ]
+}
