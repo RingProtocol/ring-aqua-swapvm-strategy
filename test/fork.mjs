@@ -25,6 +25,7 @@ import {
   buildUnderlyingRoute,
 } from '../index.mjs';
 import { config as fixture, request as requestFixture, OPERATOR, MAKER, USER } from './fixtures.mjs';
+import { runMarketCases } from './markets-fork.mjs';
 
 const port = 18569,
   localUrl = `http://127.0.0.1:${port}`;
@@ -60,6 +61,17 @@ const report = {
       'test/RecipeHarness.sol',
       'config/deployment.json',
       'config/wrapper-sources.json',
+      'assets.mjs',
+      'config/assets.json',
+      'test/market-fixtures.mjs',
+      'test/markets.test.mjs',
+      'test/markets-fork.mjs',
+      'index.d.mts',
+      'portable.d.mts',
+      'test/types.mts',
+      'test/browser-entry.mjs',
+      'test/browser-build.mjs',
+      'test/browser-shims.mjs',
     ].map((path) => [
       path,
       createHash('sha256')
@@ -640,6 +652,20 @@ async function main() {
       quotes: result.sources.flatMap((x) => x.quotes).length,
       availableQuotes: result.sources.flatMap((x) => x.quotes).filter((x) => x.status === 'available').length,
     };
+  });
+  await runMarketCases({
+    provider,
+    test,
+    sent,
+    token,
+    impersonate,
+    factory,
+    maker,
+    operator,
+    recipeHarness,
+    recipeExecutor,
+    now,
+    rpc,
   });
   delete report.currentCase;
   report.completed = true;

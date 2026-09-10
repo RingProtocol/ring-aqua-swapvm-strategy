@@ -80,7 +80,7 @@ test('conversion rejects extra recipients, external assets, wrong chains and inv
   const input = { chainId: 1, maker: MAKER, asset: 'USDC', amount: '1000000' };
   for (const patch of [
     { receiver: USER },
-    { asset: 'WETH' },
+    { asset: 'ETH' },
     { chainId: 56 },
     { maker: C.aqua },
     { amount: '0' },

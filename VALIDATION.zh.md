@@ -1,8 +1,27 @@
 # 测试记录
 
-## 接口扩展：2026-09-11
+## 当前版本 0.2.0：2026-09-11
 
-扩展后的 **45 项离线测试、38 项主网 fork 测试全部通过**，包含原有回归。格式检查通过，`npm audit --audit-level=high` 报告 0 项漏洞。新增测试实际执行 SDK 包装和解包计划、双向及两种金额模式的完整兑换，并核对退款、原有余额保留、失败回滚和过期仓位关闭。[本轮 fork 报告](evidence/integration-2026-09-11/fork-results.json)记录当前源文件及测试执行器哈希；[离线结果](evidence/integration-2026-09-11/offline-tests.txt)一并保存。真实合作方运行环境适配与前端成交仍未验证。
+**62 项离线测试、88 项主网 fork 测试全部通过**。最终 fork 完成于北京时间 2026-09-11 01:28:56；[报告](evidence/standard-interface-2026-09-11/fork-results.json)中的 27 个源文件 SHA-256 和 lockfile 哈希均与本次代码一致。以下“接口扩展”和“基线”保留旧版本证据，不代表当前测试数量。
+
+| 检查 | 结果与范围 |
+| --- | --- |
+| 离线测试 | [62 passed，无跳过](evidence/standard-interface-2026-09-11/offline-tests.txt)；覆盖旧配置兼容、官方指令编码、多资产参数、授权与关闭计划 |
+| 主网 fork | [88 passed](evidence/standard-interface-2026-09-11/fork-results.json)；原有 38 项加多资产 50 项 |
+| TypeScript | 消费方导入、构造调用和错误输入类型检查通过 |
+| 真实浏览器 | [通过](evidence/standard-interface-2026-09-11/browser.json)；使用官方 SDK 构造 USDC/WETH 建仓、关闭、WETH 包装计划，策略 hash 与 Node 一致 |
+| 最低 Node 版本 | [22.13.1 上 62 项离线测试通过](evidence/standard-interface-2026-09-11/node-22.13-tests.txt) |
+| 全新目录安装 | [通过](evidence/standard-interface-2026-09-11/clean-install.json)；锁定依赖安装、离线测试、类型检查、浏览器打包均成功 |
+
+多资产测试核验九种 FewToken 的真实合约绑定与精度，执行九种资产的包装/解包。代表性市场覆盖 USDC/WETH、WBTC/USDT、DAI/USDC、cbBTC/WBTC、weETH/WETH、UNI/WETH、wstETH/WETH，以及两组集中流动性配置。每组执行双向指定输入和指定输出的直接 FewToken 成交与原币完整成交；核对实际到账、退款、原有余额保留、授权清理、到期后关闭。另验证单边集中流动性预检与成交，以及滑点超限、解包失败、做市授权撤销时的原子回滚。
+
+这批测试沿用下文的历史主网基础区块，**在本地补充合成库存并新包装资产**。它证明这些代码路径能执行，不证明当前主网赎回储备充足，不覆盖所有可能的代币组合，也不代表下文旧 v4 wrapper 报价失败已修复。原生 ETH 不在范围内，仅支持 ERC-20 WETH。
+
+浏览器验证仅包含未签名计划构造，没有连接钱包或 RPC。CI 已配置离线测试、类型、浏览器构建、格式和依赖检查，但本次没有推送，也没有宣称 GitHub CI 已运行。实际合作方接口验收、生产执行器、安全审查与 1inch 普通币前端成交仍未验证。
+
+## 历史接口扩展：2026-09-11，提交 cbe4970
+
+当时的 **45 项离线测试、38 项主网 fork 测试全部通过**，包含原有回归。格式检查通过，`npm audit --audit-level=high` 报告 0 项漏洞。新增测试实际执行 SDK 包装和解包计划、双向及两种金额模式的完整兑换，并核对退款、原有余额保留、失败回滚和过期仓位关闭。[历史 fork 报告](evidence/integration-2026-09-11/fork-results.json)记录该版本源文件及测试执行器哈希；[离线结果](evidence/integration-2026-09-11/offline-tests.txt)一并保存。
 
 ## 基线：2026-09-10，提交 e94ae6a
 

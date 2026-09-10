@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-09-10T17:24:13.976Z",
+  "browser": "Codex in-app browser; result read from rendered DOM",
+  "observed": {
+    "status": "passed",
+    "pair": "fwUSDC/fwWETH",
+    "assets": 9,
+    "strategyHash": "0xc5e98a80c49610eea5a0a915a1417427d6896daf59447351ec33c05b9ab52914",
+    "shipCalls": 5,
+    "closeCalls": 3,
+    "unsigned": true,
+    "walletConnected": false,
+    "rpcConfigured": false
+  },
+  "nodeHashMatches": true,
+  "bundleSha256": "c648f8a39afda1b2ce3ab97f8e49316739d0a248d04e633419d6b08afec68ff3",
+  "lockSha256": "71abed6601a166a00985e52c25e4b2a3a7c8aab3286b47dd02445761e07f9510",
+  "sourceSha256": {
+    "assets.mjs": "e1da2d48675379236b69258170026cef20d441e503d5616aa010b33669fff7d4",
+    "config/assets.json": "9d8807813aa5d07cdc63082e5194b3ba60d28e4e776e059557a6f63519662ee0",
+    "strategy-core.mjs": "68929d7c9eefefef1a2e539ebd416b044e002b72e63e11ec4149ab2a8e16cefd",
+    "integration-core.mjs": "3969d659a7b273e1906e315fa10afdc7ceefcff7fe41f0c30bcb0c50d7f5900c",
+    "portable.mjs": "25b3d8e04343d7882adb89ce042def3f7f2307e70dd3040d7d54b81a6be1bffe",
+    "test/browser-entry.mjs": "2bef76821b79bdcb827ffc2e0c4e3ad13c026385dfb905f4609cfead0a01dcab",
+    "test/browser-build.mjs": "7d7b1af845a66868e53689542c94e971747d0962633fcd544c7a8379cb1a696c",
+    "test/browser-shims.mjs": "719a2bcd4cb3558614f178ed696e5bd0e9eda917d0aab88bac203e406f024c87"
+  },
+  "scope": "Plan construction only; no wallet UI, signed transaction, production frontend or live RPC acceptance."
+}

@@ -2,11 +2,13 @@
 
 [中文说明](README.zh.md) · [Integration API](INTEGRATION.md) · [Validation](VALIDATION.md) · [License scope](LICENSE.md)
 
-Build unsigned `fwUSDC/fwUSDT` strategies with the 1inch Aqua and SwapVM SDKs, inspect their on-chain state, and reproduce swaps on a local Ethereum mainnet fork.
+Build unsigned FewToken market strategies with the 1inch Aqua and SwapVM SDKs, inspect their on-chain state, and reproduce swaps on a local Ethereum mainnet fork.
 
 The strategy uses existing SwapVM instructions. It does not require a new production contract or a custom opcode. A **test-only** executor explicitly composes `USDC → fwUSDC → Aqua swap → fwUSDT → USDT`, including the reverse route. Successful local execution does **not** establish 1inch discovery, automatic route selection, Resolver adoption, or frontend traffic.
 
 Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Ltd 2025. This is a Ring integration using the published SDKs, not a 1inch-endorsed product. Upstream terms apply; see [LICENSE.md](LICENSE.md).
+
+The cooperation model is an application built on the official Aqua/SwapVM contracts, with Ring supplying FewToken integration and the host supplying its wallet and market UI. The standard ABI is reused; Barker campaign logic is not a dependency. See [integration decisions](DECISIONS.md).
 
 ## Scope
 
@@ -14,16 +16,16 @@ Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Lt
 | --- | --- |
 | Chain and deployment | Ethereum mainnet, AquaSwapVMRouter v1.0.2; pinned addresses and code hashes |
 | SDKs | `@1inch/swap-vm-sdk 0.4.2`, `@1inch/aqua-sdk 0.3.2` |
-| Pricing | Official pegged AMM instructions; not Ring V2 Pair reserve pricing |
-| Maker assets | Canonical fwUSDC and fwUSDT, both 6 decimals |
+| Pricing | Official constant-product, concentrated and pegged instructions; not Ring V2 Pair reserve pricing |
+| Maker assets | Nine canonical FewTokens, with 6/8/18 decimals; see `ASSETS` in the integration API |
 | Swap modes | Both directions, exact input and exact output, with deadlines and amount limits |
 | Access | Preserves the deployed router's `tx.origin` KycNFT check |
 | CLI | Unsigned transaction generation and read-only RPC; no private keys, signatures, or broadcasts |
 | Production status | Unaudited; discovery and real 1inch frontend fills remain unverified |
 
-`strategy-core.mjs` uses the official `PeggedSwapArgs.fromTokens` and `AquaProgramBuilder`; `strategy.mjs` preserves the Node entry. It adds a mandatory expiry instruction and encodes fees with integers. Offline tests compare the shared instruction bytes against the SDK's higher-level `AquaPeggedAmmStrategy`.
+`strategy-core.mjs` uses the official curve argument encoders and `AquaProgramBuilder`; `strategy.mjs` preserves the Node entry. It adds a mandatory expiry instruction and encodes fees with integers. Offline tests compare the shared instruction bytes against the SDK's higher-level XYC, concentrated and pegged strategies.
 
-[The integration API](INTEGRATION.md) supplies ship/dock plans, canonical USDC/USDT wrap/unwrap plans, a portable core and atomic resolver recipes. The recipe binds actual output and excess-input refunds; it still needs an adapter to the selected resolver's production runtime. No frontend application is included.
+[The integration API](INTEGRATION.md) supplies ship/dock plans, nine-asset wrap/unwrap plans, TypeScript declarations, plain quote/swap calls, a browser-tested portable core and atomic resolver recipes. The recipe binds actual output and excess-input refunds; it still needs an adapter to the selected resolver's production runtime. No frontend application is included.
 
 ## Run locally
 
@@ -35,6 +37,7 @@ cd ring-aqua-swapvm-strategy
 npm ci --ignore-scripts
 npm run format:check
 npm test
+npm run test:types
 npm audit --audit-level=high
 
 # Requires an archive RPC endpoint in ETH_RPC_URL and anvil on PATH.
@@ -43,9 +46,9 @@ npm run test:fork
 
 The fork runner starts its own Anvil on `127.0.0.1:18569` and refuses to use an occupied port. It reads the pinned mainnet block from the upstream RPC. Account impersonation, funding, contract deployment, approvals, and swaps happen only on the local fork. No real wallet key is required.
 
-Completed results go to [`evidence/fork-results.json`](evidence/fork-results.json). Failed attempts go to ignored `evidence/fork-attempt.json` without replacing the completed report. Treat the other evidence files as belonging to a run only after the full suite succeeds. GitHub CI runs offline tests, formatting, and a dependency audit; it does not hold RPC credentials or run funded operations.
+Set `RING_FORK_EVIDENCE_DIR=evidence/local-rerun` to preserve historical evidence. Completed results go to that directory, or [`evidence/fork-results.json`](evidence/fork-results.json) by default. The current version report is linked in [VALIDATION.md](VALIDATION.md). Failed attempts go to ignored `evidence/fork-attempt.json` without replacing the completed report. Treat the other evidence files as belonging to a run only after the full suite succeeds. The CI workflow is configured to run offline tests, type checks, browser bundling, formatting, and a dependency audit; it does not hold RPC credentials or run funded operations.
 
-## Build an unsigned strategy
+## Build an unsigned strategy (legacy stablecoin example)
 
 1. Copy `config/example.json` to `config/maker.local.json`.
 2. Set a dedicated maker wallet, a future expiry in Unix seconds, and a unique positive salt. Review the inventory, fees, and protocol fee recipient.

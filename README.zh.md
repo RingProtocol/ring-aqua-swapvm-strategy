@@ -2,11 +2,11 @@
 
 [English](README.md) · [接入接口](INTEGRATION.zh.md) · [测试记录](VALIDATION.zh.md) · [许可范围](LICENSE.md)
 
-本模块把 `fwUSDC/fwUSDT` 做成官方 SwapVM 策略，生成未签名的限额授权、建仓和关闭交易，并检查链上状态。使用的是官方已有 opcodes，无须新增生产合约，由 Ring 基于官方 SDK 编写。
+本模块把不同 FewToken 交易对做成官方 SwapVM 策略，生成未签名的限额授权、建仓和关闭交易，并检查链上状态。使用的是官方已有 opcodes，无须新增生产合约，由 Ring 基于官方 SDK 编写。
 
 完整的 `USDC → fwUSDC → Aqua → fwUSDT → USDT` 由本地测试执行器显式组合。它证明可以执行，不能证明 1inch 前端已经会选这条路线。后续仍需与 1inch 确认接入接口、代码提交位置和 Resolver 试点。
 
-现已增加建仓、关闭、USDC/USDT 包装和解包接口，以及供执行方适配的完整兑换步骤；计算核心不再依赖 Node 文件读取。通用部分由 Ring 自行完成，具体执行方接口适配与真实订单验收另行联调，详见[接入接口](INTEGRATION.zh.md)。本轮不含前端页面或新增生产合约。
+0.2.0 提供九种资产的包装和解包、通用建仓、凭仓位身份关闭、标准报价/成交调用、TypeScript 类型，以及供执行方适配的完整兑换步骤。采用官方 ABI 和 SDK，接口写法参考 Barker，保留 Ring 原有业务和安全约束；不依赖 Barker 的活动后台。详见[接入接口](INTEGRATION.zh.md)。本轮不含前端页面或新增生产合约。
 
 Powered by SwapVM — © Degensoft Ltd 2025.
 
@@ -20,8 +20,8 @@ Powered by Aqua — © Degensoft Ltd 2025.
 | --- | --- |
 | 网络 / Router | Ethereum mainnet；官方 AquaSwapVMRouter v1.0.2 |
 | SDK | `@1inch/swap-vm-sdk 0.4.2`、`@1inch/aqua-sdk 0.3.2`，独立 lockfile |
-| 曲线 | 官方 pegged AMM，参数由配置提供；不是 Ring V2 Pair 储备报价 |
-| Maker 策略 | 仅 canonical fwUSDC / fwUSDT，两者均为 6 decimals |
+| 曲线 | 官方常数乘积、集中流动性与 pegged；参数由配置提供，不是 Ring V2 Pair 储备报价 |
+| Maker 策略 | 九种 canonical FewToken，覆盖 6/8/18 位精度；具体资产见接入说明 |
 | 用户成交保护 | exact-in 最少到账；exact-out 最多支付；非零期限 |
 | 权限 | 保留官方 `tx.origin` KycNFT 检查；无签名、广播或私钥入口 |
 | 流量 | 官方发现、路径组合、前端成交均未验证 |
@@ -39,6 +39,7 @@ git clone https://github.com/RingProtocol/ring-aqua-swapvm-strategy.git
 cd ring-aqua-swapvm-strategy
 npm ci --ignore-scripts
 npm test
+npm run test:types
 npm audit --audit-level=high
 # 通过本地安全配置向环境提供 ETH_RPC_URL；不要写入仓库文件
 npm run test:fork
@@ -48,7 +49,7 @@ npm run test:fork
 
 CI 自动执行离线测试和依赖检查；不在 CI 中放 RPC 或自动运行主网交易。
 
-## 生成可审查的交易数据
+## 生成可审查的交易数据（保留的稳定币旧格式）
 
 1. 复制 `config/example.json` 为 `config/maker.local.json`。
 2. 填入专用 maker 地址、明确的未来到期时间（Unix 秒）和未使用过的 salt；核对库存、费率和协议费收款地址。
@@ -66,7 +67,7 @@ Maker 在执行上述建仓步骤前必须持有配置中的 FewToken。可用�
 
 `close` 是 `dock` 两种币，再分别 `approve(Aqua, 0)`。关闭不会把余额转给其他地址。若已有 `dock` 导致再次 dock 失败，仍需分别执行撤销授权；不能因为第一笔失败就放弃撤销。关闭后的 hash 不能重新 ship，必须使用新 salt。不同策略共享钱包的 ERC-20 allowance，故试点应使用专用钱包。
 
-## 参数及限制
+## 旧格式参数及限制
 
 | 参数 | 示例 | 含义 / 限制 |
 | --- | --- | --- |

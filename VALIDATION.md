@@ -1,8 +1,27 @@
 # Validation
 
-## Integration extension — 2026-09-11
+## Current version 0.2.0 — 2026-09-11
 
-The extension passed **45 offline tests and 38 fork cases**, including all baseline cases below. Formatting passed and `npm audit --audit-level=high` reported zero vulnerabilities. New cases execute the SDK's maker wrap/unwrap plans, four atomic resolver recipes, excess-input refunds, preservation of preexisting tokens, rollback after failed settlement/redemption, and shutdown after expiry. [Current fork report](evidence/integration-2026-09-11/fork-results.json) and [offline output](evidence/integration-2026-09-11/offline-tests.txt). The report binds the strategy/integration source files and both test-only executors. Actual partner runtime integration and real frontend fills remain unverified.
+**All 62 offline tests and 88 mainnet fork cases passed.** The final fork completed at `2026-09-10T17:28:56.922Z` (September 11 in Asia/Shanghai). All 27 source hashes and the lockfile hash in the [report](evidence/standard-interface-2026-09-11/fork-results.json) match the tested files. The extension and baseline sections below preserve earlier evidence, not current test counts.
+
+| Check | Result and scope |
+| --- | --- |
+| Offline tests | [62 passed, none skipped](evidence/standard-interface-2026-09-11/offline-tests.txt); legacy compatibility, official instruction encoding, asset parameters, authorization and shutdown plans |
+| Mainnet fork | [88 passed](evidence/standard-interface-2026-09-11/fork-results.json); 38 prior cases plus 50 multiasset cases |
+| TypeScript | Consumer imports, typed builder calls and rejected input types passed |
+| Actual browser | [Passed](evidence/standard-interface-2026-09-11/browser.json); official SDK construction of USDC/WETH ship, dock and WETH wrapping plans, with the same strategy hash as Node |
+| Minimum Node version | [62 offline tests passed on 22.13.1](evidence/standard-interface-2026-09-11/node-22.13-tests.txt) |
+| Fresh installation | [Passed](evidence/standard-interface-2026-09-11/clean-install.json); locked install, offline tests, consumer declarations and browser bundle |
+
+The multiasset suite checks all nine canonical FewToken bindings and decimals, and executes nine wrap/unwrap roundtrips. Representative markets cover USDC/WETH, WBTC/USDT, DAI/USDC, cbBTC/WBTC, weETH/WETH, UNI/WETH and wstETH/WETH, plus two concentrated configurations. Each market runs both directions and amount modes, testing direct FewToken settlement and atomic underlying settlement, actual balances, refunds, preservation of preexisting tokens, allowance cleanup and shutdown after expiry. Additional cases verify one-sided concentrated preflight and execution, and atomic rollback for slippage, failed redemption and revoked maker approval.
+
+Tests use the historical base block documented below with **synthetic local inventory and freshly wrapped assets**. They establish code-path behavior, not present mainnet redemption capacity, every possible pair, or a fix for the older v4 wrapper quote failures below. Native ETH is excluded; WETH is supported as ERC-20.
+
+Browser validation constructs unsigned plans without a wallet or RPC. CI is configured for offline tests, declarations, browser building, formatting and dependency checks; this local change has not been pushed or run in GitHub CI. Actual partner acceptance, a production executor, security review and ordinary-token fills from the 1inch frontend remain unverified.
+
+## Historical integration extension — 2026-09-11, commit cbe4970
+
+That extension passed **45 offline tests and 38 fork cases**, including all baseline cases below. Formatting passed and `npm audit --audit-level=high` reported zero vulnerabilities. New cases executed the SDK's maker wrap/unwrap plans, four atomic resolver recipes, excess-input refunds, preservation of preexisting tokens, rollback after failed settlement/redemption, and shutdown after expiry. [Historical fork report](evidence/integration-2026-09-11/fork-results.json) and [offline output](evidence/integration-2026-09-11/offline-tests.txt) bind the source files for that version.
 
 ## Baseline — 2026-09-10, commit e94ae6a
 

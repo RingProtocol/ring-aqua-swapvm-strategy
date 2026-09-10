@@ -1,0 +1,24 @@
+{
+  "completedAt": "2026-09-10T17:26:20.422798+00:00",
+  "node": "22.18.0",
+  "checks": [
+    {
+      "command": "npm ci --ignore-scripts",
+      "exitCode": 0
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test:types",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build:browser-smoke",
+      "exitCode": 0
+    }
+  ],
+  "lockSha256": "71abed6601a166a00985e52c25e4b2a3a7c8aab3286b47dd02445761e07f9510",
+  "scope": "Fresh temporary checkout snapshot, npm ci with lifecycle scripts disabled; offline tests, consumer declarations and browser bundling. No signing or RPC."
+}

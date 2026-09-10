@@ -26,4 +26,6 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run format:check
       - run: npm test
+      - run: npm run test:types
+      - run: npm run build:browser-smoke
       - run: npm audit --audit-level=high

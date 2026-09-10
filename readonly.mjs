@@ -1,7 +1,6 @@
 import { keccak256 } from 'ethers';
 import {
   C,
-  TOKENS,
   deployment,
   sdk,
   check,
@@ -120,7 +119,8 @@ export async function preflight(rpc, config, { request, ...options } = {}) {
       check(keccak256(await rpc('eth_getCode', [to, s.tag])) === codeHash, 'DEPLOYMENT_MISMATCH');
     }
     result.deploymentVerified = true;
-    for (const t of TOKENS) {
+    const tokens = bundle.tokenAmounts;
+    for (const t of tokens) {
       check(
         address((await s.call(C.fewFactory, erc20, 'getWrappedToken', [t.underlying]))[0]) === t.address,
         'WRAPPER_BINDING_MISMATCH',
@@ -131,7 +131,7 @@ export async function preflight(rpc, config, { request, ...options } = {}) {
     }
     result.canonicalTokens = true;
     const rows = [];
-    for (const [i, t] of TOKENS.entries()) {
+    for (const [i, t] of tokens.entries()) {
       const [balance] = await s.call(t.address, erc20, 'balanceOf', [parameters.maker]);
       const [allowance] = await s.call(t.address, erc20, 'allowance', [parameters.maker, C.aqua]);
       const [virtualBalance, tokensCount] = await s.call(C.aqua, aquaAbi, 'rawBalances', [
@@ -151,6 +151,7 @@ export async function preflight(rpc, config, { request, ...options } = {}) {
       const available =
         state === 'active' ? [balance, allowance, virtualBalance].reduce((a, b) => (a < b ? a : b)) : 0n;
       rows.push({
+        address: t.address,
         symbol: t.symbol,
         balance,
         allowance,
@@ -163,7 +164,10 @@ export async function preflight(rpc, config, { request, ...options } = {}) {
     }
     result.maker = rows;
     if (rows.some((r) => r.state !== 'active')) result.issues.push('STRATEGY_NOT_ACTIVE');
-    if (rows.some((r) => r.availableOutflow === 0n)) result.issues.push('NO_AVAILABLE_OUTFLOW');
+    // A concentrated position may intentionally fund only one side. The quote
+    // below checks the requested output side; zero input inventory alone is not
+    // proof that the selected direction cannot fill.
+    if (rows.every((r) => r.availableOutflow === 0n)) result.issues.push('NO_AVAILABLE_OUTFLOW');
     if (rows.some((r) => r.allowance > r.initialAmount))
       result.issues.push('ALLOWANCE_EXCEEDS_CONFIGURED_CAP');
     if (request) {
@@ -174,9 +178,9 @@ export async function preflight(rpc, config, { request, ...options } = {}) {
         const raw = await rpc('eth_call', [q.transaction, s.tag]);
         const [amountIn, amountOut] = routerAbi.decodeFunctionResult('quote', raw);
         result.quote = { amountIn, amountOut, tokenIn: q.tokenIn, tokenOut: q.tokenOut, raw };
-        const out = rows.find((r) => TOKENS.find((t) => t.symbol === r.symbol).address === q.tokenOut);
+        const out = rows.find((r) => r.address === q.tokenOut);
         if (amountOut > out.availableOutflow) result.issues.push('MAKER_OUTFLOW_INSUFFICIENT');
-        const input = rows.find((r) => TOKENS.find((t) => t.symbol === r.symbol).address === q.tokenIn);
+        const input = rows.find((r) => r.address === q.tokenIn);
         // Conservative fee buffer: allowance does not replenish when incoming tokens arrive.
         const protocolFeeBuffer = (amountIn * parameters.protocolFee + 10n ** 9n - 1n) / 10n ** 9n;
         if (input.availableOutflow < protocolFeeBuffer)

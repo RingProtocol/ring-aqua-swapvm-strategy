@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-09-10T17:34:57.782419+00:00",
+  "forkCompletedAt": "2026-09-10T17:28:56.922Z",
+  "forkCasesPassed": 88,
+  "offlineCasesPassed": 62,
+  "minimumNodeOfflineCasesPassed": 62,
+  "forkSourceHashesMatched": 27,
+  "browserSourceHashesMatched": 8,
+  "lockSha256": "71abed6601a166a00985e52c25e4b2a3a7c8aab3286b47dd02445761e07f9510",
+  "scope": "Local evidence integrity only; no production or official traffic acceptance."
+}

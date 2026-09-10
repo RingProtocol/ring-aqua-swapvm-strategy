@@ -1,4 +1,5 @@
 import { getAddress, Interface, keccak256 } from 'ethers';
+import { ASSETS, getAsset } from './assets.mjs';
 
 // Dependency injection keeps Node-only SDK loading out of the portable core.
 export function createStrategyApi(sdk, AquaProtocolContract, deploymentConfig) {
@@ -28,7 +29,7 @@ export function createStrategyApi(sdk, AquaProtocolContract, deploymentConfig) {
   const routerAbi = new Interface(sdk.ABI.SWAP_VM_ABI);
   const json = (x) => JSON.stringify(x, (_, v) => (typeof v === 'bigint' ? String(v) : v), 2) + '\n';
   function check(ok, code) {
-    if (!ok) throw new Error(code);
+    if (!ok) throw Object.assign(new Error(code), { code });
   }
   function address(x) {
     try {
@@ -52,6 +53,7 @@ export function createStrategyApi(sdk, AquaProtocolContract, deploymentConfig) {
     return BigInt(a + b.padEnd(places, '0'));
   }
   function normalize(config, now = BigInt(Math.floor(Date.now() / 1000))) {
+    if (config && Object.hasOwn(config, 'legs')) return normalizeMarket(config, now);
     const keys = [
       'chainId',
       'maker',
@@ -89,20 +91,125 @@ export function createStrategyApi(sdk, AquaProtocolContract, deploymentConfig) {
     return { maker, receiver, amounts, width, fee, protocolFee, expiry, salt };
   }
 
+  function normalizeMarket(config, now) {
+    const required = ['chainId', 'maker', 'legs', 'shape', 'feeRateE9', 'expiry', 'salt'];
+    const optional = ['concentrate', 'linearWidth', 'protocolFee'];
+    check(
+      required.every((k) => Object.hasOwn(config, k)) &&
+        Object.keys(config).every((k) => [...required, ...optional].includes(k)),
+      'CONFIG_FIELDS',
+    );
+    check(config.chainId === 1, 'UNSUPPORTED_CHAIN');
+    const maker = address(config.maker);
+    check(
+      ![...Object.values(C), ...ASSETS.flatMap((t) => [t.address, t.underlying])].includes(maker),
+      'INVALID_ACTOR',
+    );
+    check(Array.isArray(config.legs) && config.legs.length === 2, 'TWO_LEGS_REQUIRED');
+    const tokens = config.legs.map((leg) => {
+      check(
+        leg && Object.keys(leg).length === 2 && Object.hasOwn(leg, 'token') && Object.hasOwn(leg, 'amount'),
+        'LEG_FIELDS',
+      );
+      check(
+        leg.token && Object.keys(leg.token).every((k) => ['address', 'decimals', 'symbol'].includes(k)),
+        'TOKEN_FIELDS',
+      );
+      const t = getAsset(address(leg.token.address));
+      check(leg.token.decimals === t.decimals, 'DECIMALS_MISMATCH');
+      check(leg.token.symbol === undefined || leg.token.symbol === t.symbol, 'SYMBOL_MISMATCH');
+      return t;
+    });
+    check(BigInt(tokens[0].address) < BigInt(tokens[1].address), 'AQUA_SHIP_LEGS_ORDER_INVALID');
+    const amounts = config.legs.map((leg) => uint(rawInteger(leg.amount), 96, true));
+    check(
+      amounts.some((v) => v > 0n),
+      'RESERVE_RANGE',
+    );
+    check(['straight_full_range', 'curved_pegged'].includes(config.shape), 'UNSUPPORTED_SHAPE');
+    let concentrate, width;
+    if (config.concentrate !== undefined) {
+      check(config.shape === 'straight_full_range', 'AQUA_CONCENTRATE_SHAPE_INVALID');
+      const p = config.concentrate;
+      check(
+        p &&
+          Object.keys(p).length === 2 &&
+          Object.hasOwn(p, 'rawPriceMin') &&
+          Object.hasOwn(p, 'rawPriceMax'),
+        'PRICE_FIELDS',
+      );
+      const min = uint(rawInteger(p.rawPriceMin), 128),
+        max = uint(rawInteger(p.rawPriceMax), 128);
+      check(min < max, 'PRICE_RANGE');
+      concentrate = instructions.concentrate.ConcentrateGrowLiquidity2DArgs.fromRawPrices(min, max);
+    } else
+      check(
+        amounts.every((v) => v > 0n),
+        'TWO_SIDED_RESERVES_REQUIRED',
+      );
+    if (config.shape === 'curved_pegged') {
+      width = uint(rawInteger(config.linearWidth));
+      check(width <= 5000n * 10n ** 27n, 'AMPLIFICATION_RANGE');
+    } else check(config.linearWidth === undefined, 'UNEXPECTED_LINEAR_WIDTH');
+    const fee = uint(rawInteger(config.feeRateE9), 32, true);
+    let protocolFee = 0n,
+      receiver;
+    if (config.protocolFee !== undefined) {
+      const p = config.protocolFee;
+      check(
+        p && Object.keys(p).length === 2 && Object.hasOwn(p, 'feeRateE9') && Object.hasOwn(p, 'receiver'),
+        'PROTOCOL_FEE_FIELDS',
+      );
+      protocolFee = uint(rawInteger(p.feeRateE9), 32, true);
+      receiver = address(p.receiver);
+      check(
+        receiver !== maker &&
+          ![...Object.values(C), ...ASSETS.flatMap((t) => [t.address, t.underlying])].includes(receiver),
+        'INVALID_ACTOR',
+      );
+    }
+    check(fee + protocolFee < 10n ** 9n, 'FEE_RANGE');
+    const expiry = uint(rawInteger(config.expiry), 40),
+      salt = uint(rawInteger(config.salt), 64);
+    check(typeof now === 'bigint' && now >= 0n && expiry > now, 'STRATEGY_EXPIRED');
+    return {
+      maker,
+      receiver,
+      amounts,
+      tokens,
+      width,
+      concentrate,
+      fee,
+      protocolFee,
+      expiry,
+      salt,
+      shape: config.shape,
+    };
+  }
+  function rawInteger(value) {
+    check(typeof value === 'bigint' || typeof value === 'string', 'INTEGER_STRING_OR_BIGINT_REQUIRED');
+    return String(value);
+  }
+
   function buildStrategy(config, { now = BigInt(Math.floor(Date.now() / 1000)) } = {}) {
     const p = normalize(config, now);
-    const curve = instructions.peggedSwap.PeggedSwapArgs.fromTokens(
-      { address: new Address(C.fwUsdc), decimals: 6, reserve: p.amounts[0] },
-      { address: new Address(C.fwUsdt), decimals: 6, reserve: p.amounts[1] },
-      p.width,
-    );
+    const marketTokens = p.tokens ?? TOKENS;
     // Same official pegged-AMM instructions, with mandatory expiry and exact integer fee encoding.
     const builder = new AquaProgramBuilder()
       .onlyTxOriginTokenBalanceNonZero({ token: new Address(C.resolverCredential) })
       .deadline({ deadline: p.expiry });
+    if (p.concentrate) builder.concentrateGrowLiquidity2D(p.concentrate);
     if (p.protocolFee) builder.aquaProtocolFeeAmountInXD({ fee: p.protocolFee, to: new Address(p.receiver) });
     if (p.fee) builder.flatFeeAmountInXD({ fee: p.fee });
-    const program = builder.peggedSwapGrowPriceRange2D(curve).salt({ salt: p.salt }).build();
+    if (!p.shape || p.shape === 'curved_pegged') {
+      const [a, b] = marketTokens.map((t, i) => ({
+        address: new Address(t.address),
+        decimals: t.decimals,
+        reserve: p.amounts[i],
+      }));
+      builder.peggedSwapGrowPriceRange2D(instructions.peggedSwap.PeggedSwapArgs.fromTokens(a, b, p.width));
+    } else builder.xycSwapXD();
+    const program = builder.salt({ salt: p.salt }).build();
     const order = Order.new({ maker: new Address(p.maker), traits: MakerTraits.default(), program });
     const strategy = order.encode(),
       strategyHash = AquaProtocolContract.calculateStrategyHash(strategy);
@@ -118,7 +225,7 @@ export function createStrategyApi(sdk, AquaProtocolContract, deploymentConfig) {
     });
     const approval = (token, amount, purpose) =>
       tx(purpose, token, erc20.encodeFunctionData('approve', [C.aqua, amount]));
-    const tokens = TOKENS.map((t) => new Address(t.address));
+    const tokens = marketTokens.map((t) => new Address(t.address));
     const ship = aqua.ship({
       app: new Address(C.swapVmRouter),
       strategy,
@@ -129,21 +236,23 @@ export function createStrategyApi(sdk, AquaProtocolContract, deploymentConfig) {
       schema: 'ring.aqua-swapvm-unsigned.v1',
       chainId: 1,
       routerVersion: deployment.routerVersion,
-      config: { ...config, maker: p.maker, protocolFeeReceiver: p.receiver },
+      config: JSON.parse(
+        json({ ...config, maker: p.maker, ...(!p.shape ? { protocolFeeReceiver: p.receiver } : {}) }),
+      ),
       strategy: strategy.toString(),
       strategyHash: strategyHash.toString(),
       order: order.build(),
-      tokenAmounts: TOKENS.map((t, i) => ({ ...t, amount: String(p.amounts[i]) })),
+      tokenAmounts: marketTokens.map((t, i) => ({ ...t, amount: String(p.amounts[i]) })),
       open: [
-        ...TOKENS.flatMap((t) => [
+        ...marketTokens.flatMap((t, i) => [
           approval(t.address, 0n, `Reset ${t.symbol} Aqua allowance`),
-          approval(t.address, p.amounts[TOKENS.indexOf(t)], `Approve bounded ${t.symbol} Aqua allowance`),
+          approval(t.address, p.amounts[i], `Approve bounded ${t.symbol} Aqua allowance`),
         ]),
         tx('Ship official SwapVM strategy', ship.to, ship.data),
       ],
       close: [
         tx('Dock both tokens', dock.to, dock.data),
-        ...TOKENS.map((t) => approval(t.address, 0n, `Revoke ${t.symbol} Aqua allowance`)),
+        ...marketTokens.map((t) => approval(t.address, 0n, `Revoke ${t.symbol} Aqua allowance`)),
       ],
       safety: {
         unsigned: true,
@@ -158,16 +267,40 @@ export function createStrategyApi(sdk, AquaProtocolContract, deploymentConfig) {
   // Every taker payload is explicitly bounded. Quote is an eth_call; execution is not exposed by the CLI.
   function buildQuote(config, request, { now = BigInt(Math.floor(Date.now() / 1000)) } = {}) {
     const built = buildStrategy(config, { now });
-    check(['USDC_USDT', 'USDT_USDC'].includes(request.direction), 'UNSUPPORTED_DIRECTION');
+    const addressed = Object.hasOwn(request, 'tokenIn') || Object.hasOwn(request, 'tokenOut');
+    const requestKeys = [
+      ...(addressed ? ['tokenIn', 'tokenOut'] : ['direction']),
+      'exactIn',
+      'amount',
+      'threshold',
+      'deadline',
+      'taker',
+      'receiver',
+    ];
+    check(
+      requestKeys.every((k) => Object.hasOwn(request, k)) &&
+        Object.keys(request).every((k) => requestKeys.includes(k)),
+      'QUOTE_FIELDS',
+    );
+    check(!addressed || !Object.hasOwn(request, 'direction'), 'AMBIGUOUS_DIRECTION');
+    if (!addressed) check(['USDC_USDT', 'USDT_USDC'].includes(request.direction), 'UNSUPPORTED_DIRECTION');
     check(typeof request.exactIn === 'boolean', 'EXACT_MODE_REQUIRED');
-    const amount = uint(request.amount, 96),
-      threshold = uint(request.threshold, 96);
-    const deadline = uint(request.deadline, 40);
+    const amount = uint(rawInteger(request.amount), 96),
+      threshold = uint(rawInteger(request.threshold), 96);
+    const deadline = uint(rawInteger(request.deadline), 40);
     check(deadline > now && deadline <= built.parameters.expiry, 'INVALID_TAKER_DEADLINE');
     const taker = address(request.taker),
       receiver = address(request.receiver);
-    const [tokenIn, tokenOut] =
-      request.direction === 'USDC_USDT' ? [C.fwUsdc, C.fwUsdt] : [C.fwUsdt, C.fwUsdc];
+    const [tokenIn, tokenOut] = addressed
+      ? [address(request.tokenIn), address(request.tokenOut)]
+      : request.direction === 'USDC_USDT'
+        ? [C.fwUsdc, C.fwUsdt]
+        : [C.fwUsdt, C.fwUsdc];
+    check(
+      tokenIn !== tokenOut &&
+        [tokenIn, tokenOut].every((a) => built.bundle.tokenAmounts.some((t) => t.address === a)),
+      'TOKEN_NOT_IN_STRATEGY',
+    );
     const traits = TakerTraits.new({
       exactIn: request.exactIn,
       firstTransferFromTaker: true,
@@ -197,6 +330,7 @@ export function createStrategyApi(sdk, AquaProtocolContract, deploymentConfig) {
 
   return {
     C,
+    ASSETS,
     TOKENS,
     deployment,
     sdk,

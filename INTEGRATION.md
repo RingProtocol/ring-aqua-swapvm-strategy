@@ -1,6 +1,6 @@
 # Integration API
 
-This SDK supplies unsigned maker transactions and a resolver execution recipe for canonical Ethereum fwUSDC/fwUSDT. It uses the official Aqua/SwapVM deployment. It does not add a production contract or submit transactions.
+This SDK supplies unsigned maker transactions and resolver execution recipes for nine canonical Ethereum FewTokens (USDC, USDT, DAI, WETH, WBTC, cbBTC, weETH, UNI and wstETH underlyings). It uses the official Aqua/SwapVM deployment. It does not add a production contract or submit transactions.
 
 The public [Barker frontend](https://app.barker.money/protocols/1inch-aqua/raid) provides a reference for constructing `ship`/`dock` plans around official contracts. The API and schemas below are Ring-defined. They are not a claim that Barker or 1inch has accepted the interface or enabled FewToken routing.
 
@@ -10,29 +10,66 @@ Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Lt
 
 ```js
 import {
-  buildAquaShipPlan, buildAquaDockPlan,
+  buildAquaShipPlan, buildAquaDockPlan, buildAquaQuoteCall, buildAquaSwapCall, getAsset,
   buildMakerWrapPlan, buildMakerUnwrapPlan, buildUnderlyingRoute,
 } from '@ring-protocol/aqua-swapvm-strategy';
 ```
 
 | Function | Input | Result |
 | --- | --- | --- |
-| `buildAquaShipPlan(config, {now}?)` | Existing maker configuration from the README | Strategy identity and five ordered approval/ship transactions |
-| `buildAquaDockPlan(config)` | The original, unchanged configuration | Original identity and three dock/revoke transactions; works after strategy expiry |
-| `buildMakerWrapPlan(input)` | `{chainId: 1, maker, asset: 'USDC' \| 'USDT', amount}` | Reset allowance, approve exact amount, `wrapTo(amount, maker)`, clear temporary allowance |
-| `buildMakerUnwrapPlan(input)` | Same shape, amount in FewToken raw units | `unwrapTo(amount, maker)`; no extra approval is needed to burn the caller's FewTokens |
-| `buildUnderlyingRoute(config, request, {now}?)` | Maker config plus the resolver request below | Official quote and swap calldata, atomic execution steps, amount bindings and required runtime checks |
+| `getAsset(nameOrFewAddress)` / `ASSETS` | Catalog key or FewToken address | Immutable address, underlying, symbol and decimals |
+| `buildAquaShipPlan(config, {now}?)` | Generic market config below, or legacy USDC/USDT config | `strategyHash`, `encodedOrder`, `to/data/value`, `transaction` and five ordered approval/ship calls |
+| `buildAquaDockPlan(identityOrConfig)` | Stored `{chainId, maker, strategyHash, tokens}` or original config | Dock call plus two allowance revocations; closing needs no new price or future expiry |
+| `buildAquaQuoteCall` / `buildAquaSwapCall` | Config and bounded address-based quote request | Plain `{chainId, from, to, data, value}` for the official router |
+| `buildMakerWrapPlan` / `buildMakerUnwrapPlan` | `{chainId: 1, maker, asset, amount}` | Exact conversion calls; wrap resets, limits and clears approval; recipient is always maker |
+| `buildUnderlyingRoute` | Config and bounded resolver request | Atomic execution recipe, actual-output/refund bindings and required runtime checks |
 
-`now` is a bigint Unix timestamp for reproducible tests; it defaults to current time. All amounts in conversion/route requests are positive **raw integer strings**, with six decimals and values below 2^96. This differs from the maker configuration's human-readable `fwUSDC` / `fwUSDT` amounts. For example, conversion amount `"1250001"` means 1.250001 USDC. Do not pass JavaScript floating-point numbers.
+Declarations ship in `index.d.mts` and `portable.d.mts`. The generic input follows the public Barker builder's `legs`, `shape`, `feeRateE9` and raw price fields. The contract ABI and byte encoding use the official SDKs. Ring keeps its mandatory expiry, optional protocol fee and bounded approval orchestration. JSON outputs use string `value` and amounts; Barker's in-browser value may be bigint. This is interface alignment, not a claim of identical private API contracts or byte-identical programs after adding expiry.
 
-Transaction fields are `chainId`, `from`, `to`, `data`, `value: "0"` and `purpose`. Results are JSON serializable. `safety.executionAllowed` and `safety.productionReady` remain false; the SDK never provides authorization to sign or broadcast.
+```js
+const usdc = getAsset('USDC'), weth = getAsset('WETH');
+const now = BigInt(Math.floor(Date.now() / 1000));
+const config = {
+  chainId: 1,
+  maker: makerAddress,
+  legs: [
+    { token: { address: usdc.address, decimals: usdc.decimals }, amount: '300000000' },
+    { token: { address: weth.address, decimals: weth.decimals }, amount: '100000000000000000' },
+  ],
+  shape: 'straight_full_range',
+  feeRateE9: '10000', // 0.1 bps, explicit test fee, not a recommendation
+  expiry: String(now + 3600n),
+  salt: uniqueNonzeroUint64,
+};
+const plan = buildAquaShipPlan(config);
+// Review/send plan.transactions in order through the host wallet workflow.
+// plan.transaction is only the final ship call; it does not perform approvals.
+```
+
+This is synthetic test inventory, not market pricing or a capital recommendation. Sort two distinct FewToken `legs` by ascending address, moving amounts with their tokens. Unknown addresses, mismatched decimals/symbols, native ETH, target overrides, floats and ambiguous directions are rejected. All catalog entries are ERC-20 underlyings; native ETH must first be converted to WETH outside this API.
+
+| Parameter | Meaning and bounds |
+| --- | --- |
+| `legs[].amount` | Raw integer string or bigint, below 2^96; no human-unit conversion |
+| `shape: straight_full_range` | Official constant product; both reserves positive |
+| `concentrate: {rawPriceMin, rawPriceMax}` | Optional with straight shape; 0 < min < max < 2^128; uses official concentrated-liquidity encoding; at least one reserve positive |
+| `shape: curved_pegged`, `linearWidth` | Official pegged curve with explicit 1e27 width, positive and at most 5000 × 1e27; both reserves positive |
+| `feeRateE9` | LP fee as raw integer parts per billion; fee plus protocol fee < 1e9 |
+| `protocolFee: {feeRateE9, receiver}` | Optional Ring protocol fee; never copied from another project's business config |
+| `expiry`, `salt` | Future uint40 Unix timestamp; nonzero uint64 salt for generic configs |
+
+`rawPriceMin/Max` encode **raw tokenGt units / raw tokenLt units × 1e18**, including decimals. Never substitute a human USD price without conversion. A partner market enum `straight_concentrated` must be mapped to `straight_full_range` plus explicit `concentrate`; it is not a builder enum. The SDK does not infer pricing from token symbols or assert a stable peg.
+
+Quote/route `amount`, `threshold`, `deadline` accept raw integer strings or bigint. Conversion `amount` remains a positive raw integer string below 2^96. Outputs are JSON serializable. The legacy config and `USDC_USDT`/`USDT_USDC` directions remain supported with their old units and uint256 salt, and a frozen program/hash regression test. Do not mix legacy human-unit config fields with generic raw units.
+
+Plans retain `executionAllowed=false` and `productionReady=false`. Plain quote/swap calls contain no authorization; creating calldata neither signs nor sends it. Assets in the local catalog are not a 1inch listing or proof of live redemption backing. Market enablement, fresh read-only preflight and actual resolver execution are separate checks; this package does not call Barker's campaign APIs.
 
 ## Maker lifecycle
 
 1. Read the maker's actual balances. Decide explicitly how much underlying to convert; the SDK does not silently wrap the entire wallet or assume existing inventory is zero.
 2. Generate and review wrap plans if needed, then confirm the FewToken balances.
 3. Generate the ship plan, recheck deployment/state and execute through the application's existing wallet workflow.
-4. To stop, generate the dock plan from the original configuration and clear both Aqua allowances. If docking has already happened, execute only the revocations after checking current state.
+4. To stop, generate the dock plan from the stored identity (or unchanged original configuration) and clear both Aqua allowances. If docking has already happened, execute only the revocations after checking current state.
 5. Read fresh FewToken balances and immediate redemption availability, then generate explicit unwrap amounts. Original deposit amounts need not equal current balances after trading.
 
 These wallet operations may use separate transactions. Wrap failure after a successful approval can leave that approval outstanding: show recovery and offer the final revocation separately. Unwrap cannot be assumed executable just because it encodes successfully. A dedicated maker wallet avoids disrupting allowances shared by other strategies. Retain the original configuration; changing its salt, fees, inventory or expiry changes the strategy identity.
@@ -48,14 +85,15 @@ const kit = createRingAquaIntegration({ swapVmSdk, aquaSdk });
 const plan = kit.buildAquaShipPlan(config);
 ```
 
-Use SwapVM SDK **0.4.2** and Aqua SDK **0.3.2** with the pinned router v1.0.2. Host bundler integration of the upstream SDKs is still required. Node/portable output equivalence is tested; this change does not supply or validate a production browser application. The default Node entry retains the CJS-loading workaround for upstream extensionless ESM imports.
+Use SwapVM SDK **0.4.2** and Aqua SDK **0.3.2** with the pinned router v1.0.2. The browser smoke builds the actual official SDKs with esbuild, an `assert` polyfill and a `process/browser.js` shim; see `test/browser-build.mjs`. Node/portable equivalence and real browser generation of ship/dock/wrap plans are tested. Host applications still need equivalent bundler configuration and their own wallet/transaction UI tests; no production frontend is included. The default Node entry retains the CJS-loading workaround for upstream extensionless ESM imports.
 
 ## Resolver route request
 
 ```js
 const recipe = buildUnderlyingRoute(config, {
   chainId: 1,
-  direction: 'USDC_USDT', // or USDT_USDC
+  tokenIn: usdc.address,
+  tokenOut: weth.address, // FewToken addresses; underlying is resolved from the catalog
   exactIn: true,
   amount: amountInRaw,
   threshold: minimumOutputRaw,
@@ -99,10 +137,10 @@ These commands require neither a key nor an RPC and refuse to overwrite files. T
 For the extended mainnet fork suite, load the archive RPC through a local secret manager and run:
 
 ```sh
-RING_FORK_EVIDENCE_DIR=evidence/integration-2026-09-11 npm run test:fork
+RING_FORK_EVIDENCE_DIR=evidence/local-rerun npm run test:fork
 ```
 
-Fork deployments, impersonation, funding and transactions stay on the runner's loopback Anvil. The new output directory preserves the original evidence. The suite executes SDK maker plans and all four direction/amount-mode recipes, including excess-input refunds, preexisting token preservation and complete rollback after a failed swap or redemption.
+Fork deployments, impersonation, funding and transactions stay on the runner's loopback Anvil. The new output directory preserves the original evidence. The suite executes nine asset conversions and representative stable, volatile, 6/8/18-decimal and concentrated markets in both directions/modes, alongside the legacy regression cases. It checks actual refunds, preexisting token preservation and complete rollback after failed settlement or redemption. It does not assert every possible catalog pair has been individually tested.
 
 ## Remaining joint integration work
 

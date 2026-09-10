@@ -1,0 +1,1332 @@
+{
+  "schema": "ring.swapvm-fork-tests.v1",
+  "startedAt": "2026-09-10T17:24:32.513Z",
+  "safety": {
+    "mainnetTransactions": 0,
+    "realSignatures": 0,
+    "localWritesOnly": true,
+    "officialFrontendTraffic": "unverified"
+  },
+  "sourceBlock": {
+    "number": 25926940,
+    "hash": "0x4eef63526f5f907c0d0e0ca8e7c133cde7fcbc89f272e161e467b4fc9737715a",
+    "timestamp": 1788801743
+  },
+  "sdkVersions": {
+    "swapVm": "0.4.2",
+    "aqua": "0.3.2"
+  },
+  "lockSha256": "71abed6601a166a00985e52c25e4b2a3a7c8aab3286b47dd02445761e07f9510",
+  "sourceSha256": {
+    "strategy.mjs": "98dce5455e639a747a4dfaef6f49b3a7013f7444723ab6d1ce9cb95f19af2b2e",
+    "strategy-core.mjs": "68929d7c9eefefef1a2e539ebd416b044e002b72e63e11ec4149ab2a8e16cefd",
+    "integration-core.mjs": "3969d659a7b273e1906e315fa10afdc7ceefcff7fe41f0c30bcb0c50d7f5900c",
+    "index.mjs": "fb22eb097a1e637a8e731cd0eab28832a986efd60f5d556a85e603f6618f0438",
+    "portable.mjs": "25b3d8e04343d7882adb89ce042def3f7f2307e70dd3040d7d54b81a6be1bffe",
+    "cli.mjs": "55399ee7b85dae688a832284cf52d04f48bda36578f9f0a9c4ff38a395fa0e3c",
+    "package.json": "90a2005b9a405db0855e17c11d9850fe3fb0a9fea4aedf3e71fb535666c6dfe0",
+    "test/integration.test.mjs": "6fd60ca1a2b583760e8b45ce0472e08a33ff93898729867454d87ef4052f327d",
+    "test/cli.test.mjs": "e7e7cdc25491f51bac9ddf960646d54c6865645ff8f72acd61a22572b5461b04",
+    "readonly.mjs": "7efc45b6fc7623bfbdbd6a530efee33d659b585354993f77531a537e1961aeba",
+    "sources.mjs": "11060f19f4a5b04204107c7ae4a282dfb874468b2e31d944e5d1184d48dcb5df",
+    "test/fork.mjs": "4816ec71867c3728ae6182a77bc770dff972266d7b747ec6ebdfb566c239bb7e",
+    "test/RouteHarness.sol": "523c6e36ccf5f94dff3a600672605750c3b8454896500a0e589d61ebcfe183df",
+    "test/RecipeHarness.sol": "14678d58bc893407913fc22920776954529b3542fddb8f65ee891f0dba0e6cd7",
+    "config/deployment.json": "ab95570e7f0d63e3f893eaa8247ba1c035a782de772afae2288e7a44a7e4b698",
+    "config/wrapper-sources.json": "a6a1c4a3bfd40daf8aee5ab2ece7757225b63f86df8cf8ca798d257e51bd4d14",
+    "assets.mjs": "e1da2d48675379236b69258170026cef20d441e503d5616aa010b33669fff7d4",
+    "config/assets.json": "9d8807813aa5d07cdc63082e5194b3ba60d28e4e776e059557a6f63519662ee0",
+    "test/market-fixtures.mjs": "2953e67be6f673a9e7aedfb910d549e43035b85dfa8bfb08ab250edf55d794c0",
+    "test/markets.test.mjs": "d5179b909d2545599e97addf8db8a6f24d18f207591ceb704eef9e28e1e40128",
+    "test/markets-fork.mjs": "382b6ce7a63e1912ba018e476b12dc56bb51578d092898f78b98830fafd4dfeb",
+    "index.d.mts": "538573e3bf599b0c2471a8fabc552c5671926aef9a91f3bf52be2c488ebb9f39",
+    "portable.d.mts": "8ec30bf73257fe196a78634d5bc22d92b7afc4a7a2285a87d3d885102a226bab",
+    "test/types.mts": "3604bb394bf02321fe4d67262c16907e30759c55adbd32bcffbaa4d2382a9909",
+    "test/browser-entry.mjs": "2bef76821b79bdcb827ffc2e0c4e3ad13c026385dfb905f4609cfead0a01dcab",
+    "test/browser-build.mjs": "7d7b1af845a66868e53689542c94e971747d0962633fcd544c7a8379cb1a696c",
+    "test/browser-shims.mjs": "719a2bcd4cb3558614f178ed696e5bd0e9eda917d0aab88bac203e406f024c87"
+  },
+  "tests": [
+    {
+      "name": "unshipped strategy detected before maker authorization",
+      "passed": true,
+      "state": [
+        "unshipped",
+        "unshipped"
+      ]
+    },
+    {
+      "name": "SDK v0.4.2 + Aqua v0.3.2 compatible with deployed v1.0.2 router",
+      "passed": true,
+      "block": {
+        "hash": "0x670926c9e2dc88a8cb50c00e6c50ca8b5ab7c9ee815c9415f50e69c0f996844d",
+        "parentHash": "0xbe6e31a0896c5dc0d4603ee69a573805ea09811dbaed2654f23b09beaff9dfc8",
+        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "miner": "0x0000000000000000000000000000000000000000",
+        "stateRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "transactionsRoot": "0xadf77b2d5b5349da9d37e7f2b6205dc94ecab5fd21f90315054e1ba86676a4c3",
+        "receiptsRoot": "0x9369471c08ee5992c285ab9ffe1a6a2ce25121eef0b47f01f2f757d348a7a55f",
+        "logsBloom": "0x00000000000000000000000000000000000000000000000000100000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000004000000000000202000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000",
+        "difficulty": "0x0",
+        "number": "0x18b9d35",
+        "gasLimit": "0x3938700",
+        "gasUsed": "0x14631",
+        "timestamp": "0x6a9ef2d1",
+        "extraData": "0x",
+        "mixHash": "0xbaaf8edd85da3fe3ba3ac6f7fb15be599aa47fa6deadaec9870eaabfcf572be8",
+        "nonce": "0x0000000000000000",
+        "baseFeePerGas": "0x303ba7",
+        "withdrawalsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+        "blobGasUsed": "0x0",
+        "excessBlobGas": "0x0",
+        "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "requestsHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "totalDifficulty": "0x0",
+        "size": "0x5a3",
+        "uncles": [],
+        "transactions": [
+          "0x0a8ef3b4ea68f4280704267495e71f091ce8b61cd8b61161b601c0a93004480d"
+        ],
+        "withdrawals": []
+      },
+      "quote": {
+        "amountIn": "1000000",
+        "amountOut": "1099956",
+        "tokenIn": "0x0492560fa7cfd6a85e50d8be3f77318994f8f429",
+        "tokenOut": "0xef87f4608e601e8564800265aee1c1ffadf73283",
+        "raw": "0x00000000000000000000000000000000000000000000000000000000000f4240000000000000000000000000000000000000000000000000000000000010c8b456319082a96496ee28e98e404176caa5df7ee1ba7be1c565f2e866003dfe7d24"
+      },
+      "fillSimulation": {
+        "status": "passed",
+        "amountIn": "1000000",
+        "amountOut": "1099956"
+      }
+    },
+    {
+      "name": "SDK USDC wrap and unwrap plans reconcile real balances and allowances",
+      "passed": true
+    },
+    {
+      "name": "SDK USDT wrap and unwrap plans reconcile real balances and allowances",
+      "passed": true
+    },
+    {
+      "name": "SDK recipe USDC_USDT exact-in settles and refunds actual amounts",
+      "passed": true,
+      "amountIn": "1000000",
+      "amountOut": "1099956",
+      "refund": "0",
+      "gasUsed": "335228",
+      "recipeHash": "0xd662bd4f5a4dcbefcb020a64c5310a313b3545e4155b7778fbdcadcdb30ed2a0",
+      "composition": "Ring SDK recipe interpreted by a local test-only executor"
+    },
+    {
+      "name": "SDK recipe USDC_USDT exact-out settles and refunds actual amounts",
+      "passed": true,
+      "amountIn": "909126",
+      "amountOut": "1000000",
+      "refund": "1090874",
+      "gasUsed": "348011",
+      "recipeHash": "0xb8e8ea710a3e5d0b55ecb218d4d7164e84b3cafd584ca054f36ac60fbcce9320",
+      "composition": "Ring SDK recipe interpreted by a local test-only executor"
+    },
+    {
+      "name": "SDK recipe USDT_USDC exact-in settles and refunds actual amounts",
+      "passed": true,
+      "amountIn": "1000000",
+      "amountOut": "909057",
+      "refund": "0",
+      "gasUsed": "333236",
+      "recipeHash": "0xf5336b6064c5e78d56d0913c3988c68c9c40a16c75942ee96f57b2ef0bc036db",
+      "composition": "Ring SDK recipe interpreted by a local test-only executor"
+    },
+    {
+      "name": "SDK recipe USDT_USDC exact-out settles and refunds actual amounts",
+      "passed": true,
+      "amountIn": "1100045",
+      "amountOut": "1000000",
+      "refund": "899955",
+      "gasUsed": "346588",
+      "recipeHash": "0x45069accdf68131cb5256ab1323ceb701aa45e4dea30aa9f3d87fe57bb6ea4d7",
+      "composition": "Ring SDK recipe interpreted by a local test-only executor"
+    },
+    {
+      "name": "SDK recipe failing after wrapping rolls back input, maker and recipient balances",
+      "passed": true
+    },
+    {
+      "name": "SDK recipe wrong swap recipient cannot leave FewToken outside atomic settlement",
+      "passed": true
+    },
+    {
+      "name": "SDK recipe insufficient immediate redemption backing rolls back the Aqua fill",
+      "passed": true
+    },
+    {
+      "name": "SDK recipe deadline remains enforced during atomic execution",
+      "passed": true
+    },
+    {
+      "name": "SDK dock plan closes an expired position without requiring a future expiry",
+      "passed": true
+    },
+    {
+      "name": "direct USDC_USDT exact-in quote matches real settlement",
+      "passed": true,
+      "amountIn": "1000000",
+      "amountOut": "1099956",
+      "gasUsed": "175511"
+    },
+    {
+      "name": "atomic wrap-Aqua-unwrap USDC_USDT exact-in",
+      "passed": true,
+      "amountIn": "1000000",
+      "amountOut": "1099956",
+      "gasUsed": "350044",
+      "transactionHash": "0x3f7b3a23f986884ee5243552099279ed6cafd08c98286909d8b445287acac335",
+      "composition": "explicit test harness; no official frontend involvement"
+    },
+    {
+      "name": "direct USDC_USDT exact-out quote matches real settlement",
+      "passed": true,
+      "amountIn": "909126",
+      "amountOut": "1000000",
+      "gasUsed": "175681"
+    },
+    {
+      "name": "atomic wrap-Aqua-unwrap USDC_USDT exact-out",
+      "passed": true,
+      "amountIn": "909126",
+      "amountOut": "1000000",
+      "gasUsed": "350180",
+      "transactionHash": "0x0fd5703e3d151f5efee6279753326e7de5149fb50eeabe1d8c16615834e43594",
+      "composition": "explicit test harness; no official frontend involvement"
+    },
+    {
+      "name": "direct USDT_USDC exact-in quote matches real settlement",
+      "passed": true,
+      "amountIn": "1000000",
+      "amountOut": "909057",
+      "gasUsed": "175523"
+    },
+    {
+      "name": "atomic wrap-Aqua-unwrap USDT_USDC exact-in",
+      "passed": true,
+      "amountIn": "1000000",
+      "amountOut": "909057",
+      "gasUsed": "348179",
+      "transactionHash": "0x2f6e430d56ff031193d8cad7aff7d7c80c81452d1e6a6cbec2c50396d4866ccd",
+      "composition": "explicit test harness; no official frontend involvement"
+    },
+    {
+      "name": "direct USDT_USDC exact-out quote matches real settlement",
+      "passed": true,
+      "amountIn": "1100045",
+      "amountOut": "1000000",
+      "gasUsed": "175693"
+    },
+    {
+      "name": "atomic wrap-Aqua-unwrap USDT_USDC exact-out",
+      "passed": true,
+      "amountIn": "1100045",
+      "amountOut": "1000000",
+      "gasUsed": "348315",
+      "transactionHash": "0x0d31317f2e1d490e241b94de894e93ac9926539a92b5597ae90b3c1368d94d2c",
+      "composition": "explicit test harness; no official frontend involvement"
+    },
+    {
+      "name": "atomic USDC_USDT size 5 with actual origin-token deltas",
+      "passed": true,
+      "amountIn": "5000000",
+      "amountOut": "5499162",
+      "gasUsed": "350044"
+    },
+    {
+      "name": "atomic USDC_USDT size 25 with actual origin-token deltas",
+      "passed": true,
+      "amountIn": "25000000",
+      "amountOut": "27473611",
+      "gasUsed": "350083"
+    },
+    {
+      "name": "atomic USDT_USDC size 5 with actual origin-token deltas",
+      "passed": true,
+      "amountIn": "5000000",
+      "amountOut": "4544821",
+      "gasUsed": "348179"
+    },
+    {
+      "name": "atomic USDT_USDC size 25 with actual origin-token deltas",
+      "passed": true,
+      "amountIn": "25000000",
+      "amountOut": "22708861",
+      "gasUsed": "348217"
+    },
+    {
+      "name": "maker balances, virtual balances, protocol fee and cumulative allowances reconcile",
+      "passed": true,
+      "protocolFeeRaw": "2"
+    },
+    {
+      "name": "missing KycNFT cannot quote or execute",
+      "passed": true
+    },
+    {
+      "name": "wrong factory-to-wrapper binding fails before quoting",
+      "passed": true
+    },
+    {
+      "name": "ordinary token input does not automatically use FewToken strategy",
+      "passed": true
+    },
+    {
+      "name": "maker missing approval is detected even if mathematical quote succeeds",
+      "passed": true
+    },
+    {
+      "name": "maker physical balance below virtual inventory blocks fill",
+      "passed": true
+    },
+    {
+      "name": "missing taker approval blocks fill simulation",
+      "passed": true
+    },
+    {
+      "name": "one-wei tighter min-out / max-in protection reverts settlement",
+      "passed": true
+    },
+    {
+      "name": "oversized output cannot consume unavailable virtual inventory",
+      "passed": true
+    },
+    {
+      "name": "maker program expiry is enforced onchain",
+      "passed": true
+    },
+    {
+      "name": "taker deadline independently enforced onchain",
+      "passed": true
+    },
+    {
+      "name": "dock and revoke fully disable strategy without moving maker funds",
+      "passed": true
+    },
+    {
+      "name": "nine canonical wrapper sources checked with actual v4 quote vectors",
+      "passed": true,
+      "sources": 9,
+      "quotes": 36,
+      "availableQuotes": 30
+    },
+    {
+      "name": "multiasset cbBTC canonical wrap/unwrap round-trip reconciles 1:1 and clears approval",
+      "passed": true,
+      "asset": "cbBTC",
+      "decimals": 8,
+      "canonical": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset DAI canonical wrap/unwrap round-trip reconciles 1:1 and clears approval",
+      "passed": true,
+      "asset": "DAI",
+      "decimals": 18,
+      "canonical": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset WETH canonical wrap/unwrap round-trip reconciles 1:1 and clears approval",
+      "passed": true,
+      "asset": "WETH",
+      "decimals": 18,
+      "canonical": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset USDC canonical wrap/unwrap round-trip reconciles 1:1 and clears approval",
+      "passed": true,
+      "asset": "USDC",
+      "decimals": 6,
+      "canonical": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset WBTC canonical wrap/unwrap round-trip reconciles 1:1 and clears approval",
+      "passed": true,
+      "asset": "WBTC",
+      "decimals": 8,
+      "canonical": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset weETH canonical wrap/unwrap round-trip reconciles 1:1 and clears approval",
+      "passed": true,
+      "asset": "weETH",
+      "decimals": 18,
+      "canonical": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset UNI canonical wrap/unwrap round-trip reconciles 1:1 and clears approval",
+      "passed": true,
+      "asset": "UNI",
+      "decimals": 18,
+      "canonical": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset USDT canonical wrap/unwrap round-trip reconciles 1:1 and clears approval",
+      "passed": true,
+      "asset": "USDT",
+      "decimals": 6,
+      "canonical": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset wstETH canonical wrap/unwrap round-trip reconciles 1:1 and clears approval",
+      "passed": true,
+      "asset": "wstETH",
+      "decimals": 18,
+      "canonical": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwUSDC->fwWETH straight_full_range exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwUSDC",
+        "fwWETH"
+      ],
+      "decimals": [
+        6,
+        18
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "3000000",
+        "amountOut": "990086919581571",
+        "gasUsed": "166058"
+      },
+      "atomic": {
+        "amountIn": "3000000",
+        "amountOut": "970673590144147",
+        "gasUsed": "303216"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwUSDC->fwWETH straight_full_range exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwUSDC",
+        "fwWETH"
+      ],
+      "decimals": [
+        6,
+        18
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "3030342",
+        "amountOut": "1000000000000000",
+        "gasUsed": "166219"
+      },
+      "atomic": {
+        "amountIn": "3092185",
+        "amountOut": "1000000000000000",
+        "gasUsed": "315964"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWETH->fwUSDC straight_full_range exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWETH",
+        "fwUSDC"
+      ],
+      "decimals": [
+        18,
+        6
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "1000000000000000",
+        "amountOut": "2970260",
+        "gasUsed": "166046"
+      },
+      "atomic": {
+        "amountIn": "1000000000000000",
+        "amountOut": "2912020",
+        "gasUsed": "299251"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWETH->fwUSDC straight_full_range exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWETH",
+        "fwUSDC"
+      ],
+      "decimals": [
+        18,
+        6
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "1010113636496215",
+        "amountOut": "3000000",
+        "gasUsed": "166231"
+      },
+      "atomic": {
+        "amountIn": "1030728303580191",
+        "amountOut": "3000000",
+        "gasUsed": "308996"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWBTC->fwUSDT straight_full_range exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWBTC",
+        "fwUSDT"
+      ],
+      "decimals": [
+        8,
+        6
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "1000",
+        "amountOut": "989118",
+        "gasUsed": "134377"
+      },
+      "atomic": {
+        "amountIn": "1000",
+        "amountOut": "969733",
+        "gasUsed": "286548"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWBTC->fwUSDT straight_full_range exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWBTC",
+        "fwUSDT"
+      ],
+      "decimals": [
+        8,
+        6
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "1012",
+        "amountOut": "1000000",
+        "gasUsed": "134492"
+      },
+      "atomic": {
+        "amountIn": "1032",
+        "amountOut": "1000000",
+        "gasUsed": "297340"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwUSDT->fwWBTC straight_full_range exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwUSDT",
+        "fwWBTC"
+      ],
+      "decimals": [
+        6,
+        8
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "1000000",
+        "amountOut": "990",
+        "gasUsed": "134377"
+      },
+      "atomic": {
+        "amountIn": "1000000",
+        "amountOut": "970",
+        "gasUsed": "287329"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwUSDT->fwWBTC straight_full_range exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwUSDT",
+        "fwWBTC"
+      ],
+      "decimals": [
+        6,
+        8
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "1010113",
+        "amountOut": "1000",
+        "gasUsed": "134492"
+      },
+      "atomic": {
+        "amountIn": "1030727",
+        "amountOut": "1000",
+        "gasUsed": "300641"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwUSDC->fwDAI curved_pegged exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwUSDC",
+        "fwDAI"
+      ],
+      "decimals": [
+        6,
+        18
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "300000",
+        "amountOut": "299994504152575212",
+        "gasUsed": "142103"
+      },
+      "atomic": {
+        "amountIn": "300000",
+        "amountOut": "299989511582145060",
+        "gasUsed": "294728"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwUSDC->fwDAI curved_pegged exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwUSDC",
+        "fwDAI"
+      ],
+      "decimals": [
+        6,
+        18
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "300007",
+        "amountOut": "300000000000000000",
+        "gasUsed": "142196"
+      },
+      "atomic": {
+        "amountIn": "300012",
+        "amountOut": "300000000000000000",
+        "gasUsed": "307430"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwDAI->fwUSDC curved_pegged exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwDAI",
+        "fwUSDC"
+      ],
+      "decimals": [
+        18,
+        6
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "300000000000000000",
+        "amountOut": "299994",
+        "gasUsed": "142093"
+      },
+      "atomic": {
+        "amountIn": "300000000000000000",
+        "amountOut": "299989",
+        "gasUsed": "291758"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwDAI->fwUSDC curved_pegged exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwDAI",
+        "fwUSDC"
+      ],
+      "decimals": [
+        18,
+        6
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "300005495993835783",
+        "amountOut": "300000",
+        "gasUsed": "142224"
+      },
+      "atomic": {
+        "amountIn": "300010488963356061",
+        "amountOut": "300000",
+        "gasUsed": "301775"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWBTC->fwcbBTC straight_full_range exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWBTC",
+        "fwcbBTC"
+      ],
+      "decimals": [
+        8,
+        8
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "1000",
+        "amountOut": "989",
+        "gasUsed": "134368"
+      },
+      "atomic": {
+        "amountIn": "1000",
+        "amountOut": "969",
+        "gasUsed": "289381"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWBTC->fwcbBTC straight_full_range exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWBTC",
+        "fwcbBTC"
+      ],
+      "decimals": [
+        8,
+        8
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "1012",
+        "amountOut": "1000",
+        "gasUsed": "134482"
+      },
+      "atomic": {
+        "amountIn": "1032",
+        "amountOut": "1000",
+        "gasUsed": "300174"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwcbBTC->fwWBTC straight_full_range exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwcbBTC",
+        "fwWBTC"
+      ],
+      "decimals": [
+        8,
+        8
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "1000",
+        "amountOut": "989",
+        "gasUsed": "134368"
+      },
+      "atomic": {
+        "amountIn": "1000",
+        "amountOut": "969",
+        "gasUsed": "294574"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwcbBTC->fwWBTC straight_full_range exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwcbBTC",
+        "fwWBTC"
+      ],
+      "decimals": [
+        8,
+        8
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "1012",
+        "amountOut": "1000",
+        "gasUsed": "134482"
+      },
+      "atomic": {
+        "amountIn": "1032",
+        "amountOut": "1000",
+        "gasUsed": "306742"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwweETH->fwWETH straight_full_range exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwweETH",
+        "fwWETH"
+      ],
+      "decimals": [
+        18,
+        18
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "1000000000000000",
+        "amountOut": "990089206939525",
+        "gasUsed": "134444"
+      },
+      "atomic": {
+        "amountIn": "1000000000000000",
+        "amountOut": "970675788242259",
+        "gasUsed": "301748"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwweETH->fwWETH straight_full_range exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwweETH",
+        "fwWETH"
+      ],
+      "decimals": [
+        18,
+        18
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "1010111111212124",
+        "amountOut": "1000000000000000",
+        "gasUsed": "134559"
+      },
+      "atomic": {
+        "amountIn": "1030725726759433",
+        "amountOut": "1000000000000000",
+        "gasUsed": "315885"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWETH->fwweETH straight_full_range exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWETH",
+        "fwweETH"
+      ],
+      "decimals": [
+        18,
+        18
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "1000000000000000",
+        "amountOut": "990089206939525",
+        "gasUsed": "134444"
+      },
+      "atomic": {
+        "amountIn": "1000000000000000",
+        "amountOut": "970675788242259",
+        "gasUsed": "292357"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWETH->fwweETH straight_full_range exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWETH",
+        "fwweETH"
+      ],
+      "decimals": [
+        18,
+        18
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "1010111111212124",
+        "amountOut": "1000000000000000",
+        "gasUsed": "134559"
+      },
+      "atomic": {
+        "amountIn": "1030725726759433",
+        "amountOut": "1000000000000000",
+        "gasUsed": "302060"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWETH->fwUNI straight_full_range exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWETH",
+        "fwUNI"
+      ],
+      "decimals": [
+        18,
+        18
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "1000000000000000",
+        "amountOut": "99008920693952543",
+        "gasUsed": "134454"
+      },
+      "atomic": {
+        "amountIn": "1000000000000000",
+        "amountOut": "97067578824225908",
+        "gasUsed": "276947"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWETH->fwUNI straight_full_range exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWETH",
+        "fwUNI"
+      ],
+      "decimals": [
+        18,
+        18
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "1010111111212124",
+        "amountOut": "100000000000000000",
+        "gasUsed": "134559"
+      },
+      "atomic": {
+        "amountIn": "1030725726759433",
+        "amountOut": "100000000000000000",
+        "gasUsed": "286630"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwUNI->fwWETH straight_full_range exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwUNI",
+        "fwWETH"
+      ],
+      "decimals": [
+        18,
+        18
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "100000000000000000",
+        "amountOut": "990089206939525",
+        "gasUsed": "134444"
+      },
+      "atomic": {
+        "amountIn": "100000000000000000",
+        "amountOut": "970675788242259",
+        "gasUsed": "285199"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwUNI->fwWETH straight_full_range exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwUNI",
+        "fwWETH"
+      ],
+      "decimals": [
+        18,
+        18
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "101011111121212224",
+        "amountOut": "1000000000000000",
+        "gasUsed": "134568"
+      },
+      "atomic": {
+        "amountIn": "103072572675943212",
+        "amountOut": "1000000000000000",
+        "gasUsed": "296621"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWETH->fwwstETH straight_full_range exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWETH",
+        "fwwstETH"
+      ],
+      "decimals": [
+        18,
+        18
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "1000000000000000",
+        "amountOut": "990089206939525",
+        "gasUsed": "134444"
+      },
+      "atomic": {
+        "amountIn": "1000000000000000",
+        "amountOut": "970675788242259",
+        "gasUsed": "271691"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWETH->fwwstETH straight_full_range exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWETH",
+        "fwwstETH"
+      ],
+      "decimals": [
+        18,
+        18
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "1010111111212124",
+        "amountOut": "1000000000000000",
+        "gasUsed": "134559"
+      },
+      "atomic": {
+        "amountIn": "1030725726759433",
+        "amountOut": "1000000000000000",
+        "gasUsed": "281393"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwwstETH->fwWETH straight_full_range exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwwstETH",
+        "fwWETH"
+      ],
+      "decimals": [
+        18,
+        18
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "1000000000000000",
+        "amountOut": "990089206939525",
+        "gasUsed": "134444"
+      },
+      "atomic": {
+        "amountIn": "1000000000000000",
+        "amountOut": "970675788242259",
+        "gasUsed": "275091"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwwstETH->fwWETH straight_full_range exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwwstETH",
+        "fwWETH"
+      ],
+      "decimals": [
+        18,
+        18
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "1010111111212124",
+        "amountOut": "1000000000000000",
+        "gasUsed": "134559"
+      },
+      "atomic": {
+        "amountIn": "1030725726759433",
+        "amountOut": "1000000000000000",
+        "gasUsed": "284878"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwUSDC->fwWETH straight_full_range/concentrated exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwUSDC",
+        "fwWETH"
+      ],
+      "decimals": [
+        6,
+        18
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "3000000",
+        "amountOut": "997067359720062",
+        "gasUsed": "171801"
+      },
+      "atomic": {
+        "amountIn": "3000000",
+        "amountOut": "991260731788550",
+        "gasUsed": "307816"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwUSDC->fwWETH straight_full_range/concentrated exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwUSDC",
+        "fwWETH"
+      ],
+      "decimals": [
+        6,
+        18
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "3008851",
+        "amountOut": "1000000000000000",
+        "gasUsed": "171930"
+      },
+      "atomic": {
+        "amountIn": "3026580",
+        "amountOut": "1000000000000000",
+        "gasUsed": "320537"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWETH->fwUSDC straight_full_range/concentrated exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWETH",
+        "fwUSDC"
+      ],
+      "decimals": [
+        18,
+        6
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "1000000000000000",
+        "amountOut": "2991201",
+        "gasUsed": "171803"
+      },
+      "atomic": {
+        "amountIn": "1000000000000000",
+        "amountOut": "2973781",
+        "gasUsed": "303861"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWETH->fwUSDC straight_full_range/concentrated exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWETH",
+        "fwUSDC"
+      ],
+      "decimals": [
+        18,
+        6
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "1002950073581852",
+        "amountOut": "3000000",
+        "gasUsed": "171956"
+      },
+      "atomic": {
+        "amountIn": "1008859867138716",
+        "amountOut": "3000000",
+        "gasUsed": "313581"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWBTC->fwUSDT straight_full_range/concentrated exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWBTC",
+        "fwUSDT"
+      ],
+      "decimals": [
+        8,
+        6
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "1000",
+        "amountOut": "996083",
+        "gasUsed": "138933"
+      },
+      "atomic": {
+        "amountIn": "1000",
+        "amountOut": "990285",
+        "gasUsed": "291108"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwWBTC->fwUSDT straight_full_range/concentrated exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwWBTC",
+        "fwUSDT"
+      ],
+      "decimals": [
+        8,
+        6
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "1004",
+        "amountOut": "1000000",
+        "gasUsed": "139022"
+      },
+      "atomic": {
+        "amountIn": "1010",
+        "amountOut": "1000000",
+        "gasUsed": "301876"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwUSDT->fwWBTC straight_full_range/concentrated exact-in direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwUSDT",
+        "fwWBTC"
+      ],
+      "decimals": [
+        6,
+        8
+      ],
+      "exactIn": true,
+      "direct": {
+        "amountIn": "1000000",
+        "amountOut": "997",
+        "gasUsed": "138944"
+      },
+      "atomic": {
+        "amountIn": "1000000",
+        "amountOut": "991",
+        "gasUsed": "291901"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset fwUSDT->fwWBTC straight_full_range/concentrated exact-out direct and atomic settlement",
+      "passed": true,
+      "pair": [
+        "fwUSDT",
+        "fwWBTC"
+      ],
+      "decimals": [
+        6,
+        8
+      ],
+      "exactIn": false,
+      "direct": {
+        "amountIn": "1002950",
+        "amountOut": "1000",
+        "gasUsed": "139033"
+      },
+      "atomic": {
+        "amountIn": "1008860",
+        "amountOut": "1000",
+        "gasUsed": "305188"
+      },
+      "closeAfterExpiry": true,
+      "syntheticForkFunding": true
+    },
+    {
+      "name": "multiasset pinned preflight verifies 6/18 metadata and official quote/fill simulation",
+      "passed": true,
+      "canonicalTokens": true,
+      "fillSimulation": {
+        "status": "passed",
+        "amountIn": "3000000",
+        "amountOut": "990086919581571"
+      }
+    },
+    {
+      "name": "multiasset slippage failure reverts wrapped input and entire settlement",
+      "passed": true
+    },
+    {
+      "name": "multiasset redemption failure reverts wrapped input and entire settlement",
+      "passed": true
+    },
+    {
+      "name": "multiasset revoked-maker failure reverts wrapped input and entire settlement",
+      "passed": true
+    },
+    {
+      "name": "multiasset one-sided concentrated inventory fills from zero input reserve",
+      "passed": true,
+      "amountIn": "3000000",
+      "amountOut": "1980178413878816",
+      "syntheticForkFunding": true
+    }
+  ],
+  "strategyHash": "0x56319082a96496ee28e98e404176caa5df7ee1ba7be1c565f2e866003dfe7d24",
+  "syntheticInventory": {
+    "fwUSDC": "30",
+    "fwUSDT": "33",
+    "source": "impersonated V3 pool and real FewToken.wrapTo on local fork only",
+    "capitalRecommendation": false
+  },
+  "completed": true,
+  "completedAt": "2026-09-10T17:28:56.922Z"
+}

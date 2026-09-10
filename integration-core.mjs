@@ -1,8 +1,10 @@
 import { Interface, keccak256 } from 'ethers';
+import { ASSETS, getAsset } from './assets.mjs';
 
 // Ring's integration interface, not a private 1inch/Barker API. No signer or RPC writes.
 export function createIntegrationApi(api) {
-  const { C, TOKENS, deployment, sdk, check, address, uint, buildStrategy, buildQuote, erc20 } = api;
+  const { C, deployment, sdk, check, address, uint, buildStrategy, buildQuote, erc20 } = api;
+  const dockAbi = new Interface(['function dock(address,bytes32,address[])']);
   const fewAbi = new Interface([
     'function wrapTo(uint256,address) returns(uint256)',
     'function unwrapTo(uint256,address) returns(uint256)',
@@ -25,7 +27,10 @@ export function createIntegrationApi(api) {
   }
   function actor(value) {
     const a = address(value);
-    check(!Object.values(C).includes(a), 'INVALID_ACTOR');
+    check(
+      ![...Object.values(C), ...ASSETS.flatMap((t) => [t.address, t.underlying])].includes(a),
+      'INVALID_ACTOR',
+    );
     return a;
   }
   const transaction = (from, to, data, purpose) => ({
@@ -39,6 +44,7 @@ export function createIntegrationApi(api) {
   const approve = (from, token, spender, amount) =>
     transaction(from, token, erc20.encodeFunctionData('approve', [spender, amount]), 'Set bounded allowance');
   function lifecycle(bundle, kind) {
+    const call = kind === 'ship' ? bundle.open.at(-1) : bundle.close[0];
     return {
       schema: 'ring.aqua-lifecycle.v1',
       kind,
@@ -48,6 +54,10 @@ export function createIntegrationApi(api) {
       maker: bundle.config.maker,
       strategyHash: bundle.strategyHash,
       encodedOrder: bundle.strategy,
+      to: call.to,
+      data: call.data,
+      value: call.value,
+      transaction: call,
       tokenAmounts: bundle.tokenAmounts,
       transactions: kind === 'ship' ? bundle.open : bundle.close,
       atomicRequired: false,
@@ -58,18 +68,54 @@ export function createIntegrationApi(api) {
     return lifecycle(buildStrategy(config, options).bundle, 'ship');
   }
   function buildAquaDockPlan(config) {
+    if (config && Object.hasOwn(config, 'strategyHash')) {
+      fields(config, ['chainId', 'maker', 'strategyHash', 'tokens']);
+      check(config.chainId === 1, 'UNSUPPORTED_CHAIN');
+      const maker = actor(config.maker);
+      check(
+        /^0x[0-9a-fA-F]{64}$/.test(config.strategyHash) && BigInt(config.strategyHash) !== 0n,
+        'INVALID_STRATEGY_HASH',
+      );
+      check(Array.isArray(config.tokens) && config.tokens.length === 2, 'TWO_LEGS_REQUIRED');
+      // Historical receipt identity is sufficient for closing, even if an asset is
+      // later removed from the new-position catalog. Never accept target overrides.
+      const tokens = config.tokens.map((t) => address(t));
+      check(BigInt(tokens[0]) < BigInt(tokens[1]), 'AQUA_SHIP_LEGS_ORDER_INVALID');
+      const call = transaction(
+        maker,
+        C.aqua,
+        dockAbi.encodeFunctionData('dock', [C.swapVmRouter, config.strategyHash, tokens]),
+        'Dock both tokens',
+      );
+      return {
+        schema: 'ring.aqua-lifecycle.v1',
+        kind: 'dock',
+        chainId: 1,
+        registryAddress: C.aqua,
+        appAddress: C.swapVmRouter,
+        maker,
+        strategyHash: config.strategyHash.toLowerCase(),
+        tokens,
+        to: call.to,
+        data: call.data,
+        value: call.value,
+        transaction: call,
+        transactions: [call, ...tokens.map((t) => approve(maker, t, C.aqua, 0n))],
+        atomicRequired: false,
+        safety: safety(),
+      };
+    }
     // Closing must remain possible after expiry. Reconstruct historical bytes, never
     // alter the order's actual deadline and never expose a new ship transaction here.
-    const expiry = uint(config?.expiry, 40);
+    const expiry = uint(typeof config?.expiry === 'bigint' ? String(config.expiry) : config?.expiry, 40);
     return lifecycle(buildStrategy(config, { now: expiry - 1n }).bundle, 'dock');
   }
   function conversion(input, wrap) {
     fields(input, ['chainId', 'maker', 'asset', 'amount']);
     check(input.chainId === 1, 'UNSUPPORTED_CHAIN');
-    check(['USDC', 'USDT'].includes(input.asset), 'UNSUPPORTED_ASSET');
+    const t = getAsset(input.asset);
     const maker = actor(input.maker),
       amount = uint(input.amount, 96);
-    const t = TOKENS[input.asset === 'USDC' ? 0 : 1];
     const call = transaction(
       maker,
       t.address,
@@ -82,7 +128,7 @@ export function createIntegrationApi(api) {
       chainId: 1,
       maker,
       recipient: maker,
-      asset: input.asset,
+      asset: t.asset,
       amount: String(amount),
       underlying: t.underlying,
       fewToken: t.address,
@@ -101,10 +147,28 @@ export function createIntegrationApi(api) {
   const buildMakerWrapPlan = (input) => conversion(input, true);
   const buildMakerUnwrapPlan = (input) => conversion(input, false);
 
+  function takerCall(config, request, options, swap) {
+    const q = buildQuote(config, request, options);
+    const call = swap ? new sdk.SwapVMContract(new sdk.Address(C.swapVmRouter)).swap(q.args) : q.transaction;
+    return {
+      chainId: 1,
+      from: address(request.taker),
+      to: address(String(call.to)),
+      data: String(call.data),
+      value: '0',
+    };
+  }
+  const buildAquaQuoteCall = (config, request, options) => takerCall(config, request, options, false);
+  const buildAquaSwapCall = (config, request, options) => takerCall(config, request, options, true);
+
   function buildUnderlyingRoute(config, request, options) {
+    const addressed = Object.hasOwn(request, 'tokenIn') || Object.hasOwn(request, 'tokenOut');
+    const pair = addressed
+      ? { tokenIn: request.tokenIn, tokenOut: request.tokenOut }
+      : { direction: request.direction };
     fields(request, [
       'chainId',
-      'direction',
+      ...Object.keys(pair),
       'exactIn',
       'amount',
       'threshold',
@@ -124,7 +188,7 @@ export function createIntegrationApi(api) {
     const q = buildQuote(
       config,
       {
-        direction: request.direction,
+        ...pair,
         exactIn: request.exactIn,
         amount: request.amount,
         threshold: request.threshold,
@@ -134,9 +198,11 @@ export function createIntegrationApi(api) {
       },
       options,
     );
-    const [input, output] = request.direction === 'USDC_USDT' ? TOKENS : [...TOKENS].reverse();
-    const maxAmountIn = request.exactIn ? request.amount : request.threshold;
-    const minAmountOut = request.exactIn ? request.threshold : request.amount;
+    const [input, output] = [q.tokenIn, q.tokenOut].map((a) =>
+      q.bundle.tokenAmounts.find((t) => t.address === a),
+    );
+    const maxAmountIn = String(request.exactIn ? request.amount : request.threshold);
+    const minAmountOut = String(request.exactIn ? request.threshold : request.amount);
     const swap = new sdk.SwapVMContract(new sdk.Address(C.swapVmRouter)).swap(q.args);
     const rawSwap = { to: address(String(swap.to)), data: String(swap.data), value: '0' };
     const recipe = {
@@ -152,12 +218,12 @@ export function createIntegrationApi(api) {
       credential: C.resolverCredential,
       registryAddress: C.aqua,
       appAddress: C.swapVmRouter,
-      direction: request.direction,
+      ...(addressed ? { tokenIn: q.tokenIn, tokenOut: q.tokenOut } : pair),
       exactIn: request.exactIn,
-      amount: request.amount,
+      amount: String(request.amount),
       maxAmountIn,
       minAmountOut,
-      deadline: request.deadline,
+      deadline: String(request.deadline),
       originIn: input.underlying,
       fewIn: input.address,
       fewOut: output.address,
@@ -225,6 +291,8 @@ export function createIntegrationApi(api) {
   return {
     buildAquaShipPlan,
     buildAquaDockPlan,
+    buildAquaQuoteCall,
+    buildAquaSwapCall,
     buildMakerWrapPlan,
     buildMakerUnwrapPlan,
     buildUnderlyingRoute,
