@@ -1,8 +1,26 @@
 # 测试记录
 
-## 当前版本 0.2.0：2026-09-11
+## 当前版本 0.2.1：官方源码复核，2026-09-11
 
-**62 项离线测试、88 项主网 fork 测试全部通过**。最终 fork 完成于北京时间 2026-09-11 01:28:56；[报告](evidence/standard-interface-2026-09-11/fork-results.json)中的 27 个源文件 SHA-256 和 lockfile 哈希均与本次代码一致。以下“接口扩展”和“基线”保留旧版本证据，不代表当前测试数量。
+**69 项离线测试、95 项主网 fork 测试全部通过**，包含原有回归。最终 fork 完成于北京时间 2026-09-11 11:26:22；[本轮报告](evidence/official-review-2026-09-11/fork-results.json)中的 31 个源文件哈希及 lockfile 哈希与测试代码一致。本地提交不代表发布或官方验收。[官方接法核对与升级注意](OFFICIAL_REVIEW.zh.md)。
+
+| 检查 | 本轮结果 |
+| --- | --- |
+| 离线测试 | [69 passed，无跳过](evidence/official-review-2026-09-11/offline-tests.txt)；新增部署指令表、组合协议费顺序、官方参数解码和旧仓位身份关闭回归 |
+| 主网 fork | [95 passed](evidence/official-review-2026-09-11/fork-results.json)；新增官方事件还原、重复身份、部分关闭、钱包身份、共享授权与跳过协议费等 7 项 |
+| 真实浏览器 | [通过](evidence/official-review-2026-09-11/browser.json)；未签名建仓、关闭、包装计划，hash 与 Node 相同 |
+| 最低 Node 版本 | [22.13.1 上 69 项离线测试通过](evidence/official-review-2026-09-11/node-22.13-tests.txt) |
+| 全新安装及 TypeScript | [通过](evidence/official-review-2026-09-11/clean-install.json)；锁定安装、离线测试、类型检查和浏览器构建 |
+| 格式及依赖 | 格式通过；本轮 `npm audit --audit-level=high` 报告 0 项漏洞，不等于安全审计 |
+| 最新区块只读核对 | [通过](evidence/official-review-2026-09-11/latest-deployment.json)；三项官方部署、路由版本和九种 FewToken 绑定/精度一致 |
+
+修正前的新增对照测试为 4 项通过、2 项失败，均指向同一处组合指令顺序差异；[失败摘要](evidence/official-review-2026-09-11/conformance-before-fix.json)与对应基准提交保留。修正后新增的 7 项离线测试全部通过。此前该组合成交测试通过，不能将这次编码对照差异描述为已发生交易失败。
+
+本次也实测了官方 `ProtocolFeeSkipped`：费用未收取时，成交仍可能成功。预检保留费用储备不足的限制，收入必须核对真实到账。没有使用 1inch API key、发送主网交易、签名、部署生产合约、推送代码或联系官方。最新区块只读检查不验证赎回储备；fork 仍使用下文历史区块和本地合成库存。托管发现、执行方接受与真实前端流量仍未验证。
+
+## 历史版本 0.2.0：2026-09-11，提交 d4ec1c8
+
+当时 **62 项离线测试、88 项主网 fork 测试全部通过**。fork 完成于北京时间 2026-09-11 01:28:56；[报告](evidence/standard-interface-2026-09-11/fork-results.json)中的 27 个源文件 SHA-256 和 lockfile 哈希属于该版本。以下均为历史证据，不代表当前源码哈希或测试数量。
 
 | 检查 | 结果与范围 |
 | --- | --- |

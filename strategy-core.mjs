@@ -198,8 +198,8 @@ export function createStrategyApi(sdk, AquaProtocolContract, deploymentConfig) {
     const builder = new AquaProgramBuilder()
       .onlyTxOriginTokenBalanceNonZero({ token: new Address(C.resolverCredential) })
       .deadline({ deadline: p.expiry });
-    if (p.concentrate) builder.concentrateGrowLiquidity2D(p.concentrate);
     if (p.protocolFee) builder.aquaProtocolFeeAmountInXD({ fee: p.protocolFee, to: new Address(p.receiver) });
+    if (p.concentrate) builder.concentrateGrowLiquidity2D(p.concentrate);
     if (p.fee) builder.flatFeeAmountInXD({ fee: p.fee });
     if (!p.shape || p.shape === 'curved_pegged') {
       const [a, b] = marketTokens.map((t, i) => ({

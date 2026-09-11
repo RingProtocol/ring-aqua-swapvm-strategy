@@ -64,6 +64,10 @@ Quote/route `amount`, `threshold`, `deadline` accept raw integer strings or bigi
 
 Plans retain `executionAllowed=false` and `productionReady=false`. Plain quote/swap calls contain no authorization; creating calldata neither signs nor sends it. Assets in the local catalog are not a 1inch listing or proof of live redemption backing. Market enablement, fresh read-only preflight and actual resolver execution are separate checks; this package does not call Barker's campaign APIs.
 
+Version 0.2.1 places the protocol fee before concentration, matching the official high-level builder. **Only configurations combining concentration and a nonzero protocol fee change encoded strategy bytes/hash relative to 0.2.0.** Close existing positions from their stored `{chainId, maker, strategyHash, tokens}` identity; do not rebuild an older identity with the changed encoder. Legacy USDC/USDT encoding is unchanged.
+
+The deployed v1.0.2 Aqua protocol fee is best-effort: an unpaid fee can emit `ProtocolFeeSkipped` while the swap succeeds, leaving that fee with the maker. Preflight retains the conservative `PROTOCOL_FEE_BUFFER_INSUFFICIENT` issue. Integrators must reconcile actual receipts and this event rather than count configured fees as received revenue. This package has no continuous revenue monitor. See the [official Fee implementation](https://github.com/1inch/swap-vm/blob/32c687c2b73101fc26549e48fa1ff8a4d73afbac/src/instructions/Fee.sol) and the [local reference review](OFFICIAL_REVIEW.zh.md).
+
 ## Maker lifecycle
 
 1. Read the maker's actual balances. Decide explicitly how much underlying to convert; the SDK does not silently wrap the entire wallet or assume existing inventory is zero.

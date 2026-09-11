@@ -26,6 +26,7 @@ import {
 } from '../index.mjs';
 import { config as fixture, request as requestFixture, OPERATOR, MAKER, USER } from './fixtures.mjs';
 import { runMarketCases } from './markets-fork.mjs';
+import { runOfficialCases } from './official-fork.mjs';
 
 const port = 18569,
   localUrl = `http://127.0.0.1:${port}`;
@@ -72,6 +73,10 @@ const report = {
       'test/browser-entry.mjs',
       'test/browser-build.mjs',
       'test/browser-shims.mjs',
+      'test/official.test.mjs',
+      'test/official-fork.mjs',
+      'test/official-reference.json',
+      'evidence/official-review-2026-09-11/conformance-before-fix.json',
     ].map((path) => [
       path,
       createHash('sha256')
@@ -653,6 +658,7 @@ async function main() {
       availableQuotes: result.sources.flatMap((x) => x.quotes).filter((x) => x.status === 'available').length,
     };
   });
+  await runOfficialCases({ provider, test, sent, token, maker, operator, config, request, now, rpc });
   await runMarketCases({
     provider,
     test,

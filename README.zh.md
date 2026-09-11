@@ -6,7 +6,7 @@
 
 完整的 `USDC → fwUSDC → Aqua → fwUSDT → USDT` 由本地测试执行器显式组合。它证明可以执行，不能证明 1inch 前端已经会选这条路线。后续仍需与 1inch 确认接入接口、代码提交位置和 Resolver 试点。
 
-0.2.0 提供九种资产的包装和解包、通用建仓、凭仓位身份关闭、标准报价/成交调用、TypeScript 类型，以及供执行方适配的完整兑换步骤。采用官方 ABI 和 SDK，接口写法参考 Barker，保留 Ring 原有业务和安全约束；不依赖 Barker 的活动后台。详见[接入接口](INTEGRATION.zh.md)。本轮不含前端页面或新增生产合约。
+0.2.1 提供九种资产的包装和解包、通用建仓、凭仓位身份关闭、标准报价/成交调用、TypeScript 类型，以及供执行方适配的完整兑换步骤。采用官方 ABI 和 SDK，接口写法参考 Barker，保留 Ring 原有业务和安全约束；不依赖 Barker 的活动后台。详见[接入接口](INTEGRATION.zh.md)及[官方接法核对](OFFICIAL_REVIEW.zh.md)。本轮不含前端页面或新增生产合约。
 
 Powered by SwapVM — © Degensoft Ltd 2025.
 

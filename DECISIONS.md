@@ -1,5 +1,13 @@
 # Integration decisions
 
+## 2026-09-11: verify against deployed source before publication
+
+Keep the current work local until review and tests finish; do not push, publish or contact 1inch. Official Path B remains the selected architecture. Pin the v1.0.2 deployed Solidity tag separately from current upstream main, which has different paths and opcode dispatch. The reference fixture records immutable upstream commits and hashes.
+
+Version 0.2.1 corrects the combined concentration/protocol-fee program order to match the official high-level SDK. Earlier fork fills passed; the missing comparison was byte-level conformance for this combination. The correction changes this combination's hash, so stored identity remains the upgrade-safe closing input. Legacy stablecoin bytes remain unchanged.
+
+Add official-event reconstruction, immutable identity, caller ownership, shared allowance and best-effort fee cases. A successful swap does not prove protocol fee receipt: observe `ProtocolFeeSkipped` and actual balances. No production fee monitor or executor is added. API credentials are unnecessary for this SDK/contract review and local fork; hosted discovery and frontend acceptance remain separate work.
+
 ## 2026-09-11: official contracts, application-compatible interfaces
 
 Use the [official Aqua/SwapVM SDKs](https://github.com/1inch/sdks/tree/master/typescript/swap-vm) and existing deployed opcodes. The [Barker Aqua application](https://app.barker.money/protocols/1inch-aqua/raid) is a reference for the cooperation model and generic maker interfaces, not a backend dependency or a template for Ring's fees, rewards or token restrictions. Commercial terms and private partner implementation are outside the public evidence.

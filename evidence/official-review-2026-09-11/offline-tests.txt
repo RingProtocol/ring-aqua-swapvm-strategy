@@ -1,0 +1,428 @@
+
+> @ring-protocol/aqua-swapvm-strategy@0.2.1 test
+> node --test test/*.test.mjs
+
+TAP version 13
+# Subtest: CLI builds without any RPC or keys and refuses to overwrite a review artifact
+ok 1 - CLI builds without any RPC or keys and refuses to overwrite a review artifact
+  ---
+  duration_ms: 1227.79775
+  type: 'test'
+  ...
+# Subtest: CLI rejects invalid amounts without creating a transaction artifact
+ok 2 - CLI rejects invalid amounts without creating a transaction artifact
+  ---
+  duration_ms: 216.502166
+  type: 'test'
+  ...
+# Subtest: partner CLI commands work without secrets and preserve explicit lifecycle semantics
+ok 3 - partner CLI commands work without secrets and preserve explicit lifecycle semantics
+  ---
+  duration_ms: 955.344667
+  type: 'test'
+  ...
+# Subtest: Node and portable interfaces produce identical official ship plans
+ok 4 - Node and portable interfaces produce identical official ship plans
+  ---
+  duration_ms: 16.191042
+  type: 'test'
+  ...
+# Subtest: dock reconstructs the same strategy hash after expiry and includes both revocations
+ok 5 - dock reconstructs the same strategy hash after expiry and includes both revocations
+  ---
+  duration_ms: 2.38325
+  type: 'test'
+  ...
+# Subtest: USDC conversions are exact, canonical, self-recipient and clear allowance
+ok 6 - USDC conversions are exact, canonical, self-recipient and clear allowance
+  ---
+  duration_ms: 1.833208
+  type: 'test'
+  ...
+# Subtest: USDT conversions are exact, canonical, self-recipient and clear allowance
+ok 7 - USDT conversions are exact, canonical, self-recipient and clear allowance
+  ---
+  duration_ms: 0.763208
+  type: 'test'
+  ...
+# Subtest: conversion rejects extra recipients, external assets, wrong chains and invalid amounts
+ok 8 - conversion rejects extra recipients, external assets, wrong chains and invalid amounts
+  ---
+  duration_ms: 0.358958
+  type: 'test'
+  ...
+# Subtest: route USDC_USDT exact-in binds actor, limits and dynamic amounts
+ok 9 - route USDC_USDT exact-in binds actor, limits and dynamic amounts
+  ---
+  duration_ms: 6.039792
+  type: 'test'
+  ...
+# Subtest: route USDC_USDT exact-out binds actor, limits and dynamic amounts
+ok 10 - route USDC_USDT exact-out binds actor, limits and dynamic amounts
+  ---
+  duration_ms: 5.816958
+  type: 'test'
+  ...
+# Subtest: route USDT_USDC exact-in binds actor, limits and dynamic amounts
+ok 11 - route USDT_USDC exact-in binds actor, limits and dynamic amounts
+  ---
+  duration_ms: 4.45825
+  type: 'test'
+  ...
+# Subtest: route USDT_USDC exact-out binds actor, limits and dynamic amounts
+ok 12 - route USDT_USDC exact-out binds actor, limits and dynamic amounts
+  ---
+  duration_ms: 4.264083
+  type: 'test'
+  ...
+# Subtest: invalid route identities and unsafe limits cannot produce an execution recipe
+ok 13 - invalid route identities and unsafe limits cannot produce an execution recipe
+  ---
+  duration_ms: 3.765917
+  type: 'test'
+  ...
+# Subtest: legacy fixture retains published program bytes and hash
+ok 14 - legacy fixture retains published program bytes and hash
+  ---
+  duration_ms: 16.021708
+  type: 'test'
+  ...
+# Subtest: cbBTC metadata drives bounded conversion and generic market encoding
+ok 15 - cbBTC metadata drives bounded conversion and generic market encoding
+  ---
+  duration_ms: 6.618584
+  type: 'test'
+  ...
+# Subtest: DAI metadata drives bounded conversion and generic market encoding
+ok 16 - DAI metadata drives bounded conversion and generic market encoding
+  ---
+  duration_ms: 4.3195
+  type: 'test'
+  ...
+# Subtest: WETH metadata drives bounded conversion and generic market encoding
+ok 17 - WETH metadata drives bounded conversion and generic market encoding
+  ---
+  duration_ms: 2.669875
+  type: 'test'
+  ...
+# Subtest: USDC metadata drives bounded conversion and generic market encoding
+ok 18 - USDC metadata drives bounded conversion and generic market encoding
+  ---
+  duration_ms: 2.393208
+  type: 'test'
+  ...
+# Subtest: WBTC metadata drives bounded conversion and generic market encoding
+ok 19 - WBTC metadata drives bounded conversion and generic market encoding
+  ---
+  duration_ms: 1.981167
+  type: 'test'
+  ...
+# Subtest: weETH metadata drives bounded conversion and generic market encoding
+ok 20 - weETH metadata drives bounded conversion and generic market encoding
+  ---
+  duration_ms: 2.041708
+  type: 'test'
+  ...
+# Subtest: UNI metadata drives bounded conversion and generic market encoding
+ok 21 - UNI metadata drives bounded conversion and generic market encoding
+  ---
+  duration_ms: 2.568792
+  type: 'test'
+  ...
+# Subtest: USDT metadata drives bounded conversion and generic market encoding
+ok 22 - USDT metadata drives bounded conversion and generic market encoding
+  ---
+  duration_ms: 1.823667
+  type: 'test'
+  ...
+# Subtest: wstETH metadata drives bounded conversion and generic market encoding
+ok 23 - wstETH metadata drives bounded conversion and generic market encoding
+  ---
+  duration_ms: 2.019459
+  type: 'test'
+  ...
+# Subtest: generic straight_full_range  uses exact official program apart from expiry
+ok 24 - generic straight_full_range  uses exact official program apart from expiry
+  ---
+  duration_ms: 1.475125
+  type: 'test'
+  ...
+# Subtest: generic straight_full_range concentrated uses exact official program apart from expiry
+ok 25 - generic straight_full_range concentrated uses exact official program apart from expiry
+  ---
+  duration_ms: 1.588667
+  type: 'test'
+  ...
+# Subtest: generic curved_pegged  uses exact official program apart from expiry
+ok 26 - generic curved_pegged  uses exact official program apart from expiry
+  ---
+  duration_ms: 1.748792
+  type: 'test'
+  ...
+# Subtest: generic protocol fee is explicit, preserved and changes the program
+ok 27 - generic protocol fee is explicit, preserved and changes the program
+  ---
+  duration_ms: 1.431875
+  type: 'test'
+  ...
+# Subtest: address-based quote, swap and atomic recipe bind the same pair in both directions/modes
+ok 28 - address-based quote, swap and atomic recipe bind the same pair in both directions/modes
+  ---
+  duration_ms: 18.882416
+  type: 'test'
+  ...
+# Subtest: close from stored identity needs no initial parameters or unexpired configuration
+ok 29 - close from stored identity needs no initial parameters or unexpired configuration
+  ---
+  duration_ms: 1.9295
+  type: 'test'
+  ...
+# Subtest: generic configuration fails closed on invalid identities, precision, ranges and hidden overrides
+ok 30 - generic configuration fails closed on invalid identities, precision, ranges and hidden overrides
+  ---
+  duration_ms: 2.80725
+  type: 'test'
+  ...
+# Subtest: pinned SDK versions, official Ethereum addresses and redistributed license texts match
+ok 31 - pinned SDK versions, official Ethereum addresses and redistributed license texts match
+  ---
+  duration_ms: 5.61975
+  type: 'test'
+  ...
+# Subtest: official protocol-fee instruction order matches straight_full_range
+ok 32 - official protocol-fee instruction order matches straight_full_range
+  ---
+  duration_ms: 9.352
+  type: 'test'
+  ...
+# Subtest: official protocol-fee instruction order matches straight_full_range/concentrated
+ok 33 - official protocol-fee instruction order matches straight_full_range/concentrated
+  ---
+  duration_ms: 2.509125
+  type: 'test'
+  ...
+# Subtest: official protocol-fee instruction order matches curved_pegged
+ok 34 - official protocol-fee instruction order matches curved_pegged
+  ---
+  duration_ms: 2.12075
+  type: 'test'
+  ...
+# Subtest: encoded opcodes match the deployed Solidity tag rather than current main or SDK ordinal comments
+ok 35 - encoded opcodes match the deployed Solidity tag rather than current main or SDK ordinal comments
+  ---
+  duration_ms: 1.374541
+  type: 'test'
+  ...
+# Subtest: official taker decoding preserves limits and excludes native unwrap, signatures and hooks
+ok 36 - official taker decoding preserves limits and excludes native unwrap, signatures and hooks
+  ---
+  duration_ms: 4.779583
+  type: 'test'
+  ...
+# Subtest: a v0.2.0 concentrated fee position closes by stored identity after the encoding correction
+ok 37 - a v0.2.0 concentrated fee position closes by stored identity after the encoding correction
+  ---
+  duration_ms: 1.9465
+  type: 'test'
+  ...
+# Subtest: RPC interface forbids all writes and never includes secret-bearing errors
+ok 38 - RPC interface forbids all writes and never includes secret-bearing errors
+  ---
+  duration_ms: 0.822542
+  type: 'test'
+  ...
+# Subtest: rejects wrong id
+ok 39 - rejects wrong id
+  ---
+  duration_ms: 0.105917
+  type: 'test'
+  ...
+# Subtest: rejects missing result
+ok 40 - rejects missing result
+  ---
+  duration_ms: 0.09275
+  type: 'test'
+  ...
+# Subtest: rejects provider error
+ok 41 - rejects provider error
+  ---
+  duration_ms: 0.099375
+  type: 'test'
+  ...
+# Subtest: rejects wrong version
+ok 42 - rejects wrong version
+  ---
+  duration_ms: 0.100458
+  type: 'test'
+  ...
+# Subtest: rejects bad HTTP
+ok 43 - rejects bad HTTP
+  ---
+  duration_ms: 0.045792
+  type: 'test'
+  ...
+# Subtest: same canonical block hash is used in state calls and rechecked at end
+ok 44 - same canonical block hash is used in state calls and rechecked at end
+  ---
+  duration_ms: 0.425792
+  type: 'test'
+  ...
+# Subtest: stale, wrong chain, changed block and changed timestamp are refused
+ok 45 - stale, wrong chain, changed block and changed timestamp are refused
+  ---
+  duration_ms: 0.140166
+  type: 'test'
+  ...
+# Subtest: failed deployment verification exposes no quote or execution permission
+ok 46 - failed deployment verification exposes no quote or execution permission
+  ---
+  duration_ms: 9.660542
+  type: 'test'
+  ...
+# Subtest: deterministic SDK order encoding and hash survive JSON round trip
+ok 47 - deterministic SDK order encoding and hash survive JSON round trip
+  ---
+  duration_ms: 17.016125
+  type: 'test'
+  ...
+# Subtest: only deployed official opcode numbers, credentials, expiry and integer fees
+ok 48 - only deployed official opcode numbers, credentials, expiry and integer fees
+  ---
+  duration_ms: 1.195542
+  type: 'test'
+  ...
+# Subtest: pegged program matches high-level official strategy apart from mandatory expiry
+ok 49 - pegged program matches high-level official strategy apart from mandatory expiry
+  ---
+  duration_ms: 1.96825
+  type: 'test'
+  ...
+# Subtest: maker lifecycle has exact caps, zero resets, canonical tokens and full shutdown
+ok 50 - maker lifecycle has exact caps, zero resets, canonical tokens and full shutdown
+  ---
+  duration_ms: 1.3745
+  type: 'test'
+  ...
+# Subtest: rejects wrongChain before producing calldata
+ok 51 - rejects wrongChain before producing calldata
+  ---
+  duration_ms: 0.116625
+  type: 'test'
+  ...
+# Subtest: rejects zeroMaker before producing calldata
+ok 52 - rejects zeroMaker before producing calldata
+  ---
+  duration_ms: 0.055542
+  type: 'test'
+  ...
+# Subtest: rejects zeroReserve before producing calldata
+ok 53 - rejects zeroReserve before producing calldata
+  ---
+  duration_ms: 0.061959
+  type: 'test'
+  ...
+# Subtest: rejects excessPrecision before producing calldata
+ok 54 - rejects excessPrecision before producing calldata
+  ---
+  duration_ms: 0.053625
+  type: 'test'
+  ...
+# Subtest: rejects negativeReserve before producing calldata
+ok 55 - rejects negativeReserve before producing calldata
+  ---
+  duration_ms: 0.208042
+  type: 'test'
+  ...
+# Subtest: rejects floatReserve before producing calldata
+ok 56 - rejects floatReserve before producing calldata
+  ---
+  duration_ms: 0.259375
+  type: 'test'
+  ...
+# Subtest: rejects exponent before producing calldata
+ok 57 - rejects exponent before producing calldata
+  ---
+  duration_ms: 0.106084
+  type: 'test'
+  ...
+# Subtest: rejects hugeReserve before producing calldata
+ok 58 - rejects hugeReserve before producing calldata
+  ---
+  duration_ms: 0.052584
+  type: 'test'
+  ...
+# Subtest: rejects zeroWidth before producing calldata
+ok 59 - rejects zeroWidth before producing calldata
+  ---
+  duration_ms: 0.047417
+  type: 'test'
+  ...
+# Subtest: rejects wide before producing calldata
+ok 60 - rejects wide before producing calldata
+  ---
+  duration_ms: 0.046
+  type: 'test'
+  ...
+# Subtest: rejects badFee before producing calldata
+ok 61 - rejects badFee before producing calldata
+  ---
+  duration_ms: 0.045042
+  type: 'test'
+  ...
+# Subtest: rejects feePrecision before producing calldata
+ok 62 - rejects feePrecision before producing calldata
+  ---
+  duration_ms: 0.106208
+  type: 'test'
+  ...
+# Subtest: rejects zeroExpiry before producing calldata
+ok 63 - rejects zeroExpiry before producing calldata
+  ---
+  duration_ms: 0.0505
+  type: 'test'
+  ...
+# Subtest: rejects expired before producing calldata
+ok 64 - rejects expired before producing calldata
+  ---
+  duration_ms: 0.052458
+  type: 'test'
+  ...
+# Subtest: rejects zeroSalt before producing calldata
+ok 65 - rejects zeroSalt before producing calldata
+  ---
+  duration_ms: 0.207875
+  type: 'test'
+  ...
+# Subtest: rejects unknownField before producing calldata
+ok 66 - rejects unknownField before producing calldata
+  ---
+  duration_ms: 0.069625
+  type: 'test'
+  ...
+# Subtest: quote directions and modes use nonzero slippage and deadline protections
+ok 67 - quote directions and modes use nonzero slippage and deadline protections
+  ---
+  duration_ms: 7.015084
+  type: 'test'
+  ...
+# Subtest: decimal conversions are exact, including smallest fee unit
+ok 68 - decimal conversions are exact, including smallest fee unit
+  ---
+  duration_ms: 0.070125
+  type: 'test'
+  ...
+# Subtest: nine source PoolKeys, native ETH distinction and quote direction encoding
+ok 69 - nine source PoolKeys, native ETH distinction and quote direction encoding
+  ---
+  duration_ms: 10.8265
+  type: 'test'
+  ...
+1..69
+# tests 69
+# suites 0
+# pass 69
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2454.697

@@ -1,6 +1,6 @@
 # FewToken Aqua 接入接口
 
-0.2.0 将 FewToken 策略、做市资金准备和普通币兑换步骤整理成可供前端或执行方调用的 SDK。底层复用 1inch 官方 Aqua/SwapVM，不新增生产合约，不依赖 Barker 的活动后台。
+0.2.1 将 FewToken 策略、做市资金准备和普通币兑换步骤整理成可供前端或执行方调用的 SDK。底层复用 1inch 官方 Aqua/SwapVM，不新增生产合约，不依赖 Barker 的活动后台。[官方接法核对与升级注意](OFFICIAL_REVIEW.zh.md)。
 
 借鉴 Barker 的合作模式：应用负责市场配置、钱包和仓位体验，官方 Aqua/SwapVM 负责策略与成交；Ring 在这个基础上提供 FewToken 包装、解包和普通币完整路线。建仓输入参考其通用 `legs` 写法，交易使用官方 ABI，保留 Ring 的协议费、有效期、限额授权与资金接收约束。此处没有声称 Barker 或 1inch 已接受当前代码。
 
@@ -37,6 +37,8 @@ Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Lt
 通用金额使用原始单位整数字符串或 bigint，不能传浮点数；输出可直接序列化为 JSON。原始数量小于 2^96。区间价格是“地址较大代币的原始单位 / 地址较小代币的原始单位 × 1e18”，必须正确处理两种币的精度。完整类型、数值限制和调用示例见[英文接口说明](INTEGRATION.md)及 `index.d.mts`。
 
 旧 USDC/USDT 配置和方向字符串继续可用，保留原来的单位、策略编码和 hash。旧格式的 `fwUSDC/fwUSDT` 是人类可读数量，新格式 `legs[].amount` 是原始单位，不可混用。
+
+0.2.1 将“集中流动性 + 协议费”的组合指令顺序改为与官方高层 SDK 一致，该组合的 hash 会变。关闭 0.2.0 已有仓位时使用保存的仓位身份，不要用新版本重算旧 hash。官方 v1.0.2 可能跳过无法划转的协议费并继续成交，收入应核对实际到账与 `ProtocolFeeSkipped` 事件，不能只看配置费率。
 
 ## 做市与普通币成交
 

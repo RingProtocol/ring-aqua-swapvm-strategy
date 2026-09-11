@@ -1,0 +1,46 @@
+# 官方接法核对与本地验收
+
+2026-09-11 · 0.2.1 · 仅本地，不推送、不发布、不联系官方
+
+**当前方向符合 1inch 官方支持的接法：用现有 SwapVM 指令创建 Aqua FewToken 策略。** 不需要为现有定价功能新增 opcode 或部署定价合约。此次逐项核对官方文档、SDK 和部署版本源码，修正了一处组合指令顺序差异；本地验收结果见[测试记录](VALIDATION.zh.md)。
+
+## 核对结果
+
+| 官方要求或行为 | Ring 当前实现与验收 |
+| --- | --- |
+| 优先使用能表达需求的现有指令 | 使用官方 `AquaProgramBuilder`，支持常数乘积、集中流动性、pegged 曲线；属于文档中的 Path B |
+| SDK 与部署路由的指令表必须匹配 | 锁定 SwapVM SDK 0.4.2、Aqua SDK 0.3.2 和部署路由 v1.0.2；从该版本 Solidity 提取实际编号，不照抄 SDK 注释中的序号或新主分支 |
+| 做市授权给 Aqua，成交输入授权给路由 | 两种授权对象分开，使用明确额度；包装需要的原币授权先清零，结束后清理 |
+| 仓位由 `ship` 记录，事件包含完整策略 | 使用官方事件解码器还原仓位和订单，核对链上 hash、报价、成交事件及关闭事件 |
+| 关闭必须由做市钱包提供完整代币列表 | 测试部分关闭、其他钱包关闭、重复建仓和已关闭身份重用被拒绝；新仓位使用新 salt |
+| 成交需要指定金额模式、价格限制和时间限制 | 两种金额模式都有非零限价与有效期；保留 Ring 额外的策略到期指令，不使用原生 ETH 解包标志 |
+| 同钱包多仓位共享真实资金和 ERC-20 授权 | 增加实际竞争及撤销授权测试；一仓有报价不代表它仍能成交，试点仍使用独立做市钱包 |
+| 官方协议费是尽力收取，并非强制到账 | 增加 `ProtocolFeeSkipped` 测试；预检仍对费用储备不足报出限制，收入统计不能只根据配置费率计算 |
+
+## 本次修正及升级注意
+
+0.2.0 的“集中流动性 + 协议费”组合先执行集中流动性指令，再执行协议费指令；官方高层 SDK 的顺序相反。此前该组合的 fork 成交已通过，但字节对照测试没有覆盖组合情况。0.2.1 按官方顺序改为先协议费、再集中流动性，并增加回归。此发现不等于此前成交失败或发生资金损失。[修正前结果](evidence/official-review-2026-09-11/conformance-before-fix.json)。
+
+**该组合在相同配置下的策略 hash 会改变。** 已创建的仓位应使用当时保存的 `maker + strategyHash + tokens` 关闭，不能用新版本重新生成旧 hash。该关闭方式已有回归；旧 USDC/USDT 配置的字节和 hash 未改变。没有修改已经发布的链上策略。
+
+协议费方面，v1.0.2 在费用无法划转时可发出 `ProtocolFeeSkipped` 并继续成交，未付出的费用留在做市方。这是官方合约行为，不能把“报价、成交成功”写成“Ring 已收到协议费”。SDK 没有常驻收入监控服务，生产接入方需要读取成交回执、该事件和实际到账。
+
+## 哪些仍需外部验证
+
+本仓库是策略和交易构造工具包，没有完整前端、生产执行器、自动调价或补资金服务。原币包装 → FewToken Aqua 成交 → 原币解包的步骤仍需执行方在同一笔交易中实现。新 Aqua 仓位不自动调用已有 Ring Swap v2 池。
+
+官方文档把做市建仓与订单执行分开：建仓可以自行完成，正式成交执行方有资格要求，仓位发现与订单选路还有独立的服务逻辑。本地 fork 可以验收合约调用和资金变化，不能验收托管发现服务或 1inch 前端真实流量。价格优势须在完整路线及执行成本上比较。
+
+**本轮不需要 1inch API key。** 官方 SDK、GitHub、链上只读查询及本地 fork 已覆盖这轮任务。以后验证 1inch 托管报价或发现接口时才可能需要；API key 本身不等于执行资格或流量接入。不要把 key 写入代码、证据或文档。
+
+开源发布、生产运行和联系官方分别决定。保留上游许可与署名，没有把官方代码或生成策略改成无条件 MIT 商用许可。本轮只准备本地可审查结果。
+
+## 来源与复现
+
+- [官方 AquaApp 接法](https://business.1inch.com/portal/documentation/aqua/getting-started/build-an-aquaapp)：现有指令组合及自建合约的区别。
+- [官方 SDK 文档](https://business.1inch.com/portal/documentation/aqua/reference/sdk-overview)与 [SDK 源码](https://github.com/1inch/sdks/tree/364e7155167957e6a24320c7beb90539e06c91eb/typescript)：编码、调用和事件；文档部分版本示例较旧，以锁定包、部署版本及实际验证为准。
+- [官方部署地址与版本说明](https://business.1inch.com/portal/documentation/aqua/reference/verified-contract-addresses)、[v1.0.2 指令表](https://github.com/1inch/swap-vm/blob/32c687c2b73101fc26549e48fa1ff8a4d73afbac/src/opcodes/AquaOpcodes.sol)和[费用源码](https://github.com/1inch/swap-vm/blob/32c687c2b73101fc26549e48fa1ff8a4d73afbac/src/instructions/Fee.sol)。
+- [Aqua 注册与关闭源码](https://github.com/1inch/aqua/blob/9c5c42e5840e8741fba3597c48456c9510212b66/src/Aqua.sol)、[官方权限与选路说明](https://business.1inch.com/portal/documentation/aqua/liquidity-layer/access-resolvers-and-pathfinder)。
+- [OpenZeppelin 授权处理](https://docs.openzeppelin.com/contracts/5.x/api/token/erc20#SafeERC20-forceApprove-contract-IERC20-address-uint256-)与 [Uniswap 指定输出退款示例](https://developers.uniswap.org/docs/protocols/v3/guides/swapping/single-hop-swapping)：保留清零授权、金额限制及未使用输入退款；未复制其生产合约。
+
+[官方源码清单](test/official-reference.json)记录 12 个文件的提交、路径和 SHA-256。[最新区块只读核对](evidence/official-review-2026-09-11/latest-deployment.json)验证三项官方部署和九种资产绑定，不代表当前赎回储备、市场价格或前端收录。运行方式见 [README](README.zh.md)，完整历史与本轮证据均保留。

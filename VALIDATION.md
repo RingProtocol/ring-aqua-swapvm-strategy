@@ -1,8 +1,26 @@
 # Validation
 
-## Current version 0.2.0 — 2026-09-11
+## Current version 0.2.1 — official source review, 2026-09-11
 
-**All 62 offline tests and 88 mainnet fork cases passed.** The final fork completed at `2026-09-10T17:28:56.922Z` (September 11 in Asia/Shanghai). All 27 source hashes and the lockfile hash in the [report](evidence/standard-interface-2026-09-11/fork-results.json) match the tested files. The extension and baseline sections below preserve earlier evidence, not current test counts.
+**All 69 offline tests and 95 mainnet fork cases passed**, including previous regressions. The final fork completed at `2026-09-11T03:26:22.842Z`. All 31 source hashes and the lockfile hash in the [new report](evidence/official-review-2026-09-11/fork-results.json) match the tested code. This is local validation, not publication or partner acceptance. See the [source review](OFFICIAL_REVIEW.md).
+
+| Check | Current result |
+| --- | --- |
+| Offline tests | [69 passed, none skipped](evidence/official-review-2026-09-11/offline-tests.txt); adds deployed opcode mapping, combined protocol-fee ordering, official taker decoding and historical identity shutdown |
+| Mainnet fork | [95 passed](evidence/official-review-2026-09-11/fork-results.json); adds seven official-event, immutable-identity, partial-dock, caller, shared-allowance and skipped-fee cases |
+| Actual browser | [Passed](evidence/official-review-2026-09-11/browser.json); unsigned ship/dock/wrap construction, matching Node hash |
+| Minimum Node version | [69 tests passed on 22.13.1](evidence/official-review-2026-09-11/node-22.13-tests.txt) |
+| Fresh install and TypeScript | [Passed](evidence/official-review-2026-09-11/clean-install.json); locked install, offline tests, declarations and browser bundle |
+| Formatting and dependencies | Formatting passed; `npm audit --audit-level=high` reported zero vulnerabilities, not a security audit |
+| Latest-block read-only check | [Passed](evidence/official-review-2026-09-11/latest-deployment.json); three official deployments, router version and nine FewToken bindings/decimals |
+
+Before the fix, four new conformance tests passed and two failed on the same combined instruction-order difference. The [failure summary](evidence/official-review-2026-09-11/conformance-before-fix.json) retains its base commit. All seven new offline cases now pass. Prior fork settlements for this combination had passed; the byte-order mismatch is not evidence of an observed failed trade.
+
+The `ProtocolFeeSkipped` case proves a swap may succeed without fee receipt. Preflight keeps its conservative fee-buffer issue; account for actual received funds. No 1inch API key, mainnet transaction, real signature, production deployment, push or external contact was used. The latest-state read does not test redemption backing. Fork execution still uses the historical block and synthetic funding described below. Hosted discovery, resolver acceptance and real frontend traffic remain unverified.
+
+## Historical version 0.2.0 — 2026-09-11, commit d4ec1c8
+
+**All 62 offline tests and 88 mainnet fork cases passed at that version.** The fork completed at `2026-09-10T17:28:56.922Z` (September 11 in Asia/Shanghai). Its [report](evidence/standard-interface-2026-09-11/fork-results.json) binds 27 source hashes and the lockfile for that version. The sections below preserve historical evidence, not current source hashes or test counts.
 
 | Check | Result and scope |
 | --- | --- |
