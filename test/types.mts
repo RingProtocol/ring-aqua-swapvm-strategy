@@ -17,8 +17,8 @@ const config: MarketConfig = {
   chainId: 1,
   maker,
   legs: [
-    { token: usdc, amount: 300000000n },
-    { token: weth, amount: 100000000000000000n },
+    { token: { address: usdc.address, decimals: usdc.decimals }, amount: 300000000n },
+    { token: { address: weth.address, decimals: weth.decimals }, amount: 100000000000000000n },
   ],
   shape: 'straight_full_range',
   feeRateE9: '10000',
@@ -52,7 +52,7 @@ buildUnderlyingRoute(config, {
 });
 createRingAquaIntegration({ swapVmSdk, aquaSdk }).buildAquaShipPlan(config);
 // @ts-expect-error No floating-point token amount.
-buildAquaShipPlan({ ...config, legs: [{ token: usdc, amount: 1.5 }, config.legs[1]] });
+buildAquaShipPlan({ ...config, legs: [{ token: config.legs[0].token, amount: 1.5 }, config.legs[1]] });
 buildAquaDockPlan({
   chainId: 1,
   maker,

@@ -38,6 +38,8 @@ npm ci --ignore-scripts
 npm run format:check
 npm test
 npm run test:types
+npm run example:plans
+npm run test:package
 npm audit --audit-level=high
 
 # Requires an archive RPC endpoint in ETH_RPC_URL and anvil on PATH.
@@ -47,6 +49,12 @@ npm run test:fork
 The fork runner starts its own Anvil on `127.0.0.1:18569` and refuses to use an occupied port. It reads the pinned mainnet block from the upstream RPC. Account impersonation, funding, contract deployment, approvals, and swaps happen only on the local fork. No real wallet key is required.
 
 Set `RING_FORK_EVIDENCE_DIR=evidence/local-rerun` to preserve historical evidence. Completed results go to that directory, or [`evidence/fork-results.json`](evidence/fork-results.json) by default. The current version report is linked in [VALIDATION.md](VALIDATION.md). Failed attempts go to ignored `evidence/fork-attempt.json` without replacing the completed report. Treat the other evidence files as belonging to a run only after the full suite succeeds. The CI workflow is configured to run offline tests, type checks, browser bundling, formatting, and a dependency audit; it does not hold RPC credentials or run funded operations.
+
+## Try the installed SDK
+
+`npm run example:plans` executes [a complete USDC/WETH example](examples/build-plans.mjs) through the public package exports: wrap, ship, quote/swap calldata, atomic route recipe, dock and unwrap. It uses placeholder actors and synthetic inventory, makes no RPC calls, and must not be broadcast. The quote call is calldata, not an actual quote. Project `address` and `decimals` from the asset catalog into each `leg.token`; the runtime rejects additional catalog metadata there.
+
+`npm run test:package` creates an npm tarball, installs it with production dependencies into an isolated temporary consumer, runs that example, checks Node/portable equivalence and compiles an external TypeScript consumer. No npm package is published. Tests, local configuration and historical evidence are excluded from the tarball; source-review links in these documents refer to the full Git checkout. The package remains `private: true`. See [SECURITY.md](SECURITY.md) for the separate public-release reporting requirement.
 
 ## Build an unsigned strategy (legacy stablecoin example)
 

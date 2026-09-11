@@ -40,6 +40,8 @@ cd ring-aqua-swapvm-strategy
 npm ci --ignore-scripts
 npm test
 npm run test:types
+npm run example:plans
+npm run test:package
 npm audit --audit-level=high
 # 通过本地安全配置向环境提供 ETH_RPC_URL；不要写入仓库文件
 npm run test:fork
@@ -48,6 +50,12 @@ npm run test:fork
 最后一条命令启动专用 loopback Anvil，拒绝复用被占用的端口。RPC 只用于读取主网；资金模拟、账号 impersonation、合约部署和所有交易都在本地。报告在 `evidence/fork-results.json`，执行失败写入被忽略的 `fork-attempt.json`，不覆盖已完成的报告。
 
 CI 自动执行离线测试和依赖检查；不在 CI 中放 RPC 或自动运行主网交易。
+
+## 合作方安装与示例
+
+`npm run example:plans` 通过正式导出入口运行 [USDC/WETH 示例](examples/build-plans.mjs)，生成包装、建仓、报价/成交调用数据、完整兑换步骤、关闭和解包计划。示例使用占位地址与模拟库存，不调用 RPC、不签名、不广播；生成报价调用数据不等于已经获取报价。`leg.token` 只传目录中的 `address`、`decimals` 和可选 `symbol`，不能直接传含额外元数据的整个资产对象。
+
+`npm run test:package` 将实际 npm 压缩包安装到独立临时项目，仅装生产依赖，再运行示例、比较 Node/portable 输出并编译外部 TypeScript 调用。不会发布 npm 包。压缩包不包含测试合约、历史证据或本地配置；文档中的源码审查链接对应完整 Git 仓库。保留 `private: true` 防止误发布，公开仓库前还需落实 [安全问题私下报告入口](SECURITY.md)。
 
 ## 生成可审查的交易数据（保留的稳定币旧格式）
 

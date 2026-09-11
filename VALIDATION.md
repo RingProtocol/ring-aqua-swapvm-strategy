@@ -1,6 +1,21 @@
 # Validation
 
-## Current version 0.2.1 — official source review, 2026-09-11
+## Current local 0.2.1 — packaged consumer review, 2026-09-11
+
+The [repository follow-up](OFFICIAL_REVIEW.md) does not change strategy or settlement runtime code. It adds package boundaries, an executable example and consumer validation. The fresh [fork report](evidence/repository-review-2026-09-11/fork-results.json) completed at `2026-09-11T03:49:30.685Z`: **95 passed**, with all **34 source hashes** and the lockfile matching the reviewed files. The earlier reports below remain historical snapshots.
+
+| Check | Result |
+| --- | --- |
+| Offline regression | [69 passed, none skipped](evidence/repository-review-2026-09-11/offline-tests.txt) |
+| Installed tarball | [Passed on Node 22.18.0](evidence/repository-review-2026-09-11/package-node-22.18.txt) and [22.13.1](evidence/repository-review-2026-09-11/package-node-22.13.txt): isolated production-dependency install, actual public Node/portable exports, USDC/WETH example and external TypeScript consumer |
+| Package contents | 33 files versus 82 before the allowlist; test contracts, historical evidence and local configuration excluded; source and license bytes compared with the installed files |
+| Types, bundle and style | TypeScript and formatting passed; browser bundle built. Actual browser execution was not repeated because portable/runtime code is unchanged; the earlier browser evidence below is separate |
+| Dependency audit | [Zero reported vulnerabilities](evidence/repository-review-2026-09-11/audit.json), not a security audit |
+| Remote/publication | GitHub repository private, remote main at e94ae6a; current branch not pushed. CI configuration updated but not run remotely for this change |
+
+The first draft example failed because a full catalog Asset includes fields rejected by the strict token schema. Both the executable example and compile-only type fixture now project address/decimals explicitly. No runtime validation was relaxed. No API key, wallet signature, mainnet write or contact was used. Production execution and official frontend traffic remain unverified.
+
+## Earlier 0.2.1 — official source review, 2026-09-11, commit 97ef4ea
 
 **All 69 offline tests and 95 mainnet fork cases passed**, including previous regressions. The final fork completed at `2026-09-11T03:26:22.842Z`. All 31 source hashes and the lockfile hash in the [new report](evidence/official-review-2026-09-11/fork-results.json) match the tested code. This is local validation, not publication or partner acceptance. See the [source review](OFFICIAL_REVIEW.md).
 

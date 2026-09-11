@@ -15,11 +15,13 @@
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "test:fork": "node test/fork.mjs",
-    "format:check": "prettier --check '*.mjs' '*.d.mts' 'test/*.mjs' 'test/*.mts' 'config/*.json' package.json",
+    "format:check": "prettier --check '*.mjs' '*.d.mts' 'test/*.mjs' 'test/*.mts' 'examples/*.mjs' 'config/*.json' package.json",
     "build:unsigned": "node cli.mjs build",
     "preflight": "node cli.mjs preflight",
     "test:types": "tsc --noEmit --strict --module NodeNext --moduleResolution NodeNext --target ES2022 --skipLibCheck test/types.mts",
-    "build:browser-smoke": "node test/browser-build.mjs"
+    "build:browser-smoke": "node test/browser-build.mjs",
+    "example:plans": "node examples/build-plans.mjs",
+    "test:package": "node test/package.mjs"
   },
   "dependencies": {
     "@1inch/aqua-sdk": "0.3.2",
@@ -48,5 +50,26 @@
     },
     "./package.json": "./package.json"
   },
-  "types": "./index.d.mts"
+  "types": "./index.d.mts",
+  "files": [
+    "assets.mjs",
+    "cli.mjs",
+    "index.mjs",
+    "index.d.mts",
+    "integration-core.mjs",
+    "portable.mjs",
+    "portable.d.mts",
+    "readonly.mjs",
+    "sources.mjs",
+    "strategy.mjs",
+    "strategy-core.mjs",
+    "config/assets.json",
+    "config/deployment.json",
+    "config/example.json",
+    "config/wrapper-sources.json",
+    "examples/build-plans.mjs",
+    "*.md",
+    "LICENSE",
+    "LICENSES/*.txt"
+  ]
 }

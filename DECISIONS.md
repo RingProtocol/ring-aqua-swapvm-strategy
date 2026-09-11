@@ -1,5 +1,15 @@
 # Integration decisions
 
+## 2026-09-11: consumer readiness and work we can own
+
+Keep the standalone SDK layout and deployed Path B implementation. Official `1inch/sdks-examples` supports using runnable consumer examples; `swap-vm-template` targets a different custom-contract workflow and is not a reason to copy a new ABI, deploy a router or migrate this package to a monorepo. Add a package allowlist, isolated tarball installation/export/type validation, an unsigned multi-asset example, and private vulnerability reporting guidance. Preserve full source evidence outside the consumer tarball. The initial example run exposed catalog metadata being passed to the strict token schema; project only allowed fields and make runnable examples part of acceptance instead of treating compile-only fixtures as runtime proof.
+
+Barker's public [`barker-alm-engine`](https://github.com/barkermoney/barker-alm-engine/tree/7e208c9f2a8c60c51459122d1c6582d0aba4e0be) is a new yield-backed experiment, not the private source of its previous Aqua campaigns. Its quote/fill and deployment-version lessons are useful; do not copy its claim that Aqua custodies maker inventory, which contradicts official Aqua documentation and source. No Barker code is copied. Keep FewToken business logic and official allowance targets unchanged.
+
+Ring can still build position/fee/inventory monitoring, full-route price and gas comparisons, wallet UI, and an execution adapter. Choose the actual resolver runtime and outer authorization interface before implementing a production adapter; do not promote local harnesses to production. A real maker position requires explicit wallet transactions but not prior maker KYC. Hosted discovery, qualified resolver execution and an ordinary-token frontend fill cannot be proved by offline packaging or fork tests. Classic Swap is not a substitute test for the documented resolver-gated Aqua route.
+
+The GitHub repository was verified private during this review. Keep changes local; public visibility, push, npm publication, contact and funded trials are separate actions. The private vulnerability reporting endpoint returned 404, so a monitored private channel remains unverified and must be established before public release.
+
 ## 2026-09-11: verify against deployed source before publication
 
 Keep the current work local until review and tests finish; do not push, publish or contact 1inch. Official Path B remains the selected architecture. Pin the v1.0.2 deployed Solidity tag separately from current upstream main, which has different paths and opcode dispatch. The reference fixture records immutable upstream commits and hashes.

@@ -10,3 +10,4 @@ out/
 cache/
 broadcast/
 coverage/
+*.tgz

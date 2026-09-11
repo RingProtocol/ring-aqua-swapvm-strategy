@@ -11,6 +11,7 @@ export interface Asset {
   readonly underlying: Address;
   readonly decimals: number;
 }
+/** Runtime accepts only these keys; project address/decimals from a catalog Asset. */
 export interface Token {
   address: Address;
   decimals: number;

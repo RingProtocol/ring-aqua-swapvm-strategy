@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-09-11T03:51:34.165984+00:00",
+  "filesScanned": 99,
+  "credentialMatches": 0,
+  "localUserPaths": 0,
+  "forkSourceHashesMatched": 34,
+  "lockHashMatched": true,
+  "mainnetTransactions": 0,
+  "note": "Exact configured-secret scan is not a comprehensive security audit."
+}

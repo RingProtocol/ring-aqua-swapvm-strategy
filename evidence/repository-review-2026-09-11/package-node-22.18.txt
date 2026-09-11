@@ -1,0 +1,5 @@
+
+> @ring-protocol/aqua-swapvm-strategy@0.2.1 test:package
+> node test/package.mjs
+
+{"status":"passed","files":33,"unpackedBytes":193310,"integrity":"sha512-5bPy01qDGgPGTNsJ5PL1BL9MEoDlrR7ZAkN9HUnNuzqxFWPbGZAbgZtbbuh5gXNWpItE7VU9MahFNa7OoRkvqQ==","consumer":"isolated-tarball-install","nodeAndPortable":true,"types":true,"published":false}
