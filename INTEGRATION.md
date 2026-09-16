@@ -146,12 +146,10 @@ RING_FORK_EVIDENCE_DIR=evidence/local-rerun npm run test:fork
 
 Fork deployments, impersonation, funding and transactions stay on the runner's loopback Anvil. The new output directory preserves the original evidence. The suite executes nine asset conversions and representative stable, volatile, 6/8/18-decimal and concentrated markets in both directions/modes, alongside the legacy regression cases. It checks actual refunds, preexisting token preservation and complete rollback after failed settlement or redemption. It does not assert every possible catalog pair has been individually tested.
 
-## Remaining joint integration work
+## Review request
 
-Ring can implement an adapter for the partner's exposed runtime once the interface is provided. The partner handoff needs concrete answers to:
+The scope is FewToken inventory held in a maker wallet and offered through Aqua. Please review this SDK, its interfaces and local evidence, and identify the remaining development needed for 1inch orders to use these positions, including ordinary-token wrap/swap/unwrap routes. Interface documentation or an existing integration example would help Ring implement the required changes. Do not assume that forking or changing the official protocol is required.
 
-- Which component consumes the strategy and wrapper metadata: a frontend, source discovery service or resolver? What is its schema and code-review entry point?
-- Which eligible resolver will interpret the atomic recipe, enforce the outer order and sign the transaction? Does its runtime support actual-output and refund bindings?
-- Which 1inch user-facing swap mode is the pilot using, and how will we observe an ordinary USDC/USDT order selecting and settling the competitive full route?
+Please also advise whether Ring should add an Aqua position page to its own frontend, similar to the Barker example, and which functions that page should provide. No frontend is included in this repository. A page being available would not by itself establish live order routing.
 
-An official reference to a cooperation model is not evidence that the technical integration has already been accepted. Local success, a live strategy, source listing, resolver adoption and a real frontend fill remain separate results.
+Local success, a live strategy, source listing, resolver adoption and a real frontend fill remain separate results. Production execution still requires the appropriate runtime adapter and outer-order authorization; the test harness is not a production executor.

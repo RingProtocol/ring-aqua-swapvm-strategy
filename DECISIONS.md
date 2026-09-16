@@ -1,5 +1,13 @@
 # Integration decisions
 
+## 2026-09-16: focus on FewToken wallet market making and code review
+
+The selected scope is FewToken inventory held in a maker wallet, approved to Aqua and offered through a strategy. The goal is to make that liquidity usable by 1inch orders when the complete route is competitive, including ordinary-token orders that wrap and unwrap inside execution. This supersedes the earlier broader exploration; remove the alternative proposal and multi-option questionnaire from current repository and business materials.
+
+The current cooperation request is to introduce the SDK and its local evidence, ask 1inch to review the implementation and identify the remaining development, and ask whether Ring should add an Aqua position page to its own frontend similar to the Barker example. Do not assume a page is required or already built. Defer new product work until that review clarifies the needed interfaces and cooperation model.
+
+Keep the independent repository, official SDKs and existing-opcode Path B implementation. Preserve bounded approvals, local test evidence, license notices and the distinction between local validation and production routing. This cleanup changes documentation only; it neither publishes code nor enables funded execution.
+
 ## 2026-09-11: consumer readiness and work we can own
 
 Keep the standalone SDK layout and deployed Path B implementation. Official `1inch/sdks-examples` supports using runnable consumer examples; `swap-vm-template` targets a different custom-contract workflow and is not a reason to copy a new ABI, deploy a router or migrate this package to a monorepo. Add a package allowlist, isolated tarball installation/export/type validation, an unsigned multi-asset example, and private vulnerability reporting guidance. Preserve full source evidence outside the consumer tarball. The initial example run exposed catalog metadata being passed to the strict token schema; project only allowed fields and make runnable examples part of acceptance instead of treating compile-only fixtures as runtime proof.

@@ -2,9 +2,9 @@
 
 [English](README.md) · [接入接口](INTEGRATION.zh.md) · [测试记录](VALIDATION.zh.md) · [许可范围](LICENSE.md)
 
-本模块把不同 FewToken 交易对做成官方 SwapVM 策略，生成未签名的限额授权、建仓和关闭交易，并检查链上状态。使用的是官方已有 opcodes，无须新增生产合约，由 Ring 基于官方 SDK 编写。
+本仓库用于把钱包里的 FewToken 接入 Aqua 做市：生成未签名的限额授权、建仓和关闭交易，并检查链上状态。Ring 基于官方 SDK 和已有 SwapVM 指令实现这些功能，无须为当前策略新增生产合约。目标是在完整路线价格有竞争力时，让 1inch 的订单使用这些 FewToken 仓位。
 
-完整的 `USDC → fwUSDC → Aqua → fwUSDT → USDT` 由本地测试执行器显式组合。它证明可以执行，不能证明 1inch 前端已经会选这条路线。后续仍需与 1inch 确认接入接口、代码提交位置和 Resolver 试点。
+完整的 `USDC → fwUSDC → Aqua → fwUSDT → USDT` 由本地测试执行器显式组合。它证明可以执行，不能证明 1inch 前端已经会选这条路线。下一步请 1inch review 现有实现，指出还需要补哪些开发；同时确认 Ring 是否需要在自己的前端增加类似 Barker 的 Aqua 仓位页面。当前没有这个页面，也没有假定它是必需条件。
 
 0.2.1 提供九种资产的包装和解包、通用建仓、凭仓位身份关闭、标准报价/成交调用、TypeScript 类型，以及供执行方适配的完整兑换步骤。采用官方 ABI 和 SDK，接口写法参考 Barker，保留 Ring 原有业务和安全约束；不依赖 Barker 的活动后台。详见[接入接口](INTEGRATION.zh.md)及[官方接法核对](OFFICIAL_REVIEW.zh.md)。本轮不含前端页面或新增生产合约。
 
@@ -20,7 +20,7 @@ Powered by Aqua — © Degensoft Ltd 2025.
 | --- | --- |
 | 网络 / Router | Ethereum mainnet；官方 AquaSwapVMRouter v1.0.2 |
 | SDK | `@1inch/swap-vm-sdk 0.4.2`、`@1inch/aqua-sdk 0.3.2`，独立 lockfile |
-| 曲线 | 官方常数乘积、集中流动性与 pegged；参数由配置提供，不是 Ring V2 Pair 储备报价 |
+| 曲线 | 官方常数乘积、集中流动性与 pegged；策略参数由配置明确提供 |
 | Maker 策略 | 九种 canonical FewToken，覆盖 6/8/18 位精度；具体资产见接入说明 |
 | 用户成交保护 | exact-in 最少到账；exact-out 最多支付；非零期限 |
 | 权限 | 保留官方 `tx.origin` KycNFT 检查；无签名、广播或私钥入口 |

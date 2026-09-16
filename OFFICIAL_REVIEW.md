@@ -10,7 +10,7 @@ Repository follow-up: keep the standalone package and Path B; add a runnable USD
 
 Barker's public [ALM experiment](https://github.com/barkermoney/barker-alm-engine/tree/7e208c9f2a8c60c51459122d1c6582d0aba4e0be) explicitly excludes its earlier private Aqua campaign code. Learn from its deployment-version and quote/fill checks, but do not treat it as the production campaign implementation. Its custodial description of Aqua conflicts with the official non-custodial accounting model and is not adopted here. No Barker code is copied.
 
-Ring can independently build inventory/fee monitoring, full-route price and gas comparisons, and wallet UI. We can also implement the production route adapter once the target resolver runtime and outer authorization interface are selected. Hosted discovery and a real ordinary-token frontend fill still need joint verification; upstream PR acceptance is not a prerequisite for a normal Path B maker strategy.
+The next step is 1inch review of this wallet-based FewToken integration and guidance on remaining development. Whether to add an Aqua position page to Ring's frontend is a question for that review, not an assumed delivery requirement. Hosted discovery and a real ordinary-token frontend fill remain unverified.
 
 - Pin the deployment, not upstream main. SDKs 0.4.2/0.3.2 match the v1.0.2 deployment. Current SwapVM main has different paths and opcode dispatch. The [reference fixture](test/official-reference.json) records 12 immutable upstream source files and the deployed runtime opcode table, including its zero-based indexing.
 - Version 0.2.0 put concentration before the protocol fee when both were configured. Version 0.2.1 follows the [official high-level builder](https://github.com/1inch/sdks/blob/364e7155167957e6a24320c7beb90539e06c91eb/typescript/swap-vm/src/swap-vm/strategies/aqua-xyc-amm-strategy.ts): protocol fee first. Prior fork fills for that combination passed, but byte-level comparison had missed it. The before-fix result is retained.
@@ -24,3 +24,9 @@ Ring can independently build inventory/fee monitoring, full-route price and gas 
 Registry ownership and immutable lifecycle checks follow the [Aqua source](https://github.com/1inch/aqua/blob/9c5c42e5840e8741fba3597c48456c9510212b66/src/Aqua.sol). Maker allowances target Aqua; taker input allowances target the router. Finite approvals, nonzero thresholds, deadlines, actual-output settlement and refund behavior remain intact.
 
 No API key is needed for this SDK/source review or local fork. Hosted API credentials do not replace resolver eligibility or prove order routing; see the [official access model](https://business.1inch.com/portal/documentation/aqua/liquidity-layer/access-resolvers-and-pathfinder). No push, publication, external contact, real signature, mainnet transaction or production deployment occurred. Upstream licensing and attribution remain unchanged. Publication, production review and an actual ordinary-token frontend fill remain separate gates.
+
+## Current review request
+
+Please review the SDK, its interfaces and local tests, and tell us what Ring still needs to implement for 1inch orders to use these FewToken positions. Recommended interfaces or an existing integration example would help us make the required changes.
+
+Please also advise whether Ring should add an Aqua page to its own frontend, similar to the Barker example, and which functions it should provide. No such page is included. Production execution still needs an appropriate runtime adapter and outer-order authorization; the local test harness is not a production executor.

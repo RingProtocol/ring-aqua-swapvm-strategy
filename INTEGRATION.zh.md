@@ -2,7 +2,7 @@
 
 0.2.1 将 FewToken 策略、做市资金准备和普通币兑换步骤整理成可供前端或执行方调用的 SDK。底层复用 1inch 官方 Aqua/SwapVM，不新增生产合约，不依赖 Barker 的活动后台。[官方接法核对与升级注意](OFFICIAL_REVIEW.zh.md)。
 
-借鉴 Barker 的合作模式：应用负责市场配置、钱包和仓位体验，官方 Aqua/SwapVM 负责策略与成交；Ring 在这个基础上提供 FewToken 包装、解包和普通币完整路线。建仓输入参考其通用 `legs` 写法，交易使用官方 ABI，保留 Ring 的协议费、有效期、限额授权与资金接收约束。此处没有声称 Barker 或 1inch 已接受当前代码。
+本次范围是钱包里的 FewToken 通过 Aqua 做市。参考 Barker 的公开做法，应用可负责市场配置、钱包和仓位体验，官方 Aqua/SwapVM 负责策略与成交；Ring 提供 FewToken 包装、解包和普通币完整路线。建仓输入参考通用 `legs` 写法，交易使用官方 ABI，保留 Ring 的协议费、有效期、限额授权与资金接收约束。是否在 Ring 前端增加类似 Barker 的页面，留待 1inch 评审时确认；没有声称对方已接受当前代码。
 
 Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Ltd 2025. [许可范围](LICENSE.md)。
 
@@ -52,7 +52,7 @@ Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Lt
 
 `buildUnderlyingRoute` 生成的是执行步骤，不是一笔已经可广播的最终交易。实际执行方必须在同一笔 EVM 交易中完成包装、兑换、解包，按 SwapVM 的实际返回值处理到账与退款，保留原有零散余额并清理授权。任何步骤失败，整体回滚。它不能被拆成让普通用户分别签三笔交易来代替。
 
-报价和成交发生在新的 Aqua FewToken 仓位，不会自动使用已有 Ring Swap v2 池的储备。吸引 1inch 普通币订单仍需要实际执行方接入这条组合路线，并在有价格优势时证明它被选中成交。
+报价和成交由 Aqua FewToken 策略决定，库存来自做市钱包。吸引 1inch 普通币订单仍需要实际执行方接入这条组合路线，并在有价格优势时证明它被选中成交。
 
 ## 浏览器与本地测试
 
@@ -62,10 +62,10 @@ Node 默认入口和 `portable` 入口提供同样的构造结果，类型声明
 
 本地运行 `npm test`、`npm run test:types`、`npm run build:browser-smoke`；主网 fork 另需 archive RPC 和 Anvil。设置 `RING_FORK_EVIDENCE_DIR=evidence/local-rerun` 可保留已有报告。所有签名模拟、资金准备与成交只发生在工具启动的本地 Anvil 上。
 
-## 合作方需要配合什么
+## 请 1inch 评审的内容
 
-Ring 已能独立提供策略编码、资产资料、做市资金转换、完整兑换步骤和本地测试。接下来由合作方确认具体前端或接入服务，提供正式消费接口/仓库和代码评审入口，Ring 负责必要的适配开发。
+请 review 现有 SDK、接口和本地测试，确认当前做法是否适合接入；指出为了让 FewToken 仓位参与真实订单，还需要补哪些开发，并提供对应的接口说明或参考实现。Ring 可以根据评审结果继续适配，不预先假定必须 fork 或修改官方协议。
 
-要验证 1inch 前端流量，还需要指定执行方接入 FewToken 的包装/解包与策略发现，完成报价和执行联调，再用普通币订单验收。市场展示、联合推广和奖励资格另行确认，不能从代码可用推导出来。
+同时确认是否需要在 Ring 自己的前端增加类似 Barker 的 Aqua 页面，用于包装、授权、建仓和仓位管理，以及这种合作方式如何使用本 SDK。页面尚未开发；页面可用也不等于真实订单已经接入。
 
 本仓库所有计划的 `executionAllowed`、`productionReady` 均为 false。两份 Solidity 测试执行器仅用于本地验证，不能直接部署为生产执行器。上线许可、合约审查、真实资金限额与订单验收仍需分别完成。

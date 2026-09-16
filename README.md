@@ -2,13 +2,13 @@
 
 [中文说明](README.zh.md) · [Integration API](INTEGRATION.md) · [Validation](VALIDATION.md) · [License scope](LICENSE.md)
 
-Build unsigned FewToken market strategies with the 1inch Aqua and SwapVM SDKs, inspect their on-chain state, and reproduce swaps on a local Ethereum mainnet fork.
+Prepare FewToken inventory held in a maker wallet for Aqua market making. This SDK builds unsigned approval and strategy transactions with the official 1inch Aqua/SwapVM SDKs, inspects on-chain state, and reproduces swaps on a local Ethereum mainnet fork. The goal is to make competitive FewToken liquidity available to 1inch orders, including ordinary-token trades that wrap and unwrap during execution.
 
 The strategy uses existing SwapVM instructions. It does not require a new production contract or a custom opcode. A **test-only** executor explicitly composes `USDC → fwUSDC → Aqua swap → fwUSDT → USDT`, including the reverse route. Successful local execution does **not** establish 1inch discovery, automatic route selection, Resolver adoption, or frontend traffic.
 
 Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Ltd 2025. This is a Ring integration using the published SDKs, not a 1inch-endorsed product. Upstream terms apply; see [LICENSE.md](LICENSE.md).
 
-The cooperation model is an application built on the official Aqua/SwapVM contracts, with Ring supplying FewToken integration and the host supplying its wallet and market UI. The standard ABI is reused; Barker campaign logic is not a dependency. See [integration decisions](DECISIONS.md).
+The next request to 1inch is a review of this implementation and guidance on the remaining integration work. We also want to confirm whether Ring should add an Aqua position page to its own frontend, similar to the Barker example. No such page is included or assumed to be required. The standard ABI is reused; Barker campaign logic is not a dependency. See [integration decisions](DECISIONS.md).
 
 ## Scope
 
@@ -16,7 +16,7 @@ The cooperation model is an application built on the official Aqua/SwapVM contra
 | --- | --- |
 | Chain and deployment | Ethereum mainnet, AquaSwapVMRouter v1.0.2; pinned addresses and code hashes |
 | SDKs | `@1inch/swap-vm-sdk 0.4.2`, `@1inch/aqua-sdk 0.3.2` |
-| Pricing | Official constant-product, concentrated and pegged instructions; not Ring V2 Pair reserve pricing |
+| Pricing | Official constant-product, concentrated and pegged instructions, using explicitly configured strategy parameters |
 | Maker assets | Nine canonical FewTokens, with 6/8/18 decimals; see `ASSETS` in the integration API |
 | Swap modes | Both directions, exact input and exact output, with deadlines and amount limits |
 | Access | Preserves the deployed router's `tx.origin` KycNFT check |

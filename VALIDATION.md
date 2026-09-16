@@ -1,5 +1,9 @@
 # Validation
 
+## Documentation scope — 2026-09-16
+
+Current materials focus on FewToken wallet market making, 1inch code review and whether Ring needs an Aqua frontend page. No runtime, configuration, type, test or dependency file changed. The [cleanup verification](evidence/scope-cleanup-2026-09-16.json) records the repeated offline and installed-package checks and matching historical fork source hashes. The mainnet fork was not rerun for this documentation change; all earlier evidence below retains its original date and package integrity.
+
 ## Current local 0.2.1 — packaged consumer review, 2026-09-11
 
 The [repository follow-up](OFFICIAL_REVIEW.md) does not change strategy or settlement runtime code. It adds package boundaries, an executable example and consumer validation. The fresh [fork report](evidence/repository-review-2026-09-11/fork-results.json) completed at `2026-09-11T03:49:30.685Z`: **95 passed**, with all **34 source hashes** and the lockfile matching the reviewed files. The earlier reports below remain historical snapshots.
