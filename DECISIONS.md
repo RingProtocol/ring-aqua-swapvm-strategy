@@ -1,5 +1,13 @@
 # Integration decisions
 
+## 2026-09-16: prioritize the official Aqua creation page and ordinary-token orders
+
+The preferred product is FewToken positions created and managed directly in the 1inch Aqua UI. A separate Ring frontend is not a prerequisite. Ask 1inch to review the toolkit and identify the concrete work needed for its official token picker, position builder/management and resolver-side wrapping/settlement. If the official builder already covers the required parameters, reuse it; the partner need not adopt this entire SDK to meet Ring's goal.
+
+Official-page selection, successful funded position creation, discovery and ordinary-token route execution remain separate checks. Competitive pricing is an assumed selection condition, not evidence that wrapper composition is implemented. The target includes users paying/receiving ordinary tokens without manually acquiring FewToken.
+
+The unauthenticated Ethereum creation page was opened read-only. Its page-provided `search_tokens` tool returned canonical fwWETH, but no curated-list match for fwUSDT by either symbol or exact address. The visible picker offers name/address search. The browser connection failed while testing address entry, so manual import and pair configuration remain unverified; a curated-list miss is not proof that the UI cannot import the token. No wallet was connected and no creation flow was submitted. See [bounded page check](evidence/official-ui-check-2026-09-16.json).
+
 ## 2026-09-16: distinguish native wrapping, FewToken conversion and on-chain permission
 
 Michael requested explicit ETH, WETH, USDT and ordinary ERC-20 coverage. The previous SDK had WETH/FewToken conversion but no native ETH/WETH plan. Add independent `buildNativeWrapPlan` and `buildNativeUnwrapPlan` using canonical WETH deposit/withdraw, fixed caller recipient and explicit wei amounts. Preserve existing FewToken and strategy bytes; do not silently accept ETH as a market leg or reinterpret WETH as ETH. UNI is the standard ERC-20 regression; USDT must also pass with a preexisting nonzero allowance and its no-return approve behavior.
