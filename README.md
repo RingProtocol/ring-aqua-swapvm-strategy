@@ -1,6 +1,6 @@
 # Ring Aqua SwapVM strategy
 
-[中文](README.zh.md) · [API](docs/integration.md) · [Compatibility](docs/compatibility.md) · [Testing](docs/testing.md)
+[API](docs/integration.md) · [Compatibility](docs/compatibility.md) · [Testing](docs/testing.md)
 
 An unsigned SDK for offering FewToken inventory held in a maker wallet through 1inch Aqua. It builds bounded approvals, position creation/closure and token conversion plans using the official Aqua and SwapVM SDKs. It also generates ordinary-token execution recipes for a resolver to integrate.
 

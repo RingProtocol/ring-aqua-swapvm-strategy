@@ -1,6 +1,6 @@
 # Testing
 
-[README](../README.md) · [中文](../README.zh.md#测试和源码检查) · [Compatibility](compatibility.md)
+[README](../README.md) · [Compatibility](compatibility.md)
 
 The suite checks the unsigned SDK and settlement on a disposable Ethereum mainnet fork. It does not submit mainnet transactions. Current coverage is 73 offline tests and 102 fork cases; rerun them for the exact commit under review.
 

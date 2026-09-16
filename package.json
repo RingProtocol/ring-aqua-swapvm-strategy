@@ -70,12 +70,10 @@
     "LICENSE",
     "LICENSES/*.txt",
     "README.md",
-    "README.zh.md",
     "LICENSE.md",
     "SECURITY.md",
     "THIRD_PARTY_NOTICES.md",
     "docs/integration.md",
-    "docs/integration.zh.md",
     "docs/cli.md",
     "docs/compatibility.md",
     "docs/testing.md"

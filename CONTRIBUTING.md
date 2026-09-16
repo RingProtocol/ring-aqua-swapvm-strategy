@@ -6,6 +6,8 @@ Before proposing a change, run `npm run check:repo`, `npm test`, `npm run format
 
 Explain the problem, resulting behavior, validation performed, and anything still unverified. Keep local execution evidence separate from claims of official discovery, automatic routing, or real frontend fills.
 
+Keep public documentation in English. Team translations and business material belong outside this repository.
+
 Never commit credentials, private keys, wallet exports, local RPC URLs, or internal business material. Never add automatic signing, funding, deployment, or mainnet broadcasting to CI. Do not use the test harness as a production executor.
 
 Preserve upstream notices and the [license scope](LICENSE.md). Package `private: true` intentionally prevents accidental npm publication; it does not control GitHub visibility.
