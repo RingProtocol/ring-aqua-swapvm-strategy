@@ -1,8 +1,8 @@
 # Testing
 
-[README](../README.md) · [中文](testing.zh.md) · [Compatibility](compatibility.md)
+[README](../README.md) · [中文](../README.zh.md#测试和源码检查) · [Compatibility](compatibility.md)
 
-The suite checks the unsigned SDK and settlement on a disposable Ethereum mainnet fork. It does not submit mainnet transactions. Current coverage is 74 offline tests and 103 fork cases; rerun them for the exact commit under review.
+The suite checks the unsigned SDK and settlement on a disposable Ethereum mainnet fork. It does not submit mainnet transactions. Current coverage is 73 offline tests and 102 fork cases; rerun them for the exact commit under review.
 
 ## Commands
 
@@ -10,6 +10,7 @@ Requires Node.js 22.13.1 or newer.
 
 ```sh
 npm ci --ignore-scripts
+npm run check:repo
 npm run format:check
 npm test
 npm run test:types
@@ -32,7 +33,7 @@ Load credentials through a local secret manager. The CLI does not load .env file
 | Fork | Direct FewToken and atomic underlying settlement, both directions and exact-input/output modes; actual balances, refunds, rollback and authorization |
 | Dependency audit | Known registry advisories at run time; not a security audit |
 
-CI runs formatting, offline/type/package checks, browser bundling and dependency audit on pull requests and main. It has no RPC credentials and does not run the fork suite. Consult the actual PR checks for their result.
+CI rejects generated/dated run paths and broken local Markdown links, and runs formatting, offline/type/package checks, browser bundling and dependency audit on pull requests and main. It has no RPC credentials and does not run the fork suite. Consult the actual PR checks for their result.
 
 ## Fork coverage and isolation
 
@@ -48,7 +49,7 @@ Coverage includes:
 - Expiry, immutable position identity, shared wallet allowances, caller ownership, registry token allocations and skipped protocol fees.
 - Atomic ordinary-token routes, actual-output/refund accounting, preservation of preexisting tokens, and rollback on failed settlement or redemption.
 
-The suite does not individually test every possible token pair. The test executors do not implement complete production user-order authorization.
+The suite does not individually test every possible token pair. The test executor does not implement complete production user-order authorization.
 
 ## Reports and regression fixtures
 

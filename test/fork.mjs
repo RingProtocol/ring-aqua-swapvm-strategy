@@ -16,7 +16,6 @@ import {
   erc20,
 } from '../strategy.mjs';
 import { readonlyRpc, preflight } from '../readonly.mjs';
-import { inspectSources } from '../sources.mjs';
 import {
   buildAquaShipPlan,
   buildAquaDockPlan,
@@ -55,16 +54,14 @@ const report = {
       'package.json',
       'examples/build-plans.mjs',
       'test/package.mjs',
+      'test/repository.mjs',
       '.github/workflows/ci.yml',
       'test/integration.test.mjs',
       'test/cli.test.mjs',
       'readonly.mjs',
-      'sources.mjs',
       'test/fork.mjs',
-      'test/RouteHarness.sol',
       'test/RecipeHarness.sol',
       'config/deployment.json',
-      'config/wrapper-sources.json',
       'assets.mjs',
       'config/assets.json',
       'test/market-fixtures.mjs',
@@ -206,7 +203,6 @@ async function main() {
   const compilerInput = {
     language: 'Solidity',
     sources: {
-      'RouteHarness.sol': { content: readFileSync(new URL('./RouteHarness.sol', import.meta.url), 'utf8') },
       'RecipeHarness.sol': { content: readFileSync(new URL('./RecipeHarness.sol', import.meta.url), 'utf8') },
     },
     settings: {
@@ -222,14 +218,6 @@ async function main() {
     0,
     'Harness compilation failed',
   );
-  const artifact = compiled.contracts['RouteHarness.sol'].RouteHarness;
-  const harness = await new ethers.ContractFactory(
-    artifact.abi,
-    artifact.evm.bytecode.object,
-    operator,
-  ).deploy(C.swapVmRouter, OPERATOR);
-  await harness.waitForDeployment();
-  const harnessAddress = (await harness.getAddress()).toLowerCase();
   const recipeArtifact = compiled.contracts['RecipeHarness.sol'].RecipeHarness;
   const recipeHarness = await new ethers.ContractFactory(
     recipeArtifact.abi,
@@ -238,8 +226,6 @@ async function main() {
   ).deploy(C.swapVmRouter, OPERATOR);
   await recipeHarness.waitForDeployment();
   const recipeExecutor = (await recipeHarness.getAddress()).toLowerCase();
-  for (const t of TOKENS)
-    await (await token(t.underlying, operator).approve(harnessAddress, 100_000000n)).wait();
   for (const t of TOKENS)
     await (await token(t.underlying, operator).approve(recipeExecutor, 100_000000n)).wait();
   async function test(name, fn) {
@@ -455,7 +441,7 @@ async function main() {
         return { amountIn, amountOut, gasUsed: receipt.gasUsed };
       });
       await test(`atomic wrap-Aqua-unwrap ${direction} ${exactIn ? 'exact-in' : 'exact-out'}`, async () => {
-        const req = quoteRequest(direction, exactIn, 1_000000n, exactIn ? 1n : 2_000000n, harnessAddress);
+        const req = quoteRequest(direction, exactIn, 1_000000n, exactIn ? 1n : 2_000000n, recipeExecutor);
         const { amountIn, amountOut } = await quote(req);
         const b = buildQuote(config, { ...req, threshold: String(exactIn ? amountOut : amountIn) }, opts);
         const [a, z] = direction === 'USDC_USDT' ? TOKENS : [...TOKENS].reverse();
@@ -463,21 +449,23 @@ async function main() {
           beforeOut = await token(z.underlying).balanceOf(OPERATOR);
         const tx = new sdk.SwapVMContract(new sdk.Address(C.swapVmRouter)).swap(b.args);
         const receipt = await (
-          await harness.execute(
+          await recipeHarness.execute(
             a.underlying,
             a.address,
             z.address,
             z.underlying,
             amountIn,
             amountOut,
+            req.deadline,
+            OPERATOR,
             String(tx.data),
           )
         ).wait();
         assert.equal(beforeIn - (await token(a.underlying).balanceOf(OPERATOR)), amountIn);
         assert.equal((await token(z.underlying).balanceOf(OPERATOR)) - beforeOut, amountOut);
-        assert.equal(await token(a.address).balanceOf(harnessAddress), 0n);
-        assert.equal(await token(z.address).balanceOf(harnessAddress), 0n);
-        assert.equal(await token(a.address).allowance(harnessAddress, C.swapVmRouter), 0n);
+        assert.equal(await token(a.address).balanceOf(recipeExecutor), 0n);
+        assert.equal(await token(z.address).balanceOf(recipeExecutor), 0n);
+        assert.equal(await token(a.address).allowance(recipeExecutor, C.swapVmRouter), 0n);
         const swaps = receipt.logs
           .filter((l) => l.address.toLowerCase() === C.swapVmRouter)
           .map((l) => {
@@ -501,7 +489,7 @@ async function main() {
   for (const direction of ['USDC_USDT', 'USDT_USDC'])
     for (const amount of [5_000000n, 25_000000n])
       await test(`atomic ${direction} size ${amount / 1000000n} with actual origin-token deltas`, async () => {
-        const req = quoteRequest(direction, true, amount, 1n, harnessAddress);
+        const req = quoteRequest(direction, true, amount, 1n, recipeExecutor);
         const { amountIn, amountOut } = await quote(req);
         const b = buildQuote(config, { ...req, threshold: String(amountOut) }, opts);
         const [a, z] = direction === 'USDC_USDT' ? TOKENS : [...TOKENS].reverse();
@@ -509,13 +497,15 @@ async function main() {
           beforeOut = await token(z.underlying).balanceOf(OPERATOR);
         const tx = new sdk.SwapVMContract(new sdk.Address(C.swapVmRouter)).swap(b.args);
         const receipt = await (
-          await harness.execute(
+          await recipeHarness.execute(
             a.underlying,
             a.address,
             z.address,
             z.underlying,
             amountIn,
             amountOut,
+            req.deadline,
+            OPERATOR,
             String(tx.data),
           )
         ).wait();
@@ -650,19 +640,6 @@ async function main() {
     assert(r.maker.every((x) => x.state === 'docked' && x.allowance === 0n));
     assert.equal(r.quote, null);
     assert.deepEqual(await Promise.all(TOKENS.map((t) => token(t.address).balanceOf(MAKER))), before);
-  });
-  await test('nine canonical wrapper sources checked with actual v4 quote vectors', async () => {
-    const result = await inspectSources(rpc, opts);
-    assert.equal(result.status, 'available', json(result));
-    assert.equal(result.sources.length, 9);
-    for (const symbol of ['USDC', 'USDT'])
-      assert(result.sources.find((s) => s.asset === symbol).quotes.every((q) => q.status === 'available'));
-    writeFileSync(new URL('wrapper-source-vectors.json', evidence), json(result));
-    return {
-      sources: result.sources.length,
-      quotes: result.sources.flatMap((x) => x.quotes).length,
-      availableQuotes: result.sources.flatMap((x) => x.quotes).filter((x) => x.status === 'available').length,
-    };
   });
   await runOfficialCases({ provider, test, sent, token, maker, operator, config, request, now, rpc });
   await runMarketCases({

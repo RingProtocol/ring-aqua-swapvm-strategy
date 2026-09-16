@@ -2,7 +2,7 @@
 
 This SDK supplies unsigned maker transactions and resolver execution recipes for nine canonical Ethereum FewTokens (USDC, USDT, DAI, WETH, WBTC, cbBTC, weETH, UNI and wstETH underlyings). It uses the official Aqua/SwapVM deployment. It does not add a production contract or submit transactions.
 
-The public [Barker frontend](https://app.barker.money/protocols/1inch-aqua/raid) provides a reference for constructing `ship`/`dock` plans around official contracts. The API and schemas below are Ring-defined. They are not a claim that Barker or 1inch has accepted the interface or enabled FewToken routing.
+The API and schemas below are Ring-defined wrappers around official contract calls; see [compatibility](compatibility.md).
 
 Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Ltd 2025. [License scope](../LICENSE.md).
 
@@ -163,11 +163,3 @@ RING_FORK_EVIDENCE_DIR=artifacts/local-rerun npm run test:fork
 ```
 
 Fork deployments, impersonation, funding and transactions stay on the runner's loopback Anvil. Reports are local build output and are not committed. The suite executes nine asset conversions and representative stable, volatile, 6/8/18-decimal and concentrated markets in both directions/modes, alongside the legacy regression cases. It checks actual refunds, preexisting token preservation and complete rollback after failed settlement or redemption. It does not assert every possible catalog pair has been individually tested.
-
-## Review request
-
-The scope is FewToken inventory held in a maker wallet and offered through Aqua. Please review this SDK, its interfaces and local evidence, and identify the remaining development needed for 1inch orders to use these positions, including ordinary-token wrap/swap/unwrap routes. Interface documentation or an existing integration example would help Ring implement the required changes. Do not assume that forking or changing the official protocol is required.
-
-The preferred workflow is to select FewTokens and manage positions in the official Aqua UI. Please identify any missing token-picker or strategy-parameter support. Ring can supply an additional frontend only if that review identifies a need; it is not a prerequisite. No frontend is included in this repository. A creation page alone does not establish live order routing.
-
-Local success, a live strategy, source listing, resolver adoption and a real frontend fill remain separate results. Production execution still requires the appropriate runtime adapter and outer-order authorization; the test harness is not a production executor.

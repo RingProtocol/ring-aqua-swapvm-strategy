@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Interface, keccak256 } from 'ethers';
 import { C, sdk, buildStrategy, buildQuote, decimal, json } from '../strategy.mjs';
-import { catalog, poolId, wrapperQuote, v4Quoter } from '../sources.mjs';
 import { config, request, NOW } from './fixtures.mjs';
 
 test('deterministic SDK order encoding and hash survive JSON round trip', () => {
@@ -115,23 +114,4 @@ test('decimal conversions are exact, including smallest fee unit', () => {
   assert.equal(decimal('0.00001', 5), 1n);
   assert.equal(decimal('1.000001', 6), 1000001n);
   assert.equal(decimal('300', 27), 300n * 10n ** 27n);
-});
-test('nine source PoolKeys, native ETH distinction and quote direction encoding', () => {
-  assert.equal(catalog.sources.length, 9);
-  for (const row of catalog.sources) {
-    assert.equal(poolId(row.poolKey), row.poolId);
-    for (const wrap of [true, false])
-      for (const exactIn of [true, false]) {
-        const q = wrapperQuote(row, { wrap, exactIn, amount: 100n });
-        const [p] = v4Quoter.decodeFunctionData(q.method, q.data);
-        assert.equal(p.exactAmount, 100n);
-        assert.equal(p.hookData, '0x');
-        assert.equal(
-          p.zeroForOne,
-          wrap ? row.poolKey.currency0 !== row.fewToken : row.poolKey.currency0 === row.fewToken,
-        );
-      }
-  }
-  const eth = catalog.sources.find((r) => r.asset === 'ETH');
-  assert.notEqual(eth.underlying, eth.poolKey.currency0);
 });

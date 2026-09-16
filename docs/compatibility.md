@@ -20,14 +20,17 @@ Ring keeps the deployed `tx.origin` credential check, adds a mandatory expiry an
 
 Since 0.2.1, the protocol fee instruction precedes concentration, matching the official builder. This changes the hash for older configurations combining concentration and a nonzero protocol fee. Close such positions using their stored identity, never by rebuilding old parameters with a new encoder. The [legacy fixtures](../test/fixtures/README.md) retain this regression. A successful swap can emit `ProtocolFeeSkipped`; integrators must check actual fee receipts.
 
-## Reference projects
+## Official references and design choices
 
-- [Official AquaApp guide](https://business.1inch.com/portal/documentation/aqua/getting-started/build-an-aquaapp): documents the existing-opcode approach and the SDK/router version dependency.
-- [Official SwapVM template](https://github.com/1inch/swap-vm-template): useful for executable tests, examples and license notices. It includes a contract/deployment workflow; copying its directory tree or current ABI is not required for this unsigned SDK.
-- [Official SDK examples](https://github.com/1inch/sdks-examples): a reference for runnable consumer examples, not an Aqua-specific admission standard.
-- [Barker Aqua page](https://app.barker.money/protocols/1inch-aqua/raid): a reference for the partner-facing user flow. Its public [ALM experiment](https://github.com/barkermoney/barker-alm-engine/tree/7e208c9f2a8c60c51459122d1c6582d0aba4e0be) is not the earlier campaign's private implementation. No Barker code is copied and private API compatibility is not claimed.
+- [Build an AquaApp, Path B](https://business.1inch.com/portal/documentation/aqua/getting-started/build-an-aquaapp): use the least custom supported pricing path. Ring composes existing instructions and does not add an opcode or production contract.
+- [Strategy Template](https://business.1inch.com/portal/documentation/aqua/getting-started/strategy-template): demonstrates a fork test plus SDK ship/quote/swap/dock. Use the intended deployment and installed SDK as the encoding reference, not unversioned example constants.
+- [SwapVM SDK](https://github.com/1inch/sdks/tree/master/typescript/swap-vm): recommends `AquaProgramBuilder` for the deployed Aqua subset. [Aqua SDK](https://github.com/1inch/sdks/tree/master/typescript/aqua) owns ship/dock encoding; Ring does not maintain a separate dock encoder.
 
-These sources do not establish approval of this repository. The integration schemas are Ring-defined wrappers around official contract calls. Official token selection, discovery and resolver adoption still require 1inch review and live verification. A competitive local quote does not prove that the official execution system knows how to compose the route.
+The scope is FewToken inventory in maker wallets, ideally created and managed in the official Aqua UI. Uniswap hook discovery and its quote diagnostic are outside this scope: FewToken conversion calls canonical wrappers directly. Preserve expiry, bounded approvals, caller-owned recipients, stored-identity shutdown and atomic ordinary-token settlement. Keep the Node/portable APIs and legacy encoding stable; local compatibility and production adoption remain separate.
+
+[Barker's page](https://app.barker.money/protocols/1inch-aqua/raid) is a reference for the user flow, not a private API specification. Ring's schemas are not claimed as accepted 1inch/Barker interfaces. No Barker code is copied. Prefer the official lifecycle and SDK interfaces over copying partner-specific campaign logic.
+
+Generated reports stay local in `artifacts/`; retain runnable tests and fixed regression inputs. The source-tree CI check fails CI when dated run paths or generated output are tracked. Revisit these choices when required pricing, assets, the intended deployment or the selected resolver interface changes; do not silently weaken the checks to match a new example.
 
 ## Review priorities
 
@@ -35,4 +38,4 @@ These sources do not establish approval of this repository. The integration sche
 2. Identify what the official Aqua UI needs to create/manage these FewToken positions and parameters.
 3. Specify the missing discovery and resolver interfaces for ordinary-token wrapping, swap execution, actual-output unwrapping, refunds and outer-order authorization.
 
-Test executors are not production adapters. This repository does not claim production security, official frontend traffic or unrestricted commercial permission; see [security](../SECURITY.md) and [licenses](../LICENSE.md).
+The test executor is not a production adapter. This repository does not claim production security, official frontend traffic or unrestricted commercial permission; see [security](../SECURITY.md) and [licenses](../LICENSE.md).

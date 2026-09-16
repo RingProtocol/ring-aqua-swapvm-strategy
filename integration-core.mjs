@@ -3,8 +3,8 @@ import { ASSETS, getAsset } from './assets.mjs';
 
 // Ring's integration interface, not a private 1inch/Barker API. No signer or RPC writes.
 export function createIntegrationApi(api) {
-  const { C, deployment, sdk, check, address, uint, buildStrategy, buildQuote, erc20 } = api;
-  const dockAbi = new Interface(['function dock(address,bytes32,address[])']);
+  const { C, deployment, sdk, AquaProtocolContract, check, address, uint, buildStrategy, buildQuote, erc20 } =
+    api;
   const fewAbi = new Interface([
     'function wrapTo(uint256,address) returns(uint256)',
     'function unwrapTo(uint256,address) returns(uint256)',
@@ -85,7 +85,13 @@ export function createIntegrationApi(api) {
       const call = transaction(
         maker,
         C.aqua,
-        dockAbi.encodeFunctionData('dock', [C.swapVmRouter, config.strategyHash, tokens]),
+        String(
+          AquaProtocolContract.encodeDockCallData({
+            app: new sdk.Address(C.swapVmRouter),
+            strategyHash: new sdk.HexString(config.strategyHash),
+            tokens: tokens.map((t) => new sdk.Address(t)),
+          }),
+        ),
         'Dock both tokens',
       );
       return {

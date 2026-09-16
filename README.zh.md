@@ -1,6 +1,6 @@
 # Ring Aqua SwapVM strategy
 
-[English](README.md) · [接口](docs/integration.zh.md) · [官方源码对照](docs/compatibility.md) · [测试](docs/testing.zh.md)
+[English](README.md) · [接口](docs/integration.zh.md) · [官方源码对照](docs/compatibility.md) · [测试](docs/testing.md)
 
 这个 SDK 用于把做市钱包里的 FewToken 配置为 Aqua 仓位。它通过 1inch 官方 SDK 生成限额授权、建仓、关闭、包装和解包的未签名交易，也为执行方生成普通币完整兑换的操作步骤。
 
@@ -29,6 +29,7 @@ git clone https://github.com/RingProtocol/ring-aqua-swapvm-strategy.git
 cd ring-aqua-swapvm-strategy
 npm ci --ignore-scripts
 npm run example:plans
+npm run check:repo
 npm test
 npm run test:types
 npm run test:package
@@ -36,7 +37,11 @@ npm run test:package
 
 [完整示例](examples/build-plans.mjs)通过公开接口生成 USDC/WETH 包装、建仓、报价/成交调用、兑换步骤、关闭和解包计划。示例使用虚拟参数，不得直接广播。安装包测试会在独立目录安装实际 tarball，运行示例并检查类型，不会发布 npm 包。`private: true` 防止误发 npm，不限制 GitHub 公开源码。
 
-主网 fork 测试另需 [Anvil](https://getfoundry.sh/anvil/overview) 和环境变量 `ETH_RPC_URL` 中的 archive RPC，运行 `npm run test:fork`。所有交易只在本地 Anvil 执行，生成报告保存在被 Git 忽略的 `artifacts/fork/`。详见[测试说明](docs/testing.zh.md)、[接口](docs/integration.zh.md)和 [CLI](docs/cli.md)。
+主网 fork 测试另需 [Anvil](https://getfoundry.sh/anvil/overview) 和环境变量 `ETH_RPC_URL` 中的 archive RPC，运行 `npm run test:fork`。所有交易只在本地 Anvil 执行，生成报告保存在被 Git 忽略的 `artifacts/fork/`。详见[测试说明](docs/testing.md)、[接口](docs/integration.zh.md)和 [CLI](docs/cli.md)。
+
+## 测试和源码检查
+
+离线测试覆盖参数、编码和授权；fork 测试覆盖双向成交、退款、回滚、权限，以及 ETH、WETH、USDT 和普通 ERC-20。固定历史区块用于复现行为，不代表当前主网库存。CI 不使用 RPC，只跑离线、类型、浏览器打包、安装包和依赖检查。`check:repo` 会在 CI 中检查日期报告、生成目录及失效文档链接。详细命令见[测试说明](docs/testing.md)。
 
 ## 请 1inch 审核什么
 
@@ -46,15 +51,15 @@ npm run test:package
 
 本地 fork 已验证这条组合及反向成交，但还没有证明官方收录、自动选路或真实前端成交。请 review 现有代码，指出官方选币、仓位参数，以及执行方包装和结算还需要我们补什么。优先复用官方页面，不预设 Ring 必须另做页面；实现目标也不要求对方完整采用本 SDK。
 
-完整路线输出是待执行方适配的操作步骤，不是可直接上线的最终交易。`test/` 内两份 Solidity 合约只用于测试，不能处理生产订单。真实试点前还要检查余额、即时赎回能力、费用和 gas；成交成功或配置了费率，都不等于项目已经获得收益。
+完整路线输出是待执行方适配的操作步骤，不是可直接上线的最终交易。`test/` 内 Solidity 合约只用于测试，不能处理生产订单。真实试点前还要检查余额、即时赎回能力、费用和 gas；成交成功或配置了费率，都不等于项目已经获得收益。
 
 ## 目录与许可
 
 - 根目录 `.mjs` / `.d.mts`：SDK、CLI、类型。
-- `config/`：资产与部署配置、wrapper 元数据及示例参数。
+- `config/`：资产与部署配置及示例参数。
 - `examples/`：可运行的未签名示例。
 - `test/`：离线、fork、安装包测试及固定回归样本。
-- `docs/`：接口、CLI、兼容性、测试和[设计决定](docs/design.md)。
+- `docs/`：接口、CLI、兼容性、测试和设计决定。
 
 代码未经安全审计。使用前阅读 [SECURITY.md](SECURITY.md) 和[许可范围](LICENSE.md)。Ring 独立代码使用 MIT；上游 SDK 和生成的程序继续适用上游条款，不能整体宣称为无限制商用 MIT 项目。
 

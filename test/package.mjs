@@ -36,7 +36,6 @@ try {
     'portable.d.mts',
     'config/assets.json',
     'config/deployment.json',
-    'config/wrapper-sources.json',
     'examples/build-plans.mjs',
     'LICENSE',
     'LICENSE.md',

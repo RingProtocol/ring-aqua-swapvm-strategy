@@ -334,6 +334,7 @@ export function createStrategyApi(sdk, AquaProtocolContract, deploymentConfig) {
     TOKENS,
     deployment,
     sdk,
+    AquaProtocolContract,
     erc20,
     aquaAbi,
     routerAbi,

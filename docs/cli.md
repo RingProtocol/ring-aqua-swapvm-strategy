@@ -62,17 +62,3 @@ The checker pins one canonical block hash, checks deployment code, FewFactory bi
 | `stale` | The snapshot expired or its block changed |
 
 `executionAllowed` is always `false`. A successful simulation does not authorize a trade or validate an entire Resolver user order. Recheck after changing the block, taker, receiver, or amount limits. Receiving tokens in a reverse swap does not replenish a spent ERC-20 allowance.
-
-## Wrapper source material
-
-`config/wrapper-sources.json` contains nine Uniswap v4 wrapper PoolKeys, pool IDs, tokens, decimals, and pinned public allowlist provenance. The ETH pool takes native ETH; the underlying token bound to fwWETH is WETH.
-
-```sh
-# Requires ETH_RPC_URL. The sources command reads the fixed catalog;
-# its JSON input is required by the CLI but does not override that catalog.
-node cli.mjs sources config/example.json wrapper-check.local.json
-```
-
-`sources.mjs` verifies canonical bindings, immediate redemption backing, and hook code hashes, then requests both directions in both amount modes from V4Quoter. Failed quotes retain `null` and their own status. A top-level `available` means the catalog and snapshot checks completed; inspect every `quotes[].status` separately.
-
-This is Ring's source-data format, **not an accepted 1inch Pathfinder plugin interface**. Uniswap allowlisting does not establish 1inch integration. Resolver execution still needs settlement-order, returned-delta, redemption-availability, user-limit, and gas checks.

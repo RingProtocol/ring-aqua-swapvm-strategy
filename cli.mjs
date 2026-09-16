@@ -1,7 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { buildStrategy, json, check } from './strategy.mjs';
 import { preflight, readonlyRpc } from './readonly.mjs';
-import { inspectSources } from './sources.mjs';
 import {
   buildAquaShipPlan,
   buildAquaDockPlan,
@@ -13,7 +12,7 @@ import {
 try {
   const [command, input, output] = process.argv.slice(2);
   check(
-    ['build', 'ship', 'dock', 'wrap', 'unwrap', 'route', 'preflight', 'sources'].includes(command) &&
+    ['build', 'ship', 'dock', 'wrap', 'unwrap', 'route', 'preflight'].includes(command) &&
       input &&
       output &&
       process.argv.length === 5,
@@ -30,10 +29,7 @@ try {
   else {
     check(process.env.ETH_RPC_URL || process.env.RPC_URL, 'MISSING_RPC');
     const rpc = readonlyRpc(process.env.ETH_RPC_URL || process.env.RPC_URL);
-    result =
-      command === 'sources'
-        ? await inspectSources(rpc)
-        : await preflight(rpc, config.strategy, { request: config.quote });
+    result = await preflight(rpc, config.strategy, { request: config.quote });
   }
   // Refuse to overwrite an existing review artifact or a config file.
   writeFileSync(output, json(result), { flag: 'wx', mode: 0o600 });
@@ -41,7 +37,7 @@ try {
   if (result.status && result.status !== 'available') process.exitCode = 2;
 } catch {
   console.error(
-    'Command failed. Usage: node cli.mjs build|ship|dock|wrap|unwrap|route|preflight|sources INPUT.json NEW_OUTPUT.json. Check config, expiry, RPC and output path. No transaction sent.',
+    'Command failed. Usage: node cli.mjs build|ship|dock|wrap|unwrap|route|preflight INPUT.json NEW_OUTPUT.json. Check config, expiry, RPC and output path. No transaction sent.',
   );
   process.exitCode = 1;
 }

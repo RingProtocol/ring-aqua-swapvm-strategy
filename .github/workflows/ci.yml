@@ -24,6 +24,7 @@ jobs:
           node-version: '22.18.0'
           cache: npm
       - run: npm ci --ignore-scripts
+      - run: npm run check:repo
       - run: npm run format:check
       - run: npm test
       - run: npm run test:types

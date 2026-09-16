@@ -5,7 +5,7 @@ import { createStrategyApi } from './strategy-core.mjs';
 // The pinned upstream ESM entry has extensionless transitive imports in Node.
 const require = createRequire(import.meta.url);
 export const sdk = require('@1inch/swap-vm-sdk');
-const { AquaProtocolContract } = require('@1inch/aqua-sdk');
+export const { AquaProtocolContract } = require('@1inch/aqua-sdk');
 export const {
   C,
   TOKENS,

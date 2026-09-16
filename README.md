@@ -29,6 +29,7 @@ git clone https://github.com/RingProtocol/ring-aqua-swapvm-strategy.git
 cd ring-aqua-swapvm-strategy
 npm ci --ignore-scripts
 npm run example:plans
+npm run check:repo
 npm test
 npm run test:types
 npm run test:package
@@ -46,15 +47,15 @@ Our goal is to create and manage FewToken positions in the official Aqua UI, and
 
 The local fork validates this composition, including reverse settlement. It does not establish official discovery, automatic selection or a real 1inch frontend fill. Please review the SDK and identify remaining work for official token selection, position parameters and resolver-side wrapping/settlement. Reuse the official UI where possible; a separate Ring page is not assumed necessary. The partner does not have to adopt this entire SDK to meet that goal.
 
-The route output is an execution recipe, not a finished production transaction. Both Solidity contracts under `test/` are test-only executors and must not handle production orders. Fresh inventory, redemption backing, fees and gas must be checked before any real trial; configured fees or a successful swap do not guarantee profit.
+The route output is an execution recipe, not a finished production transaction. The Solidity contract under `test/` is a test-only executor and must not handle production orders. Fresh inventory, redemption backing, fees and gas must be checked before any real trial; configured fees or a successful swap do not guarantee profit.
 
 ## Repository map
 
 - Root `.mjs` and `.d.mts`: SDK, CLI and public types.
-- `config/`: pinned assets, deployment, wrapper metadata and example inputs.
+- `config/`: pinned assets, deployment and example inputs.
 - `examples/`: runnable unsigned consumer example.
 - `test/`: executable unit/fork/consumer tests and stable regression fixtures.
-- `docs/`: integration, CLI, compatibility, testing and [design decisions](docs/design.md).
+- `docs/`: integration, CLI, compatibility, testing and design decisions.
 
 ## Security and licenses
 
