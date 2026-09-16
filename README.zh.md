@@ -6,7 +6,9 @@
 
 完整的 `USDC → fwUSDC → Aqua → fwUSDT → USDT` 由本地测试执行器显式组合。它证明可以执行，不能证明 1inch 前端已经会选这条路线。下一步请 1inch review 现有实现，指出还需要补哪些开发；同时确认 Ring 是否需要在自己的前端增加类似 Barker 的 Aqua 仓位页面。当前没有这个页面，也没有假定它是必需条件。
 
-0.2.1 提供九种资产的包装和解包、通用建仓、凭仓位身份关闭、标准报价/成交调用、TypeScript 类型，以及供执行方适配的完整兑换步骤。采用官方 ABI 和 SDK，接口写法参考 Barker，保留 Ring 原有业务和安全约束；不依赖 Barker 的活动后台。详见[接入接口](INTEGRATION.zh.md)及[官方接法核对](OFFICIAL_REVIEW.zh.md)。本轮不含前端页面或新增生产合约。
+0.2.2 提供九种资产的包装和解包、独立的 ETH/WETH 转换、通用建仓、凭仓位身份关闭、标准报价/成交调用、TypeScript 类型，以及供执行方适配的完整兑换步骤。采用官方 ABI 和 SDK，接口写法参考 Barker，保留 Ring 原有业务和安全约束；不依赖 Barker 的活动后台。详见[接入接口](INTEGRATION.zh.md)及[官方接法核对](OFFICIAL_REVIEW.zh.md)。本轮不含前端页面或新增生产合约。
+
+`ETH ↔ WETH` 与 `WETH ↔ fwWETH` 是两层转换；原生 ETH 不直接进入 Aqua 仓位。九种代币的目录只限制工具包，不是链上全局白名单；链上由做市钱包的授权和已发布仓位控制用币范围。详见[代币列表与链上权限](INTEGRATION.zh.md#代币列表与链上权限)。
 
 Powered by SwapVM — © Degensoft Ltd 2025.
 

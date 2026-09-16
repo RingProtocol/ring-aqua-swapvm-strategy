@@ -3,6 +3,8 @@ import {
   buildAquaDockPlan,
   buildAquaSwapCall,
   buildUnderlyingRoute,
+  buildNativeWrapPlan,
+  buildNativeUnwrapPlan,
   getAsset,
   type MarketConfig,
   type Address,
@@ -11,6 +13,15 @@ import { createRingAquaIntegration } from '@ring-protocol/aqua-swapvm-strategy/p
 import * as swapVmSdk from '@1inch/swap-vm-sdk';
 import * as aquaSdk from '@1inch/aqua-sdk';
 const maker: Address = '0x0000000000000000000000000000000020260909';
+const nativeRequest = { chainId: 1 as const, maker, amount: '1000000000000000' };
+buildNativeWrapPlan(nativeRequest);
+buildNativeUnwrapPlan(nativeRequest);
+createRingAquaIntegration({ swapVmSdk, aquaSdk }).buildNativeWrapPlan(nativeRequest);
+createRingAquaIntegration({ swapVmSdk, aquaSdk }).buildNativeUnwrapPlan(nativeRequest);
+// @ts-expect-error Native wrapping cannot override the canonical WETH target.
+buildNativeWrapPlan({ ...nativeRequest, to: maker });
+// @ts-expect-error Native amounts must be integer strings in wei.
+buildNativeUnwrapPlan({ ...nativeRequest, amount: 0.1 });
 const usdc = getAsset('USDC'),
   weth = getAsset('WETH');
 const config: MarketConfig = {

@@ -12,6 +12,8 @@ The next request to 1inch is a review of this implementation and guidance on the
 
 ## Scope
 
+Version 0.2.2 adds separate unsigned `ETH <-> WETH` plans alongside `WETH <-> fwWETH`; see [native conversion and token permissions](INTEGRATION.md#native-conversion-and-token-permissions-022). The nine-token SDK catalog is not an on-chain global allowlist. Maker approvals and each shipped strategy control wallet use; native user-order execution remains a resolver integration task.
+
 | Component | Supported scope |
 | --- | --- |
 | Chain and deployment | Ethereum mainnet, AquaSwapVMRouter v1.0.2; pinned addresses and code hashes |

@@ -70,6 +70,8 @@ const report = {
       'test/market-fixtures.mjs',
       'test/markets.test.mjs',
       'test/markets-fork.mjs',
+      'test/conversions-fork.mjs',
+      'test/native.test.mjs',
       'index.d.mts',
       'portable.d.mts',
       'test/types.mts',

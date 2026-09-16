@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "files": 33,
+  "unpackedBytes": 210865,
+  "integrity": "sha512-D9viWQXw0p2av/UhqHY5Q4xCPwlKUbUh6WkK1rXQ/e7ga+MxI0Iiw0vWrc696be0yZ0GCHgq3vDQRdJK1mMyEw==",
+  "consumer": "isolated-tarball-install",
+  "nodeAndPortable": true,
+  "types": true,
+  "published": false
+}

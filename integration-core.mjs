@@ -9,6 +9,7 @@ export function createIntegrationApi(api) {
     'function wrapTo(uint256,address) returns(uint256)',
     'function unwrapTo(uint256,address) returns(uint256)',
   ]);
+  const wethAbi = new Interface(['function deposit() payable', 'function withdraw(uint256)']);
   const safety = () => ({
     unsigned: true,
     executionAllowed: false,
@@ -146,6 +147,37 @@ export function createIntegrationApi(api) {
   }
   const buildMakerWrapPlan = (input) => conversion(input, true);
   const buildMakerUnwrapPlan = (input) => conversion(input, false);
+
+  // Native wrapping is a separate layer: ETH <-> WETH, never ETH <-> fwWETH.
+  // Compose with the existing WETH FewToken plans only after each receipt succeeds.
+  function nativeConversion(input, wrap) {
+    fields(input, ['chainId', 'maker', 'amount']);
+    check(input.chainId === 1, 'UNSUPPORTED_CHAIN');
+    const maker = actor(input.maker),
+      amount = uint(input.amount, 96),
+      weth = getAsset('WETH').underlying;
+    const call = transaction(
+      maker,
+      weth,
+      wethAbi.encodeFunctionData(wrap ? 'deposit' : 'withdraw', wrap ? [] : [amount]),
+      wrap ? 'Wrap maker ETH into WETH' : 'Unwrap maker WETH into ETH',
+    );
+    return {
+      schema: 'ring.native-conversion.v1',
+      kind: wrap ? 'wrap' : 'unwrap',
+      chainId: 1,
+      maker,
+      recipient: maker,
+      nativeAsset: 'ETH',
+      wrappedToken: weth,
+      amount: String(amount),
+      transactions: [{ ...call, value: wrap ? String(amount) : '0' }],
+      atomicRequired: false,
+      safety: safety(),
+    };
+  }
+  const buildNativeWrapPlan = (input) => nativeConversion(input, true);
+  const buildNativeUnwrapPlan = (input) => nativeConversion(input, false);
 
   function takerCall(config, request, options, swap) {
     const q = buildQuote(config, request, options);
@@ -295,6 +327,8 @@ export function createIntegrationApi(api) {
     buildAquaSwapCall,
     buildMakerWrapPlan,
     buildMakerUnwrapPlan,
+    buildNativeWrapPlan,
+    buildNativeUnwrapPlan,
     buildUnderlyingRoute,
     fewAbi,
   };

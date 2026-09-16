@@ -27,6 +27,10 @@ const close = kit.buildAquaDockPlan({
   tokens: [usdc.address, weth.address],
 });
 const wrap = kit.buildMakerWrapPlan({ chainId: 1, maker, asset: 'WETH', amount: '100000000000000000' });
+const nativeWrap = kit.buildNativeWrapPlan({ chainId: 1, maker, amount: '100000000000000000' });
+const nativeUnwrap = kit.buildNativeUnwrapPlan({ chainId: 1, maker, amount: nativeWrap.amount });
+if (nativeWrap.transactions[0].value !== nativeWrap.amount || nativeUnwrap.transactions[0].value !== '0')
+  throw new Error('BROWSER_NATIVE_PLAN_MISMATCH');
 if (plan.transactions.length !== 5 || close.transactions.length !== 3 || wrap.transactions.length !== 4)
   throw new Error('BROWSER_PLAN_MISMATCH');
 document.body.textContent = JSON.stringify({

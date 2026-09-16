@@ -15,5 +15,7 @@ export function createRingAquaIntegration(dependencies: {
   | 'buildAquaSwapCall'
   | 'buildMakerWrapPlan'
   | 'buildMakerUnwrapPlan'
+  | 'buildNativeWrapPlan'
+  | 'buildNativeUnwrapPlan'
   | 'buildUnderlyingRoute'
 >;

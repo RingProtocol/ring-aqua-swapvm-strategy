@@ -1,6 +1,6 @@
 # Official source review
 
-2026-09-11 · version 0.2.1 · local only
+Source review: 2026-09-11 · version 0.2.1. Historical review snapshot; publication status is not current here. The 0.2.2 native-conversion changes and current tests are in [VALIDATION.md](VALIDATION.md).
 
 The implementation follows the officially supported [Path B](https://business.1inch.com/portal/documentation/aqua/getting-started/build-an-aquaapp): compose existing SwapVM instructions and ship a strategy to the shared router. The current pricing scope needs no new opcode or pricing contract. Ring adds FewToken conversion, bounded transaction plans and an atomic underlying-route recipe; it does not implement hosted discovery or a production resolver.
 

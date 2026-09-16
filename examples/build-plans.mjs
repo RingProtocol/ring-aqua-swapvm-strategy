@@ -7,6 +7,8 @@ import {
   buildAquaSwapCall,
   buildMakerWrapPlan,
   buildMakerUnwrapPlan,
+  buildNativeWrapPlan,
+  buildNativeUnwrapPlan,
   buildUnderlyingRoute,
   getAsset,
 } from '@ring-protocol/aqua-swapvm-strategy';
@@ -58,6 +60,8 @@ export function buildExamplePlans() {
   return {
     config,
     identity,
+    // Optional outer layer when starting/ending with native ETH, not already-held WETH.
+    nativeWrap: buildNativeWrapPlan({ chainId: 1, maker, amount: conversion.amount }),
     wrap: buildMakerWrapPlan(conversion),
     ship,
     quote: buildAquaQuoteCall(config, { ...request, taker: operator, receiver }, { now }),
@@ -66,6 +70,7 @@ export function buildExamplePlans() {
     dock: buildAquaDockPlan(identity),
     // Only a format example; live unwrapping must use fresh balances/redemption checks.
     unwrap: buildMakerUnwrapPlan(conversion),
+    nativeUnwrap: buildNativeUnwrapPlan({ chainId: 1, maker, amount: conversion.amount }),
   };
 }
 
@@ -78,9 +83,11 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         pair: 'USDC/WETH',
         strategyHash: plans.identity.strategyHash,
         wrapCalls: plans.wrap.transactions.length,
+        nativeWrapCalls: plans.nativeWrap.transactions.length,
         shipCalls: plans.ship.transactions.length,
         dockCalls: plans.dock.transactions.length,
         unwrapCalls: plans.unwrap.transactions.length,
+        nativeUnwrapCalls: plans.nativeUnwrap.transactions.length,
         routeAdapter: plans.route.adapterStatus,
         safety: plans.ship.safety,
       },

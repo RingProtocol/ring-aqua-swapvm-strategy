@@ -1,0 +1,117 @@
+
+> @ring-protocol/aqua-swapvm-strategy@0.2.2 test:fork
+> node test/fork.mjs
+
+PASS unshipped strategy detected before maker authorization
+PASS SDK v0.4.2 + Aqua v0.3.2 compatible with deployed v1.0.2 router
+PASS SDK USDC wrap and unwrap plans reconcile real balances and allowances
+PASS SDK USDT wrap and unwrap plans reconcile real balances and allowances
+PASS SDK recipe USDC_USDT exact-in settles and refunds actual amounts
+PASS SDK recipe USDC_USDT exact-out settles and refunds actual amounts
+PASS SDK recipe USDT_USDC exact-in settles and refunds actual amounts
+PASS SDK recipe USDT_USDC exact-out settles and refunds actual amounts
+PASS SDK recipe failing after wrapping rolls back input, maker and recipient balances
+PASS SDK recipe wrong swap recipient cannot leave FewToken outside atomic settlement
+PASS SDK recipe insufficient immediate redemption backing rolls back the Aqua fill
+PASS SDK recipe deadline remains enforced during atomic execution
+PASS SDK dock plan closes an expired position without requiring a future expiry
+PASS direct USDC_USDT exact-in quote matches real settlement
+PASS atomic wrap-Aqua-unwrap USDC_USDT exact-in
+PASS direct USDC_USDT exact-out quote matches real settlement
+PASS atomic wrap-Aqua-unwrap USDC_USDT exact-out
+PASS direct USDT_USDC exact-in quote matches real settlement
+PASS atomic wrap-Aqua-unwrap USDT_USDC exact-in
+PASS direct USDT_USDC exact-out quote matches real settlement
+PASS atomic wrap-Aqua-unwrap USDT_USDC exact-out
+PASS atomic USDC_USDT size 5 with actual origin-token deltas
+PASS atomic USDC_USDT size 25 with actual origin-token deltas
+PASS atomic USDT_USDC size 5 with actual origin-token deltas
+PASS atomic USDT_USDC size 25 with actual origin-token deltas
+PASS maker balances, virtual balances, protocol fee and cumulative allowances reconcile
+PASS missing KycNFT cannot quote or execute
+PASS wrong factory-to-wrapper binding fails before quoting
+PASS ordinary token input does not automatically use FewToken strategy
+PASS maker missing approval is detected even if mathematical quote succeeds
+PASS maker physical balance below virtual inventory blocks fill
+PASS missing taker approval blocks fill simulation
+PASS one-wei tighter min-out / max-in protection reverts settlement
+PASS oversized output cannot consume unavailable virtual inventory
+PASS maker program expiry is enforced onchain
+PASS taker deadline independently enforced onchain
+PASS dock and revoke fully disable strategy without moving maker funds
+PASS nine canonical wrapper sources checked with actual v4 quote vectors
+PASS official SDK decodes ship and fill events, reconstructs the order, and decodes shutdown
+PASS official registry rejects partial-token docking without changing either token state
+PASS official registry rejects re-shipping an active or previously docked strategy identity
+PASS official dock caller identity prevents another wallet from closing the maker position
+PASS shared Aqua allowance can block a sibling position even when its quote remains unchanged
+PASS closing one strategy and revoking shared allowance leaves a sibling active but unfillable
+PASS v1.0.2 can skip an unpaid protocol fee while settling; preflight preserves the fee buffer warning
+Preparing fork inventory: cbBTC
+PASS multiasset cbBTC canonical wrap/unwrap round-trip reconciles 1:1 and clears approval
+Preparing fork inventory: DAI
+PASS multiasset DAI canonical wrap/unwrap round-trip reconciles 1:1 and clears approval
+Preparing fork inventory: WETH
+PASS multiasset WETH canonical wrap/unwrap round-trip reconciles 1:1 and clears approval
+Preparing fork inventory: USDC
+PASS multiasset USDC canonical wrap/unwrap round-trip reconciles 1:1 and clears approval
+Preparing fork inventory: WBTC
+PASS multiasset WBTC canonical wrap/unwrap round-trip reconciles 1:1 and clears approval
+Preparing fork inventory: weETH
+PASS multiasset weETH canonical wrap/unwrap round-trip reconciles 1:1 and clears approval
+Preparing fork inventory: UNI
+PASS multiasset UNI canonical wrap/unwrap round-trip reconciles 1:1 and clears approval
+Preparing fork inventory: USDT
+PASS multiasset USDT canonical wrap/unwrap round-trip reconciles 1:1 and clears approval
+Preparing fork inventory: wstETH
+PASS multiasset wstETH canonical wrap/unwrap round-trip reconciles 1:1 and clears approval
+PASS native ETH deposit/withdraw reconciles ETH, WETH and gas without touching fwWETH
+PASS ETH to WETH to fwWETH and reverse preserves principal and clears wrapper allowance
+PASS native conversion fails on insufficient ETH or WETH and does not move balances
+PASS WETH real conversion reconciles deltas with an existing nonzero allowance
+PASS USDT-no-return-reset-approval real conversion reconciles deltas with an existing nonzero allowance
+PASS ordinary-ERC20 real conversion reconciles deltas with an existing nonzero allowance
+PASS Aqua registry accepts ERC20 tokens outside Ring SDK catalog without a global token allowlist
+PASS ERC20 allowance alone cannot pull a token absent from the maker strategy allocation
+PASS multiasset fwUSDC->fwWETH straight_full_range exact-in direct and atomic settlement
+PASS multiasset fwUSDC->fwWETH straight_full_range exact-out direct and atomic settlement
+PASS multiasset fwWETH->fwUSDC straight_full_range exact-in direct and atomic settlement
+PASS multiasset fwWETH->fwUSDC straight_full_range exact-out direct and atomic settlement
+PASS multiasset fwWBTC->fwUSDT straight_full_range exact-in direct and atomic settlement
+PASS multiasset fwWBTC->fwUSDT straight_full_range exact-out direct and atomic settlement
+PASS multiasset fwUSDT->fwWBTC straight_full_range exact-in direct and atomic settlement
+PASS multiasset fwUSDT->fwWBTC straight_full_range exact-out direct and atomic settlement
+PASS multiasset fwUSDC->fwDAI curved_pegged exact-in direct and atomic settlement
+PASS multiasset fwUSDC->fwDAI curved_pegged exact-out direct and atomic settlement
+PASS multiasset fwDAI->fwUSDC curved_pegged exact-in direct and atomic settlement
+PASS multiasset fwDAI->fwUSDC curved_pegged exact-out direct and atomic settlement
+PASS multiasset fwWBTC->fwcbBTC straight_full_range exact-in direct and atomic settlement
+PASS multiasset fwWBTC->fwcbBTC straight_full_range exact-out direct and atomic settlement
+PASS multiasset fwcbBTC->fwWBTC straight_full_range exact-in direct and atomic settlement
+PASS multiasset fwcbBTC->fwWBTC straight_full_range exact-out direct and atomic settlement
+PASS multiasset fwweETH->fwWETH straight_full_range exact-in direct and atomic settlement
+PASS multiasset fwweETH->fwWETH straight_full_range exact-out direct and atomic settlement
+PASS multiasset fwWETH->fwweETH straight_full_range exact-in direct and atomic settlement
+PASS multiasset fwWETH->fwweETH straight_full_range exact-out direct and atomic settlement
+PASS multiasset fwWETH->fwUNI straight_full_range exact-in direct and atomic settlement
+PASS multiasset fwWETH->fwUNI straight_full_range exact-out direct and atomic settlement
+PASS multiasset fwUNI->fwWETH straight_full_range exact-in direct and atomic settlement
+PASS multiasset fwUNI->fwWETH straight_full_range exact-out direct and atomic settlement
+PASS multiasset fwWETH->fwwstETH straight_full_range exact-in direct and atomic settlement
+PASS multiasset fwWETH->fwwstETH straight_full_range exact-out direct and atomic settlement
+PASS multiasset fwwstETH->fwWETH straight_full_range exact-in direct and atomic settlement
+PASS multiasset fwwstETH->fwWETH straight_full_range exact-out direct and atomic settlement
+PASS multiasset fwUSDC->fwWETH straight_full_range/concentrated exact-in direct and atomic settlement
+PASS multiasset fwUSDC->fwWETH straight_full_range/concentrated exact-out direct and atomic settlement
+PASS multiasset fwWETH->fwUSDC straight_full_range/concentrated exact-in direct and atomic settlement
+PASS multiasset fwWETH->fwUSDC straight_full_range/concentrated exact-out direct and atomic settlement
+PASS multiasset fwWBTC->fwUSDT straight_full_range/concentrated exact-in direct and atomic settlement
+PASS multiasset fwWBTC->fwUSDT straight_full_range/concentrated exact-out direct and atomic settlement
+PASS multiasset fwUSDT->fwWBTC straight_full_range/concentrated exact-in direct and atomic settlement
+PASS multiasset fwUSDT->fwWBTC straight_full_range/concentrated exact-out direct and atomic settlement
+PASS multiasset pinned preflight verifies 6/18 metadata and official quote/fill simulation
+PASS multiasset slippage failure reverts wrapped input and entire settlement
+PASS multiasset redemption failure reverts wrapped input and entire settlement
+PASS multiasset revoked-maker failure reverts wrapped input and entire settlement
+PASS multiasset one-sided concentrated inventory fills from zero input reserve
+All 103 fork cases passed. No mainnet transaction sent.

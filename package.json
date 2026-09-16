@@ -1,6 +1,6 @@
 {
   "name": "@ring-protocol/aqua-swapvm-strategy",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Unsigned FewToken strategy building and read-only validation using the 1inch Aqua and SwapVM SDKs",
   "repository": {
     "type": "git",

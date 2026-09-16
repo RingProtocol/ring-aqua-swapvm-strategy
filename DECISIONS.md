@@ -1,5 +1,15 @@
 # Integration decisions
 
+## 2026-09-16: distinguish native wrapping, FewToken conversion and on-chain permission
+
+Michael requested explicit ETH, WETH, USDT and ordinary ERC-20 coverage. The previous SDK had WETH/FewToken conversion but no native ETH/WETH plan. Add independent `buildNativeWrapPlan` and `buildNativeUnwrapPlan` using canonical WETH deposit/withdraw, fixed caller recipient and explicit wei amounts. Preserve existing FewToken and strategy bytes; do not silently accept ETH as a market leg or reinterpret WETH as ETH. UNI is the standard ERC-20 regression; USDT must also pass with a preexisting nonzero allowance and its no-return approve behavior.
+
+The nine-asset JSON catalog is an off-chain SDK restriction, not a global Aqua token policy. Verify on the fork that the registry accepts other ERC-20 allocations, while a token allowance alone cannot debit an unallocated token from a given maker/app/strategy. Keep maker-owned authorization and shutdown. No global whitelist administrator or new production contract is introduced.
+
+Maker ETH/WETH preparation may be sequential; ordinary-user swaps must remain atomic within the resolver. Native funding/withdrawal/refund support for that production executor remains unimplemented. New native helpers must pass Node/portable, installed-package/type and real WETH fork balance/gas checks before handoff.
+
+Michael authorized pushing the reviewed repository. Commit 2cff867 was pushed to `feat/aqua-integration-sdk`; this supersedes the earlier local-only push hold. Continue this correction on that branch. Main, public visibility, deployments, mainnet transactions and external contact remain unchanged.
+
 ## 2026-09-16: focus on FewToken wallet market making and code review
 
 The selected scope is FewToken inventory held in a maker wallet, approved to Aqua and offered through a strategy. The goal is to make that liquidity usable by 1inch orders when the complete route is competitive, including ordinary-token orders that wrap and unwrap inside execution. This supersedes the earlier broader exploration; remove the alternative proposal and multi-option questionnaire from current repository and business materials.

@@ -4,6 +4,7 @@ import * as kit from '../index.mjs';
 import { C, erc20, routerAbi } from '../strategy.mjs';
 import { MAKER, OPERATOR, USER, config as legacy } from './fixtures.mjs';
 import { market, concentrated } from './market-fixtures.mjs';
+import { runConversionCases } from './conversions-fork.mjs';
 
 // Invoked only by fork.mjs after it creates and verifies its own loopback Anvil.
 export async function runMarketCases({
@@ -90,6 +91,7 @@ export async function runMarketCases({
     });
   }
   const extra = { expiry: String(now + 86400n) };
+  await runConversionCases({ provider, test, sent, token, maker, now });
   const cases = [
     market('USDC', 'WETH', '300000000', '100000000000000000', {
       ...extra,

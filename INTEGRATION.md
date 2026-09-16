@@ -8,10 +8,13 @@ Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Lt
 
 ## Entry points
 
+Native conversion and on-chain permission details follow the entry-point table.
+
 ```js
 import {
   buildAquaShipPlan, buildAquaDockPlan, buildAquaQuoteCall, buildAquaSwapCall, getAsset,
   buildMakerWrapPlan, buildMakerUnwrapPlan, buildUnderlyingRoute,
+  buildNativeWrapPlan, buildNativeUnwrapPlan,
 } from '@ring-protocol/aqua-swapvm-strategy';
 ```
 
@@ -22,7 +25,22 @@ import {
 | `buildAquaDockPlan(identityOrConfig)` | Stored `{chainId, maker, strategyHash, tokens}` or original config | Dock call plus two allowance revocations; closing needs no new price or future expiry |
 | `buildAquaQuoteCall` / `buildAquaSwapCall` | Config and bounded address-based quote request | Plain `{chainId, from, to, data, value}` for the official router |
 | `buildMakerWrapPlan` / `buildMakerUnwrapPlan` | `{chainId: 1, maker, asset, amount}` | Exact conversion calls; wrap resets, limits and clears approval; recipient is always maker |
+| `buildNativeWrapPlan` / `buildNativeUnwrapPlan` | `{chainId: 1, maker, amount}` | ETH/WETH only: canonical WETH `deposit()` with exact wei value, or `withdraw(amount)` with zero value; no ERC-20 approval |
 | `buildUnderlyingRoute` | Config and bounded resolver request | Atomic execution recipe, actual-output/refund bindings and required runtime checks |
+
+## Native conversion and token permissions (0.2.2)
+
+Wrapping has two distinct layers: `ETH <-> WETH <-> fwWETH`. `buildNativeWrapPlan({chainId: 1, maker, amount})` calls canonical WETH `deposit()` with `value=amount`; `buildNativeUnwrapPlan` calls `withdraw(amount)` with zero value. Amount is a positive integer string in wei, below 2^96. Both return one unsigned transaction with the caller as recipient, fixed WETH target and no approval. WETH9 returns ETH to its caller; contract wallets must verify their receiving behavior. See [WETH9](https://github.com/gnosis/canonical-weth/blob/master/contracts/WETH9.sol).
+
+The existing `buildMakerWrapPlan({chainId: 1, maker, asset: 'WETH', amount})` and its unwrap counterpart handle **WETH/fwWETH only**. USDT uses its canonical FewToken with zero-reset, bounded approval and final allowance cleanup; standard ERC-20 coverage includes UNI. Native ETH remains invalid as a FewToken catalog key or market leg.
+
+Maker preparation can run native-wrap, FewToken-wrap and ship sequentially after confirmed receipts. Exit uses dock/revoke, a fresh FewToken balance and redemption check, FewToken-unwrap, then optional native-unwrap. Leave ETH for gas. A failed step does not undo earlier confirmed transactions; inspect and revoke remaining approvals. These are maker wallet operations, not atomic user swaps. `buildUnderlyingRoute` still accepts ERC-20 boundaries; a resolver must separately integrate native funding, dynamic WETH withdrawal/refunds and native-dust protection in its atomic executor. No production native-order executor is provided.
+
+There is **no Ring on-chain global token allowlist or addToken/removeToken administrator**. `config/assets.json` is an SDK support catalog maintained through repository review and releases; it is not read by Aqua and cannot revoke live positions. Other developers can fork it or call Aqua directly for their own wallets. New entries require binding, decimals and behavior checks, not merely a symbol edit.
+
+On-chain control belongs to the maker: bounded token approvals plus `ship` allocations scoped to `(maker, app, strategyHash, token)`. An ERC-20 allowance alone cannot authorize a debit from an unallocated token in that strategy. Closing uses the original position identity even after catalog removal; a catalog edit does not close or change a live position. Official discovery and route adoption are another layer. Enforcing a global policy for a future Ring app would require an explicitly reviewed on-chain design; this SDK does not claim that policy exists. See [Aqua.sol](https://github.com/1inch/aqua/blob/main/src/Aqua.sol) and [strategy lifecycle](https://business.1inch.com/portal/documentation/aqua/liquidity-layer/strategy-lifecycle).
+
+## Market configuration
 
 Declarations ship in `index.d.mts` and `portable.d.mts`. The generic input follows the public Barker builder's `legs`, `shape`, `feeRateE9` and raw price fields. The contract ABI and byte encoding use the official SDKs. Ring keeps its mandatory expiry, optional protocol fee and bounded approval orchestration. JSON outputs use string `value` and amounts; Barker's in-browser value may be bigint. This is interface alignment, not a claim of identical private API contracts or byte-identical programs after adding expiry.
 
@@ -46,7 +64,7 @@ const plan = buildAquaShipPlan(config);
 // plan.transaction is only the final ship call; it does not perform approvals.
 ```
 
-This is synthetic test inventory, not market pricing or a capital recommendation. Sort two distinct FewToken `legs` by ascending address, moving amounts with their tokens. Unknown addresses, mismatched decimals/symbols, native ETH, target overrides, floats and ambiguous directions are rejected. All catalog entries are ERC-20 underlyings; native ETH must first be converted to WETH outside this API.
+This is synthetic test inventory, not market pricing or a capital recommendation. Sort two distinct FewToken `legs` by ascending address, moving amounts with their tokens. Unknown addresses, mismatched decimals/symbols, native ETH market legs, target overrides, floats and ambiguous directions are rejected. All catalog entries are ERC-20 underlyings; use the separate native conversion API for ETH/WETH.
 
 | Parameter | Meaning and bounds |
 | --- | --- |

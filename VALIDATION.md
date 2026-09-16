@@ -1,10 +1,20 @@
 # Validation
 
-## Documentation scope — 2026-09-16
+## Current 0.2.2 — native conversion and token permissions, 2026-09-16
+
+**74 offline tests and 103 mainnet fork cases passed.** The [new fork report](evidence/native-conversions-2026-09-16/fork-results.json) records the exact source/lock hashes and pinned historical block. Inventory is synthetic and all writes occur on the dedicated local Anvil; no mainnet transaction, funded position or official frontend acceptance is claimed.
+
+The eight added fork cases cover native ETH/WETH round-trip with gas separated from principal; ETH/WETH/fwWETH composition and reversal; insufficient ETH/WETH; WETH, USDT and ordinary ERC-20 UNI conversion with existing nonzero approvals; registry acceptance outside the SDK catalog; and rejection of an unallocated token debit despite ERC-20 approval. USDT is checked for a revert on nonzero-to-nonzero approval and its empty approve return data. All older settlement, expiry, caller, rollback and shared-allowance cases were rerun.
+
+This release adds only unsigned maker ETH/WETH plans. It does not add native-user-order support to a production executor, an on-chain global token allowlist or an administrator. TypeScript, browser bundling and isolated installed-package checks cover both public entry points; new browser execution is not claimed. See [verification](evidence/native-conversions-2026-09-16/verification.json).
+
+The earlier `2cff867` review commit is on `feat/aqua-integration-sdk`. This correction uses the same branch; `main` and repository visibility are unchanged. Branch push does not by itself trigger this repository's main/PR-only CI, and no remote CI success is claimed. Earlier publication statuses below are dated historical snapshots.
+
+## Earlier documentation scope — 2026-09-16
 
 Current materials focus on FewToken wallet market making, 1inch code review and whether Ring needs an Aqua frontend page. No runtime, configuration, type, test or dependency file changed. The [cleanup verification](evidence/scope-cleanup-2026-09-16.json) records the repeated offline and installed-package checks and matching historical fork source hashes. The mainnet fork was not rerun for this documentation change; all earlier evidence below retains its original date and package integrity.
 
-## Current local 0.2.1 — packaged consumer review, 2026-09-11
+## Historical 0.2.1 — packaged consumer review, 2026-09-11
 
 The [repository follow-up](OFFICIAL_REVIEW.md) does not change strategy or settlement runtime code. It adds package boundaries, an executable example and consumer validation. The fresh [fork report](evidence/repository-review-2026-09-11/fork-results.json) completed at `2026-09-11T03:49:30.685Z`: **95 passed**, with all **34 source hashes** and the lockfile matching the reviewed files. The earlier reports below remain historical snapshots.
 

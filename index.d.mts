@@ -110,6 +110,25 @@ export interface ConversionRequest {
   asset: string;
   amount: string;
 }
+/** One layer only: ETH <-> canonical WETH. Amount is a positive integer string in wei. */
+export interface NativeConversionRequest {
+  chainId: 1;
+  maker: Address;
+  amount: string;
+}
+export interface NativeConversionPlan {
+  schema: 'ring.native-conversion.v1';
+  kind: 'wrap' | 'unwrap';
+  chainId: 1;
+  maker: Address;
+  recipient: Address;
+  nativeAsset: 'ETH';
+  wrappedToken: Address;
+  amount: string;
+  transactions: TransactionCall[];
+  atomicRequired: false;
+  safety: Safety;
+}
 export interface ConversionPlan {
   schema: 'ring.fewtoken-conversion.v1';
   kind: 'wrap' | 'unwrap';
@@ -224,6 +243,8 @@ export function buildAquaSwapCall(
 ): TransactionCall;
 export function buildMakerWrapPlan(input: ConversionRequest): ConversionPlan;
 export function buildMakerUnwrapPlan(input: ConversionRequest): ConversionPlan;
+export function buildNativeWrapPlan(input: NativeConversionRequest): NativeConversionPlan;
+export function buildNativeUnwrapPlan(input: NativeConversionRequest): NativeConversionPlan;
 export function buildUnderlyingRoute(
   config: Config,
   request: RouteRequest,

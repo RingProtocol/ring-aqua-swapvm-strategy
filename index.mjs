@@ -8,6 +8,8 @@ export const {
   buildAquaSwapCall,
   buildMakerWrapPlan,
   buildMakerUnwrapPlan,
+  buildNativeWrapPlan,
+  buildNativeUnwrapPlan,
   buildUnderlyingRoute,
   fewAbi,
 } = createIntegrationApi(strategy);
