@@ -10,4 +10,4 @@ Never commit credentials, private keys, wallet exports, local RPC URLs, or inter
 
 Preserve upstream notices and the [license scope](LICENSE.md). Package `private: true` intentionally prevents accidental npm publication; it does not control GitHub visibility.
 
-Keep runtime/config/example files explicit in the package allowlist. Historical tests and evidence remain in the source repository for review, but are not installed into consumer applications. Read [SECURITY.md](SECURITY.md) before reporting a vulnerability.
+Keep runtime/config/example files explicit in the package allowlist. Keep executable tests and stable regression inputs in `test/`. Generated results belong in ignored `artifacts/`; do not commit dated run folders, terminal output or internal meeting records. Tests and generated output are excluded from the consumer package. Read [SECURITY.md](SECURITY.md) before reporting a vulnerability.

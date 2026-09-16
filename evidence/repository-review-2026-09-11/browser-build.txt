@@ -1,1 +1,0 @@
-{"status": "bundled", "browserExecution": "required", "wallet": false}

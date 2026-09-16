@@ -68,8 +68,13 @@
     "config/example.json",
     "config/wrapper-sources.json",
     "examples/build-plans.mjs",
-    "*.md",
     "LICENSE",
-    "LICENSES/*.txt"
+    "LICENSES/*.txt",
+    "README.md",
+    "README.zh.md",
+    "LICENSE.md",
+    "SECURITY.md",
+    "THIRD_PARTY_NOTICES.md",
+    "docs/*.md"
   ]
 }

@@ -1,3 +1,0 @@
-
-> @ring-protocol/aqua-swapvm-strategy@0.2.0 test:types
-> tsc --noEmit --strict --module NodeNext --moduleResolution NodeNext --target ES2022 --skipLibCheck test/types.mts

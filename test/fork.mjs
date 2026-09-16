@@ -81,7 +81,8 @@ const report = {
       'test/official.test.mjs',
       'test/official-fork.mjs',
       'test/official-reference.json',
-      'evidence/official-review-2026-09-11/conformance-before-fix.json',
+      'test/fixtures/legacy-position-identity.json',
+      'test/fixtures/legacy-strategy.json',
     ].map((path) => [
       path,
       createHash('sha256')
@@ -94,7 +95,7 @@ const report = {
 const evidence = new URL(
   process.env.RING_FORK_EVIDENCE_DIR
     ? `../${process.env.RING_FORK_EVIDENCE_DIR.replace(/\/$/, '')}/`
-    : '../evidence/',
+    : '../artifacts/fork/',
   import.meta.url,
 );
 mkdirSync(evidence, { recursive: true });

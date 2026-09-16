@@ -4,7 +4,7 @@ This SDK supplies unsigned maker transactions and resolver execution recipes for
 
 The public [Barker frontend](https://app.barker.money/protocols/1inch-aqua/raid) provides a reference for constructing `ship`/`dock` plans around official contracts. The API and schemas below are Ring-defined. They are not a claim that Barker or 1inch has accepted the interface or enabled FewToken routing.
 
-Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Ltd 2025. [License scope](LICENSE.md).
+Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Ltd 2025. [License scope](../LICENSE.md).
 
 ## Entry points
 
@@ -28,7 +28,7 @@ import {
 | `buildNativeWrapPlan` / `buildNativeUnwrapPlan` | `{chainId: 1, maker, amount}` | ETH/WETH only: canonical WETH `deposit()` with exact wei value, or `withdraw(amount)` with zero value; no ERC-20 approval |
 | `buildUnderlyingRoute` | Config and bounded resolver request | Atomic execution recipe, actual-output/refund bindings and required runtime checks |
 
-## Native conversion and token permissions (0.2.2)
+## Native conversion and token permissions
 
 Wrapping has two distinct layers: `ETH <-> WETH <-> fwWETH`. `buildNativeWrapPlan({chainId: 1, maker, amount})` calls canonical WETH `deposit()` with `value=amount`; `buildNativeUnwrapPlan` calls `withdraw(amount)` with zero value. Amount is a positive integer string in wei, below 2^96. Both return one unsigned transaction with the caller as recipient, fixed WETH target and no approval. WETH9 returns ETH to its caller; contract wallets must verify their receiving behavior. See [WETH9](https://github.com/gnosis/canonical-weth/blob/master/contracts/WETH9.sol).
 
@@ -84,7 +84,7 @@ Plans retain `executionAllowed=false` and `productionReady=false`. Plain quote/s
 
 Version 0.2.1 places the protocol fee before concentration, matching the official high-level builder. **Only configurations combining concentration and a nonzero protocol fee change encoded strategy bytes/hash relative to 0.2.0.** Close existing positions from their stored `{chainId, maker, strategyHash, tokens}` identity; do not rebuild an older identity with the changed encoder. Legacy USDC/USDT encoding is unchanged.
 
-The deployed v1.0.2 Aqua protocol fee is best-effort: an unpaid fee can emit `ProtocolFeeSkipped` while the swap succeeds, leaving that fee with the maker. Preflight retains the conservative `PROTOCOL_FEE_BUFFER_INSUFFICIENT` issue. Integrators must reconcile actual receipts and this event rather than count configured fees as received revenue. This package has no continuous revenue monitor. See the [official Fee implementation](https://github.com/1inch/swap-vm/blob/32c687c2b73101fc26549e48fa1ff8a4d73afbac/src/instructions/Fee.sol) and the [local reference review](OFFICIAL_REVIEW.zh.md).
+The deployed v1.0.2 Aqua protocol fee is best-effort: an unpaid fee can emit `ProtocolFeeSkipped` while the swap succeeds, leaving that fee with the maker. Preflight retains the conservative `PROTOCOL_FEE_BUFFER_INSUFFICIENT` issue. Integrators must reconcile actual receipts and this event rather than count configured fees as received revenue. This package has no continuous revenue monitor. See the [official Fee implementation](https://github.com/1inch/swap-vm/blob/32c687c2b73101fc26549e48fa1ff8a4d73afbac/src/instructions/Fee.sol) and the [local reference review](compatibility.md).
 
 ## Maker lifecycle
 
@@ -159,15 +159,15 @@ These commands require neither a key nor an RPC and refuse to overwrite files. T
 For the extended mainnet fork suite, load the archive RPC through a local secret manager and run:
 
 ```sh
-RING_FORK_EVIDENCE_DIR=evidence/local-rerun npm run test:fork
+RING_FORK_EVIDENCE_DIR=artifacts/local-rerun npm run test:fork
 ```
 
-Fork deployments, impersonation, funding and transactions stay on the runner's loopback Anvil. The new output directory preserves the original evidence. The suite executes nine asset conversions and representative stable, volatile, 6/8/18-decimal and concentrated markets in both directions/modes, alongside the legacy regression cases. It checks actual refunds, preexisting token preservation and complete rollback after failed settlement or redemption. It does not assert every possible catalog pair has been individually tested.
+Fork deployments, impersonation, funding and transactions stay on the runner's loopback Anvil. Reports are local build output and are not committed. The suite executes nine asset conversions and representative stable, volatile, 6/8/18-decimal and concentrated markets in both directions/modes, alongside the legacy regression cases. It checks actual refunds, preexisting token preservation and complete rollback after failed settlement or redemption. It does not assert every possible catalog pair has been individually tested.
 
 ## Review request
 
 The scope is FewToken inventory held in a maker wallet and offered through Aqua. Please review this SDK, its interfaces and local evidence, and identify the remaining development needed for 1inch orders to use these positions, including ordinary-token wrap/swap/unwrap routes. Interface documentation or an existing integration example would help Ring implement the required changes. Do not assume that forking or changing the official protocol is required.
 
-Please also advise whether Ring should add an Aqua position page to its own frontend, similar to the Barker example, and which functions that page should provide. No frontend is included in this repository. A page being available would not by itself establish live order routing.
+The preferred workflow is to select FewTokens and manage positions in the official Aqua UI. Please identify any missing token-picker or strategy-parameter support. Ring can supply an additional frontend only if that review identifies a need; it is not a prerequisite. No frontend is included in this repository. A creation page alone does not establish live order routing.
 
 Local success, a live strategy, source listing, resolver adoption and a real frontend fill remain separate results. Production execution still requires the appropriate runtime adapter and outer-order authorization; the test harness is not a production executor.

@@ -29,9 +29,7 @@ const req = (c) => ({
 });
 
 test('legacy fixture retains published program bytes and hash', () => {
-  const frozen = JSON.parse(
-    readFileSync(new URL('../evidence/integration-2026-09-11/unsigned-fixture.json', import.meta.url)),
-  );
+  const frozen = JSON.parse(readFileSync(new URL('./fixtures/legacy-strategy.json', import.meta.url)));
   const current = kit.buildStrategy(frozen.config, { now: BigInt(frozen.config.expiry) - 1n }).bundle;
   assert.equal(current.strategy, frozen.strategy);
   assert.equal(current.strategyHash, frozen.strategyHash);

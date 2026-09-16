@@ -27,7 +27,7 @@ try {
     run('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', dir], root),
   );
   const files = pack.files.map((file) => file.path);
-  assert(!files.some((path) => /^(test|evidence|node_modules|\.github)\//.test(path)));
+  assert(!files.some((path) => /^(test|evidence|artifacts|node_modules|\.github)\//.test(path)));
   assert(!files.some((path) => /(^|\/)\.env|\.local\.|\.(sol|log|tgz)$/.test(path)));
   for (const path of [
     'index.mjs',

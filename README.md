@@ -1,150 +1,63 @@
 # Ring Aqua SwapVM strategy
 
-[中文说明](README.zh.md) · [Integration API](INTEGRATION.md) · [Validation](VALIDATION.md) · [License scope](LICENSE.md)
+[中文](README.zh.md) · [API](docs/integration.md) · [Compatibility](docs/compatibility.md) · [Testing](docs/testing.md)
 
-Prepare FewToken inventory held in a maker wallet for Aqua market making. This SDK builds unsigned approval and strategy transactions with the official 1inch Aqua/SwapVM SDKs, inspects on-chain state, and reproduces swaps on a local Ethereum mainnet fork. The goal is to make competitive FewToken liquidity available to 1inch orders, including ordinary-token trades that wrap and unwrap during execution.
+An unsigned SDK for offering FewToken inventory held in a maker wallet through 1inch Aqua. It builds bounded approvals, position creation/closure and token conversion plans using the official Aqua and SwapVM SDKs. It also generates ordinary-token execution recipes for a resolver to integrate.
 
-The strategy uses existing SwapVM instructions. It does not require a new production contract or a custom opcode. A **test-only** executor explicitly composes `USDC → fwUSDC → Aqua swap → fwUSDT → USDT`, including the reverse route. Successful local execution does **not** establish 1inch discovery, automatic route selection, Resolver adoption, or frontend traffic.
-
-Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Ltd 2025. This is a Ring integration using the published SDKs, not a 1inch-endorsed product. Upstream terms apply; see [LICENSE.md](LICENSE.md).
-
-The next request to 1inch is a review of this implementation and guidance on the remaining integration work. We also want to confirm whether Ring should add an Aqua position page to its own frontend, similar to the Barker example. No such page is included or assumed to be required. The standard ABI is reused; Barker campaign logic is not a dependency. See [integration decisions](DECISIONS.md).
+The implementation follows [1inch's Path B](https://business.1inch.com/portal/documentation/aqua/getting-started/build-an-aquaapp): compose existing SwapVM instructions and register a strategy on the deployed router. No custom opcode or new production contract is required for this pricing scope. This is an independent Ring integration, not a 1inch-endorsed product.
 
 ## Scope
 
-Version 0.2.2 adds separate unsigned `ETH <-> WETH` plans alongside `WETH <-> fwWETH`; see [native conversion and token permissions](INTEGRATION.md#native-conversion-and-token-permissions-022). The nine-token SDK catalog is not an on-chain global allowlist. Maker approvals and each shipped strategy control wallet use; native user-order execution remains a resolver integration task.
-
-| Component | Supported scope |
+| Component | Current support |
 | --- | --- |
-| Chain and deployment | Ethereum mainnet, AquaSwapVMRouter v1.0.2; pinned addresses and code hashes |
-| SDKs | `@1inch/swap-vm-sdk 0.4.2`, `@1inch/aqua-sdk 0.3.2` |
-| Pricing | Official constant-product, concentrated and pegged instructions, using explicitly configured strategy parameters |
-| Maker assets | Nine canonical FewTokens, with 6/8/18 decimals; see `ASSETS` in the integration API |
-| Swap modes | Both directions, exact input and exact output, with deadlines and amount limits |
-| Access | Preserves the deployed router's `tx.origin` KycNFT check |
-| CLI | Unsigned transaction generation and read-only RPC; no private keys, signatures, or broadcasts |
-| Production status | Unaudited; discovery and real 1inch frontend fills remain unverified |
+| Deployment | Ethereum; AquaSwapVMRouter v1.0.2, pinned SDK versions and code hashes |
+| FewTokens | Underlyings: USDC, USDT, DAI, WETH, WBTC, cbBTC, weETH, UNI, wstETH |
+| Maker operations | Bounded approvals, ship, dock/revoke, ERC-20/FewToken wrap and unwrap |
+| Native ETH | Separate ETH/WETH maker conversion, then WETH/fwWETH if needed |
+| Pricing | Official constant-product, concentrated and pegged instructions; explicit fees and expiry |
+| Integrator tools | Node/portable exports, TypeScript declarations, read-only checks and atomic route recipes |
+| Not included | Wallet UI, signing/broadcasting, production resolver, automated pricing or inventory management |
 
-`strategy-core.mjs` uses the official curve argument encoders and `AquaProgramBuilder`; `strategy.mjs` preserves the Node entry. It adds a mandatory expiry instruction and encodes fees with integers. Offline tests compare the shared instruction bytes against the SDK's higher-level XYC, concentrated and pegged strategies.
+The nine-asset [catalog](config/assets.json) limits what this SDK builds; it is not an on-chain whitelist or an official 1inch token listing. Maker funds remain in the maker wallet under revocable allowances. Strategies can share those balances and allowances.
 
-[The integration API](INTEGRATION.md) supplies ship/dock plans, nine-asset wrap/unwrap plans, TypeScript declarations, plain quote/swap calls, a browser-tested portable core and atomic resolver recipes. The recipe binds actual output and excess-input refunds; it still needs an adapter to the selected resolver's production runtime. No frontend application is included.
+## Quick start
 
-## Run locally
-
-Requires Node.js 22.13.1 or newer. The fork suite also requires [Foundry's Anvil](https://getfoundry.sh/anvil/overview) on `PATH` and an Ethereum archive RPC endpoint available through `ETH_RPC_URL` (or `RPC_URL`). Load credentials through your local secret manager; do not put them in tracked files. The CLI does not load `.env` files automatically.
+Requires Node.js 22.13.1 or newer. No API key, RPC or wallet is needed for the example and offline checks.
 
 ```sh
 git clone https://github.com/RingProtocol/ring-aqua-swapvm-strategy.git
 cd ring-aqua-swapvm-strategy
 npm ci --ignore-scripts
-npm run format:check
+npm run example:plans
 npm test
 npm run test:types
-npm run example:plans
 npm run test:package
-npm audit --audit-level=high
-
-# Requires an archive RPC endpoint in ETH_RPC_URL and anvil on PATH.
-npm run test:fork
 ```
 
-The fork runner starts its own Anvil on `127.0.0.1:18569` and refuses to use an occupied port. It reads the pinned mainnet block from the upstream RPC. Account impersonation, funding, contract deployment, approvals, and swaps happen only on the local fork. No real wallet key is required.
+[examples/build-plans.mjs](examples/build-plans.mjs) exercises the public exports with synthetic USDC/WETH inventory: wrap, ship, quote/swap calldata, a route recipe, dock and unwrap. The output is unsigned and must not be broadcast. The package test installs the actual tarball into an isolated consumer and checks exports, types and the example; it does not publish an npm package. `private: true` prevents accidental npm publication, not GitHub source review.
 
-Set `RING_FORK_EVIDENCE_DIR=evidence/local-rerun` to preserve historical evidence. Completed results go to that directory, or [`evidence/fork-results.json`](evidence/fork-results.json) by default. The current version report is linked in [VALIDATION.md](VALIDATION.md). Failed attempts go to ignored `evidence/fork-attempt.json` without replacing the completed report. Treat the other evidence files as belonging to a run only after the full suite succeeds. The CI workflow is configured to run offline tests, type checks, browser bundling, formatting, and a dependency audit; it does not hold RPC credentials or run funded operations.
+For local chain execution, install [Anvil](https://getfoundry.sh/anvil/overview), provide an archive RPC through `ETH_RPC_URL`, then run `npm run test:fork`. All writes occur on a dedicated loopback Anvil. Results go to ignored `artifacts/fork/`. See [test coverage and limitations](docs/testing.md), [the API](docs/integration.md) and [CLI instructions](docs/cli.md).
 
-## Try the installed SDK
+## What we want 1inch to review
 
-`npm run example:plans` executes [a complete USDC/WETH example](examples/build-plans.mjs) through the public package exports: wrap, ship, quote/swap calldata, atomic route recipe, dock and unwrap. It uses placeholder actors and synthetic inventory, makes no RPC calls, and must not be broadcast. The quote call is calldata, not an actual quote. Project `address` and `decimals` from the asset catalog into each `leg.token`; the runtime rejects additional catalog metadata there.
+Our goal is to create and manage FewToken positions in the official Aqua UI, and have ordinary-token orders use them when the complete executable route is competitive:
 
-`npm run test:package` creates an npm tarball, installs it with production dependencies into an isolated temporary consumer, runs that example, checks Node/portable equivalence and compiles an external TypeScript consumer. No npm package is published. Tests, local configuration and historical evidence are excluded from the tarball; source-review links in these documents refer to the full Git checkout. The package remains `private: true`. See [SECURITY.md](SECURITY.md) for the separate public-release reporting requirement.
+`USDC → fwUSDC → Aqua swap → fwUSDT → USDT`
 
-## Build an unsigned strategy (legacy stablecoin example)
+The local fork validates this composition, including reverse settlement. It does not establish official discovery, automatic selection or a real 1inch frontend fill. Please review the SDK and identify remaining work for official token selection, position parameters and resolver-side wrapping/settlement. Reuse the official UI where possible; a separate Ring page is not assumed necessary. The partner does not have to adopt this entire SDK to meet that goal.
 
-1. Copy `config/example.json` to `config/maker.local.json`.
-2. Set a dedicated maker wallet, a future expiry in Unix seconds, and a unique positive salt. Review the inventory, fees, and protocol fee recipient.
-3. Build a new output file:
+The route output is an execution recipe, not a finished production transaction. Both Solidity contracts under `test/` are test-only executors and must not handle production orders. Fresh inventory, redemption backing, fees and gas must be checked before any real trial; configured fees or a successful swap do not guarantee profit.
 
-```sh
-node cli.mjs build config/maker.local.json maker-unsigned.local.json
-```
+## Repository map
 
-This command does not connect a wallet or send transactions. It refuses to overwrite existing files. The bundle contains the maker, chain ID, target, calldata, value, and strategy hash.
+- Root `.mjs` and `.d.mts`: SDK, CLI and public types.
+- `config/`: pinned assets, deployment, wrapper metadata and example inputs.
+- `examples/`: runnable unsigned consumer example.
+- `test/`: executable unit/fork/consumer tests and stable regression fixtures.
+- `docs/`: integration, CLI, compatibility, testing and [design decisions](docs/design.md).
 
-`open` contains five ordered transactions: reset the fwUSDC allowance to Aqua, approve the bounded fwUSDC amount, reset the fwUSDT allowance, approve its bounded amount, then `ship` both assets. The maker must hold the FewTokens before executing these steps. Separate `wrap` plans can prepare explicitly chosen amounts from the maker's underlying balance; nothing is funded or sent automatically.
+## Security and licenses
 
-`close` docks both assets and separately resets both allowances to zero. Closing does not transfer maker balances to another address. If an already-docked strategy makes `dock` revert, revoke the allowances separately. A docked hash cannot be shipped again; build a fresh strategy with a new salt. ERC-20 allowances are shared across strategies in the same wallet, so isolate a pilot in a dedicated wallet.
+Unaudited. Read [SECURITY.md](SECURITY.md) and [license scope](LICENSE.md) before use. Ring's independent code uses MIT; upstream SDKs and generated programs retain their applicable terms. See [third-party notices](THIRD_PARTY_NOTICES.md) and [contributing](CONTRIBUTING.md).
 
-| Field | Example | Meaning |
-| --- | --- | --- |
-| `fwUSDC`, `fwUSDT` | `"30"`, `"33"` | Human-readable units, up to 6 decimals; raw amounts must be positive and below 2^96 |
-| `amplification` | `"300"` | SDK curve parameter in `(0, 5000]`, encoded at 1e27 precision |
-| `feeBps` | `"0.1"` | Maker fee: 0.1 bps = 0.001%; up to 5 decimal places |
-| `protocolFeeBps` | `"0.025"` | Protocol fee: 0.025 bps = 0.00025%; confirm it and the recipient with the integration team |
-| `expiry` | Future Unix seconds | Required future uint40 timestamp |
-| `salt` | Unique positive integer | Distinct strategy identity; do not reuse a shipped or docked strategy |
-
-The example is a **test fixture, not a funding recommendation**. Its 30/33 inventory ratio gives an initial price near 1.10 USDT per USDC. The maker supplies that price concession; the trader's extra output is not protocol profit. The entire authorized inventory is exposed to contract and pricing risk, not just the three-unit inventory difference. There is no external price oracle, automated hedge, or replenishment service.
-
-## Read-only preflight
-
-The input is `{ "strategy": <maker config>, "quote": <request> }`. A request has this shape; replace the placeholders before use:
-
-```json
-{
-  "direction": "USDC_USDT",
-  "exactIn": true,
-  "amount": "1000000",
-  "threshold": "990000",
-  "taker": "REPLACE_WITH_ELIGIBLE_RESOLVER_ADDRESS",
-  "receiver": "REPLACE_WITH_RECEIVER_ADDRESS",
-  "deadline": "REPLACE_WITH_FUTURE_UNIX_SECONDS"
-}
-```
-
-Amounts are raw FewToken units. Use `USDT_USDC` for the reverse direction. For exact input, `threshold` is the minimum output; for exact output it is the maximum input. The request deadline cannot exceed the strategy expiry. The example threshold is only a formatting illustration, not a recommended limit.
-
-```sh
-# Requires ETH_RPC_URL in the environment.
-node cli.mjs preflight preflight-input.local.json preflight-result.local.json
-```
-
-The checker pins one canonical block hash, checks deployment code, FewFactory bindings, decimals, real wallet balances, allowances, Aqua virtual balances, and Resolver credentials, then simulates `quote` and `swap` with `eth_call`. It rechecks the chain and block before returning, with a maximum snapshot age of 180 seconds. RPCs that do not support block-hash queries fail closed.
-
-| Status | Meaning |
-| --- | --- |
-| `available` | Requested checks passed at the recorded snapshot |
-| `insufficient` | A known constraint failed, such as inactive inventory or insufficient allowance |
-| `read_failed` | The checker could not obtain or verify a complete result |
-| `stale` | The snapshot expired or its block changed |
-
-`executionAllowed` is always `false`. A successful simulation does not authorize a trade or validate an entire Resolver user order. Recheck after changing the block, taker, receiver, or amount limits. Receiving tokens in a reverse swap does not replenish a spent ERC-20 allowance.
-
-## Wrapper source material
-
-`config/wrapper-sources.json` contains nine Uniswap v4 wrapper PoolKeys, pool IDs, tokens, decimals, and pinned public allowlist provenance. The ETH pool takes native ETH; the underlying token bound to fwWETH is WETH.
-
-```sh
-# Requires ETH_RPC_URL. The sources command reads the fixed catalog;
-# its JSON input is required by the CLI but does not override that catalog.
-node cli.mjs sources config/example.json wrapper-check.local.json
-```
-
-`sources.mjs` verifies canonical bindings, immediate redemption backing, and hook code hashes, then requests both directions in both amount modes from V4Quoter. Failed quotes retain `null` and their own status. A top-level `available` means the catalog and snapshot checks completed; inspect every `quotes[].status` separately.
-
-This is Ring's source-data format, **not an accepted 1inch Pathfinder plugin interface**. Uniswap allowlisting does not establish 1inch integration. Resolver execution still needs settlement-order, returned-delta, redemption-availability, user-limit, and gas checks.
-
-## Integration acceptance
-
-Ring now supplies maker lifecycle/conversion APIs, atomic execution recipes, wrapper metadata and reproducible tests without waiting for a private partner interface. The remaining joint work is adaptation to the selected source/Assembler and resolver runtime, code review and an eligible Resolver pilot. These Ring-defined APIs are not represented as an accepted 1inch plugin schema.
-
-Frontend acceptance requires a normal USDC/USDT order to select the full FewToken route when it offers the best executable result after costs, followed by a verifiable real frontend fill. Publishing an Aqua position, obtaining an API quote, or passing this fork suite does not establish that outcome.
-
-`test/RouteHarness.sol` and `test/RecipeHarness.sol` are local test executors. They do not provide a production executor's complete route binding, outer user authorization and security controls. The recipe harness exercises actual output/refund and balance checks but is not a production adapter. Do not deploy either to serve orders. Pinned code hashes are compatibility checks, not a security audit; proxy implementations and upstream changes require separate review.
-
-## References
-
-- [1inch: build an AquaApp using existing opcodes](https://business.1inch.com/portal/documentation/aqua/getting-started/build-an-aquaapp)
-- [1inch: access, Resolvers, and Pathfinder](https://business.1inch.com/portal/documentation/aqua/liquidity-layer/access-resolvers-and-pathfinder)
-- [SwapVM SDK source](https://github.com/1inch/sdks/tree/master/typescript/swap-vm)
-- [Aqua SDK source](https://github.com/1inch/sdks/tree/master/typescript/aqua)
-- [Uniswap hook allowlist](https://github.com/Uniswap/uniroute-public/blob/main/src/lib/poolCaching/util/hooksAddressesAllowlist.ts)
+Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Ltd 2025.

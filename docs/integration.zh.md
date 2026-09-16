@@ -1,10 +1,10 @@
 # FewToken Aqua 接入接口
 
-0.2.2 将 FewToken 策略、做市资金准备和普通币兑换步骤整理成可供前端或执行方调用的 SDK，并提供独立的 ETH/WETH 转换。底层复用 1inch 官方 Aqua/SwapVM，不新增生产合约，不依赖 Barker 的活动后台。[官方接法核对与升级注意](OFFICIAL_REVIEW.zh.md)。
+0.2.2 将 FewToken 策略、做市资金准备和普通币兑换步骤整理成可供前端或执行方调用的 SDK，并提供独立的 ETH/WETH 转换。底层复用 1inch 官方 Aqua/SwapVM，不新增生产合约，不依赖 Barker 的活动后台。[官方接法核对与升级注意](compatibility.md)。
 
 本次范围是钱包里的 FewToken 通过 Aqua 做市。参考 Barker 的公开做法，应用可负责市场配置、钱包和仓位体验，官方 Aqua/SwapVM 负责策略与成交；Ring 提供 FewToken 包装、解包和普通币完整路线。建仓输入参考通用 `legs` 写法，交易使用官方 ABI，保留 Ring 的协议费、有效期、限额授权与资金接收约束。是否在 Ring 前端增加类似 Barker 的页面，留待 1inch 评审时确认；没有声称对方已接受当前代码。
 
-Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Ltd 2025. [许可范围](LICENSE.md)。
+Powered by SwapVM — © Degensoft Ltd 2025. Powered by Aqua — © Degensoft Ltd 2025. [许可范围](../LICENSE.md)。
 
 ## 仓库提供的功能
 
@@ -70,7 +70,7 @@ const wethToEth = buildNativeUnwrapPlan(native);
 - `feeRateE9`：十亿分之一为单位的 LP 手续费；可另传明确的 `protocolFee` 和接收地址。
 - `expiry`、`salt`：有效期和不重复的策略标识。通用格式的 salt 为非零 uint64。
 
-通用金额使用原始单位整数字符串或 bigint，不能传浮点数；输出可直接序列化为 JSON。原始数量小于 2^96。区间价格是“地址较大代币的原始单位 / 地址较小代币的原始单位 × 1e18”，必须正确处理两种币的精度。完整类型、数值限制和调用示例见[英文接口说明](INTEGRATION.md)及 `index.d.mts`。
+通用金额使用原始单位整数字符串或 bigint，不能传浮点数；输出可直接序列化为 JSON。原始数量小于 2^96。区间价格是“地址较大代币的原始单位 / 地址较小代币的原始单位 × 1e18”，必须正确处理两种币的精度。完整类型、数值限制和调用示例见[英文接口说明](integration.md)及 `index.d.mts`。
 
 旧 USDC/USDT 配置和方向字符串继续可用，保留原来的单位、策略编码和 hash。旧格式的 `fwUSDC/fwUSDT` 是人类可读数量，新格式 `legs[].amount` 是原始单位，不可混用。
 
@@ -92,16 +92,16 @@ const wethToEth = buildNativeUnwrapPlan(native);
 
 ## 浏览器与本地测试
 
-Node 默认入口和 `portable` 入口提供同样的构造结果，类型声明随包提供。`portable` 由宿主传入官方 SDK 实例，避免类身份不一致；官方依赖在浏览器中需要 `assert` 与 `process/browser.js` 兼容模块。`test/browser-build.mjs` 给出可复现的 esbuild 配置，真实浏览器已验证构造建仓、关闭和 WETH 包装计划。钱包连接、签名、交易确认和仓位 UI 仍由宿主应用负责，本仓库不包含前端页面。
+Node 默认入口和 `portable` 入口提供同样的构造结果，类型声明随包提供。`portable` 由宿主传入官方 SDK 实例，避免类身份不一致；官方依赖在浏览器中需要 `assert` 与 `process/browser.js` 兼容模块。`test/browser-build.mjs` 给出可复现的 esbuild 配置，历史版本在真实浏览器中验证过建仓、关闭和 WETH 包装；当前本地检查覆盖打包与两种入口的一致性，不据此声明全部浏览器钱包兼容。钱包连接、签名、交易确认和仓位 UI 仍由宿主应用负责，本仓库不包含前端页面。
 
-本次测试覆盖九种资产的包装/解包，以及稳定币、波动资产、不同精度、集中流动性交易对的双向指定输入/指定输出成交。每笔检查实际到账、退款、授权残留、过期关闭和失败回滚。使用合成的本地做市库存和真实合约代码，不代表这些仓位已在主网上创建，也不代表每一种可能的代币组合均已单独验收。[最终测试记录](VALIDATION.zh.md)。
+本次测试覆盖九种资产的包装/解包，以及稳定币、波动资产、不同精度、集中流动性交易对的双向指定输入/指定输出成交。每笔检查实际到账、退款、授权残留、过期关闭和失败回滚。使用合成的本地做市库存和真实合约代码，不代表这些仓位已在主网上创建，也不代表每一种可能的代币组合均已单独验收。[最终测试记录](testing.zh.md)。
 
-本地运行 `npm test`、`npm run test:types`、`npm run build:browser-smoke`；主网 fork 另需 archive RPC 和 Anvil。设置 `RING_FORK_EVIDENCE_DIR=evidence/local-rerun` 可保留已有报告。所有签名模拟、资金准备与成交只发生在工具启动的本地 Anvil 上。
+本地运行 `npm test`、`npm run test:types`、`npm run build:browser-smoke`；主网 fork 另需 archive RPC 和 Anvil。设置 `RING_FORK_EVIDENCE_DIR=artifacts/local-rerun` 可保留已有报告。所有签名模拟、资金准备与成交只发生在工具启动的本地 Anvil 上。
 
 ## 请 1inch 评审的内容
 
 请 review 现有 SDK、接口和本地测试，确认当前做法是否适合接入；指出为了让 FewToken 仓位参与真实订单，还需要补哪些开发，并提供对应的接口说明或参考实现。Ring 可以根据评审结果继续适配，不预先假定必须 fork 或修改官方协议。
 
-同时确认是否需要在 Ring 自己的前端增加类似 Barker 的 Aqua 页面，用于包装、授权、建仓和仓位管理，以及这种合作方式如何使用本 SDK。页面尚未开发；页面可用也不等于真实订单已经接入。
+优先在 1inch 官方 Aqua 页面选择 FewToken 并创建、管理仓位。请指出官方选币和仓位参数还缺哪些支持；只有官方页面不能满足需求时，再确认 Ring 是否需要补充自己的页面。页面可用也不等于真实订单已经接入。
 
 本仓库所有计划的 `executionAllowed`、`productionReady` 均为 false。两份 Solidity 测试执行器仅用于本地验证，不能直接部署为生产执行器。上线许可、合约审查、真实资金限额与订单验收仍需分别完成。

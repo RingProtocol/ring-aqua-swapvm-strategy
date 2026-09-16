@@ -7,7 +7,7 @@ import { sdk, C, buildStrategy, buildQuote, routerAbi } from '../strategy.mjs';
 import { market, concentrated } from './market-fixtures.mjs';
 import { NOW, config as legacy, request } from './fixtures.mjs';
 import { buildAquaDockPlan } from '../index.mjs';
-import beforeFix from '../evidence/official-review-2026-09-11/conformance-before-fix.json' with { type: 'json' };
+import beforeFix from './fixtures/legacy-position-identity.json' with { type: 'json' };
 
 const require = createRequire(import.meta.url);
 const aqua = require('@1inch/aqua-sdk');
