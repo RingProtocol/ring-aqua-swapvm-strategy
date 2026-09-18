@@ -1,0 +1,9 @@
+{
+  "sourceCommit": "d4ec1c8a2a8833f4ba6cfac41112baf3306df724",
+  "historicalIdentity": {
+    "chainId": 1,
+    "maker": "0x0000000000000000000000000000000020260909",
+    "strategyHash": "0xfb46322faa2b08ae9cb41cc02390801becebf456f6db6eff713462c80c3696f0",
+    "tokens": ["0x0492560fa7cfd6a85e50d8be3f77318994f8f429", "0xa250cc729bb3323e7933022a67b52200fe354767"]
+  }
+}

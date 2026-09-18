@@ -1,0 +1,239 @@
+{
+  "schema": "ring.aqua-official-reference.v1",
+  "reviewDate": "2026-09-11",
+  "routerVersion": "1.0.2",
+  "swapVmSdk": "0.4.2",
+  "aquaSdk": "0.3.2",
+  "opcodeSource": {
+    "repository": "1inch/swap-vm",
+    "commit": "32c687c2b73101fc26549e48fa1ff8a4d73afbac",
+    "path": "src/opcodes/AquaOpcodes.sol",
+    "sha256": "0e203b86b50fd9f9d155f86a5c8a28ed20b90b545dac1f64e5d3021d97049acb",
+    "url": "https://github.com/1inch/swap-vm/blob/32c687c2b73101fc26549e48fa1ff8a4d73afbac/src/opcodes/AquaOpcodes.sol"
+  },
+  "runtimeOpcodeTable": [
+    {
+      "index": 0,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 1,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 2,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 3,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 4,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 5,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 6,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 7,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 8,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 9,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 10,
+      "solidityFunction": "Controls._jump"
+    },
+    {
+      "index": 11,
+      "solidityFunction": "Controls._jumpIfTokenIn"
+    },
+    {
+      "index": 12,
+      "solidityFunction": "Controls._jumpIfTokenOut"
+    },
+    {
+      "index": 13,
+      "solidityFunction": "Controls._deadline"
+    },
+    {
+      "index": 14,
+      "solidityFunction": "Controls._onlyTakerTokenBalanceNonZero"
+    },
+    {
+      "index": 15,
+      "solidityFunction": "Controls._onlyTakerTokenBalanceGte"
+    },
+    {
+      "index": 16,
+      "solidityFunction": "Controls._onlyTakerTokenSupplyShareGte"
+    },
+    {
+      "index": 17,
+      "solidityFunction": "XYCSwap._xycSwapXD"
+    },
+    {
+      "index": 18,
+      "solidityFunction": "XYCConcentrate._xycConcentrateGrowLiquidity2D"
+    },
+    {
+      "index": 19,
+      "solidityFunction": "Decay._decayXD"
+    },
+    {
+      "index": 20,
+      "solidityFunction": "Controls._salt"
+    },
+    {
+      "index": 21,
+      "solidityFunction": "Fee._flatFeeAmountInXD"
+    },
+    {
+      "index": 22,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 23,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 24,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 25,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 26,
+      "solidityFunction": "_notInstruction"
+    },
+    {
+      "index": 27,
+      "solidityFunction": "Fee._protocolFeeAmountInXD"
+    },
+    {
+      "index": 28,
+      "solidityFunction": "Fee._aquaProtocolFeeAmountInXD"
+    },
+    {
+      "index": 29,
+      "solidityFunction": "Fee._dynamicProtocolFeeAmountInXD"
+    },
+    {
+      "index": 30,
+      "solidityFunction": "Fee._aquaDynamicProtocolFeeAmountInXD"
+    },
+    {
+      "index": 31,
+      "solidityFunction": "PeggedSwap._peggedSwapGrowPriceRange2D"
+    },
+    {
+      "index": 32,
+      "solidityFunction": "Extruction._extruction"
+    },
+    {
+      "index": 33,
+      "solidityFunction": "Controls._onlyTxOriginTokenBalanceNonZero"
+    }
+  ],
+  "indexNote": "The Solidity array header overwrites its first dummy item. Remaining entries are zero-based runtime opcodes; comments in SDK source use one-based ordinal numbers.",
+  "sources": [
+    {
+      "repository": "1inch/swap-vm",
+      "commit": "32c687c2b73101fc26549e48fa1ff8a4d73afbac",
+      "path": "src/opcodes/AquaOpcodes.sol",
+      "sha256": "0e203b86b50fd9f9d155f86a5c8a28ed20b90b545dac1f64e5d3021d97049acb",
+      "url": "https://github.com/1inch/swap-vm/blob/32c687c2b73101fc26549e48fa1ff8a4d73afbac/src/opcodes/AquaOpcodes.sol"
+    },
+    {
+      "repository": "1inch/swap-vm",
+      "commit": "32c687c2b73101fc26549e48fa1ff8a4d73afbac",
+      "path": "src/libs/VM.sol",
+      "sha256": "bad6801f5f007bb6cedddd17fcc9008ebcf0cfe00325e81e20adf5f5145452b2",
+      "url": "https://github.com/1inch/swap-vm/blob/32c687c2b73101fc26549e48fa1ff8a4d73afbac/src/libs/VM.sol"
+    },
+    {
+      "repository": "1inch/swap-vm",
+      "commit": "32c687c2b73101fc26549e48fa1ff8a4d73afbac",
+      "path": "src/libs/TakerTraits.sol",
+      "sha256": "31ac84e088342873b1c7592c617a9345eea3c3e0a4122df8b406469d5ae8df7a",
+      "url": "https://github.com/1inch/swap-vm/blob/32c687c2b73101fc26549e48fa1ff8a4d73afbac/src/libs/TakerTraits.sol"
+    },
+    {
+      "repository": "1inch/swap-vm",
+      "commit": "32c687c2b73101fc26549e48fa1ff8a4d73afbac",
+      "path": "src/instructions/Fee.sol",
+      "sha256": "8aac61cbb397ff2212bc69579e085468f2c3bfc4843458ad4f29d544d44fc980",
+      "url": "https://github.com/1inch/swap-vm/blob/32c687c2b73101fc26549e48fa1ff8a4d73afbac/src/instructions/Fee.sol"
+    },
+    {
+      "repository": "1inch/swap-vm",
+      "commit": "32c687c2b73101fc26549e48fa1ff8a4d73afbac",
+      "path": "src/SwapVM.sol",
+      "sha256": "a561f4402f6e0bc4f54a9f3d95314f7a9beb1585fdd1e3ebed21f9338f23ff1a",
+      "url": "https://github.com/1inch/swap-vm/blob/32c687c2b73101fc26549e48fa1ff8a4d73afbac/src/SwapVM.sol"
+    },
+    {
+      "repository": "1inch/sdks",
+      "commit": "364e7155167957e6a24320c7beb90539e06c91eb",
+      "path": "typescript/swap-vm/src/swap-vm/instructions/index.ts",
+      "sha256": "878f7d3bcfd32ca4c88a94baaf1e92a2cfdaf26c7bd9306ca686ab4589c0f901",
+      "url": "https://github.com/1inch/sdks/blob/364e7155167957e6a24320c7beb90539e06c91eb/typescript/swap-vm/src/swap-vm/instructions/index.ts"
+    },
+    {
+      "repository": "1inch/sdks",
+      "commit": "364e7155167957e6a24320c7beb90539e06c91eb",
+      "path": "typescript/swap-vm/src/swap-vm/strategies/aqua-xyc-amm-strategy.ts",
+      "sha256": "91c08f83211f865454684ce810ea642d1eb6656ba28f21d3f21c6bfac2f90158",
+      "url": "https://github.com/1inch/sdks/blob/364e7155167957e6a24320c7beb90539e06c91eb/typescript/swap-vm/src/swap-vm/strategies/aqua-xyc-amm-strategy.ts"
+    },
+    {
+      "repository": "1inch/sdks",
+      "commit": "364e7155167957e6a24320c7beb90539e06c91eb",
+      "path": "typescript/swap-vm/src/swap-vm/strategies/aqua-pegged-amm-strategy.ts",
+      "sha256": "5c2dd0e3ed72abb26a5e31f763cf440adef50304cf9e4d0d9a201e55e4e06352",
+      "url": "https://github.com/1inch/sdks/blob/364e7155167957e6a24320c7beb90539e06c91eb/typescript/swap-vm/src/swap-vm/strategies/aqua-pegged-amm-strategy.ts"
+    },
+    {
+      "repository": "1inch/sdks",
+      "commit": "364e7155167957e6a24320c7beb90539e06c91eb",
+      "path": "typescript/aqua/src/aqua-protocol-contract/events/shipped-event.ts",
+      "sha256": "891d905cd4a1b08bac4fa5133773078118b03f5472b59ba7044b805057ee712e",
+      "url": "https://github.com/1inch/sdks/blob/364e7155167957e6a24320c7beb90539e06c91eb/typescript/aqua/src/aqua-protocol-contract/events/shipped-event.ts"
+    },
+    {
+      "repository": "1inch/aqua",
+      "commit": "9c5c42e5840e8741fba3597c48456c9510212b66",
+      "path": "src/Aqua.sol",
+      "sha256": "de94a67c58f7b8b9e95c03f6a9c2acbacf525b5f43f8255111a83a0f5156b68c",
+      "url": "https://github.com/1inch/aqua/blob/9c5c42e5840e8741fba3597c48456c9510212b66/src/Aqua.sol"
+    },
+    {
+      "repository": "1inch/aqua",
+      "commit": "9c5c42e5840e8741fba3597c48456c9510212b66",
+      "path": "src/interfaces/IAqua.sol",
+      "sha256": "915cbe38c77b46c3927143693a1a1b8ca0f32f75dc34cd5c18526a8103e94fd9",
+      "url": "https://github.com/1inch/aqua/blob/9c5c42e5840e8741fba3597c48456c9510212b66/src/interfaces/IAqua.sol"
+    },
+    {
+      "repository": "1inch/aqua",
+      "commit": "9c5c42e5840e8741fba3597c48456c9510212b66",
+      "path": "test/AquaShipDock.t.sol",
+      "sha256": "3034d903496ac8d6ff08cd568c1f4464ec8e2f71d4512b7d6549aa6474e490f9",
+      "url": "https://github.com/1inch/aqua/blob/9c5c42e5840e8741fba3597c48456c9510212b66/test/AquaShipDock.t.sol"
+    }
+  ]
+}
